@@ -176,28 +176,159 @@ function validateFileClient(file) {
   return { valid: true };
 }
 
-async function uploadFile(file) {
-  if (!file) return null;
+function createUploadProgressToast(fileName) {
+  let container = document.getElementById('pekon-toast-container') || document.getElementById('admin-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'admin-toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'pekon-toast toast-upload';
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+
+  const shortName = fileName.length > 24 ? fileName.substring(0, 12) + '...' + fileName.substring(fileName.lastIndexOf('.')) : fileName;
+
+  toast.innerHTML = `
+    <div class="toast-icon-box">
+      <svg class="w-5 h-5 flex-shrink-0 text-blue-600 toast-spinner" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+    <div class="toast-content w-full">
+      <div class="toast-title flex items-center justify-between">
+        <span>Mengunggah di Background...</span>
+        <span class="upload-percent text-xs font-bold text-blue-600">0%</span>
+      </div>
+      <div class="toast-message text-xs text-gray-500 truncate mb-1">${escapeHtml(shortName)}</div>
+      <div class="toast-upload-bar-track">
+        <div class="toast-upload-bar-fill"></div>
+      </div>
+    </div>
+    <button type="button" class="toast-close" aria-label="Tutup">&times;</button>
+  `;
+
+  const barFill = toast.querySelector('.toast-upload-bar-fill');
+  const percentText = toast.querySelector('.upload-percent');
+  const titleText = toast.querySelector('.toast-title span');
+  const iconBox = toast.querySelector('.toast-icon-box');
+  const closeBtn = toast.querySelector('.toast-close');
+
+  const dismiss = () => {
+    toast.classList.remove('toast-show');
+    toast.classList.add('toast-hide');
+    setTimeout(() => toast.remove(), 350);
+  };
+  closeBtn.addEventListener('click', dismiss);
+
+  container.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.classList.add('toast-show');
+  });
+
+  return {
+    update(percent) {
+      const rounded = Math.min(100, Math.max(0, Math.round(percent)));
+      if (barFill) barFill.style.width = rounded + '%';
+      if (percentText) percentText.textContent = rounded + '%';
+      if (rounded >= 100) {
+        if (titleText) titleText.textContent = 'Memproses Berkas...';
+      }
+    },
+    success(message = 'Foto berhasil diunggah! Memperbarui halaman...', autoReload = false) {
+      toast.className = 'pekon-toast toast-success';
+      if (iconBox) {
+        iconBox.innerHTML = `<svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`;
+      }
+      if (titleText) titleText.textContent = '✓ Unggah Berkas Berhasil!';
+      if (percentText) percentText.textContent = '100%';
+      if (barFill) barFill.style.width = '100%';
+      const msgEl = toast.querySelector('.toast-message');
+      if (msgEl) msgEl.textContent = message;
+
+      if (autoReload) {
+        setTimeout(() => {
+          location.reload();
+        }, 1300);
+      } else {
+        setTimeout(dismiss, 3500);
+      }
+    },
+    error(message = 'Gagal mengunggah foto.') {
+      toast.className = 'pekon-toast toast-error';
+      if (iconBox) {
+        iconBox.innerHTML = `<svg class="w-5 h-5 flex-shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+      }
+      if (titleText) titleText.textContent = 'Unggah Gagal';
+      if (percentText) percentText.textContent = 'Gagal';
+      const msgEl = toast.querySelector('.toast-message');
+      if (msgEl) msgEl.textContent = message;
+      setTimeout(dismiss, 4500);
+    }
+  };
+}
+
+function uploadFile(file, options = {}) {
+  if (!file) return Promise.resolve(null);
   const check = validateFileClient(file);
   if (!check.valid) {
-    adminToast(check.message, 'error');
-    return null;
+    adminToast(check.message, 'error', 'Peringatan Berkas');
+    return Promise.resolve(null);
   }
-  const formData = new FormData();
-  formData.append('foto', file);
-  try {
-    const res = await fetch(API_BASE + '/api/admin/upload', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + (adminToken || '') },
-      body: formData
+
+  return new Promise((resolve) => {
+    const progressToast = createUploadProgressToast(file.name);
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('foto', file);
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percent = (e.loaded / e.total) * 100;
+        progressToast.update(percent);
+      }
     });
-    const data = await res.json();
-    if (data.success) return data.url;
-    adminToast(data.message || 'Gagal mengupload berkas', 'error');
-  } catch (err) {
-    adminToast('Terjadi kesalahan jaringan saat upload berkas', 'error');
-  }
-  return null;
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.success) {
+            progressToast.success('Foto berhasil diunggah! Data sedang disimpan...', options.autoReload || false);
+            resolve(data.url);
+          } else {
+            progressToast.error(data.message || 'Gagal mengupload berkas');
+            resolve(null);
+          }
+        } catch (err) {
+          progressToast.error('Gagal membaca respon server');
+          resolve(null);
+        }
+      } else if (xhr.status === 401) {
+        progressToast.error('Sesi login telah berakhir. Silakan login kembali.');
+        setTimeout(() => checkSession(), 1500);
+        resolve(null);
+      } else {
+        progressToast.error('Terjadi kesalahan server (' + xhr.status + ')');
+        resolve(null);
+      }
+    });
+
+    xhr.addEventListener('error', () => {
+      progressToast.error('Terjadi kesalahan jaringan saat upload.');
+      resolve(null);
+    });
+
+    xhr.open('POST', API_BASE + '/api/admin/upload');
+    const token = sessionStorage.getItem('adminToken') || adminToken;
+    if (token) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+    }
+    xhr.send(formData);
+  });
 }
 
 async function loadAllData() {
@@ -519,8 +650,9 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
     if (data.success) {
       msg.textContent = '✓ Profil berhasil disimpan';
       msg.className = 'ml-3 text-sm text-green-600';
-      adminToast('Profil desa berhasil diperbarui!', 'success');
+      adminToast('Profil desa berhasil diperbarui! Memperbarui halaman...', 'success', 'Simpan Berhasil');
       if (data.data.logo) document.getElementById('header-logo').src = data.data.logo;
+      setTimeout(() => location.reload(), 1300);
     } else {
       msg.textContent = data.message || 'Gagal menyimpan profil';
       msg.className = 'ml-3 text-sm text-red-600';
@@ -620,7 +752,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
     if (data.success) {
       msg.textContent = '✓ Pemerintahan berhasil disimpan';
       msg.className = 'ml-3 text-sm text-green-600';
-      adminToast('Data pemerintahan & lembaga berhasil disimpan!', 'success');
+      adminToast('Data pemerintahan & lembaga berhasil disimpan! Memperbarui halaman...', 'success', 'Simpan Berhasil');
       if (data.data?.kepalaDesa?.foto && preview) {
         preview.src = data.data.kepalaDesa.foto;
         preview.dataset.savedUrl = data.data.kepalaDesa.foto;
@@ -628,6 +760,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       if (data.data?.lembaga) {
         renderLembaga(data.data.lembaga);
       }
+      setTimeout(() => location.reload(), 1300);
     } else {
       msg.textContent = data.message || 'Gagal menyimpan data pemerintahan';
       msg.className = 'ml-3 text-sm text-red-600';
@@ -773,39 +906,66 @@ const GALERI_CATEGORIES = [
 GALERI_CATEGORIES.forEach(cat => {
   document.getElementById(cat.btnId)?.addEventListener('click', async () => {
     const fileInput = document.getElementById(cat.fileId);
-    const files = fileInput.files;
+    const files = Array.from(fileInput.files);
     const btn = document.getElementById(cat.btnId);
 
-    if (!files.length) {
-      alert('Silakan pilih foto terlebih dahulu.');
-      return;
-    }
+    if (!files.length) return;
 
     btn.disabled = true;
-    btn.textContent = 'Mengupload...';
+    btn.textContent = 'Mengunggah...';
+
+    const progressToast = createUploadProgressToast(`${files.length} Foto Galeri`);
 
     try {
       const formData = new FormData();
       for (const file of files) {
         formData.append('foto', file);
       }
-      const upRes = await fetch(API_BASE + '/api/admin/upload-multiple', { method: 'POST', body: formData });
-      const upData = await upRes.json();
- 
+
+      const xhr = new XMLHttpRequest();
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          const percent = (e.loaded / e.total) * 100;
+          progressToast.update(percent);
+        }
+      });
+
+      const uploadPromise = new Promise((resolve, reject) => {
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              resolve(JSON.parse(xhr.responseText));
+            } catch (err) { reject(err); }
+          } else {
+            reject(new Error('Upload gagal dengan status ' + xhr.status));
+          }
+        });
+        xhr.addEventListener('error', () => reject(new Error('Network error')));
+      });
+
+      xhr.open('POST', API_BASE + '/api/admin/upload-multiple');
+      const token = sessionStorage.getItem('adminToken') || adminToken;
+      if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.send(formData);
+
+      const upData = await uploadPromise;
+
       if (upData.success && upData.urls.length) {
         await fetch(API_BASE + '/api/admin/galeri-category', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ category: cat.key, urls: upData.urls })
         });
+        progressToast.success(`✓ ${files.length} foto berhasil diunggah ke kategori ${cat.label}! Memperbarui...`, true);
+      } else {
+        progressToast.error(upData.message || 'Gagal mengunggah foto galeri');
       }
 
       fileInput.value = '';
       const data = await (await fetch(API_BASE + '/api/data')).json();
       renderGaleriAll(data.galeri || {});
-      alert('Foto berhasil diupload ke kategori ' + cat.label + '!');
     } catch (err) {
-      alert('Gagal mengupload foto.');
+      progressToast.error('Terjadi kesalahan saat mengunggah foto galeri.');
     } finally {
       btn.disabled = false;
       btn.textContent = 'Upload';

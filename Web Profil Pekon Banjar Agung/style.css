@@ -290,3 +290,44 @@ footer.kebung-tikhai a:hover {
   from { width: 100%; }
   to { width: 0%; }
 }
+
+/* Spinner & Background Upload Progress Styles */
+.pekon-toast.toast-upload {
+  border-left-color: #3b82f6;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.pekon-toast.toast-upload .toast-title {
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toast-spinner {
+  display: inline-block;
+  animation: pekonSpin 0.85s linear infinite;
+}
+
+@keyframes pekonSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.toast-upload-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.toast-upload-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  border-radius: 9999px;
+  transition: width 0.2s ease-out;
+}
