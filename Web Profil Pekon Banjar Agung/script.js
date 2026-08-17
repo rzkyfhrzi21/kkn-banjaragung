@@ -180,29 +180,73 @@ if (badge) {
     };
 });
 
-// ===== Toast Notification =====
-function showToast(message, type = 'success') {
-    let container = document.getElementById('toast-container');
+// ===== Universal Modern Toast Notification System =====
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function showToast(message, type = 'success', title = '', duration = 4000) {
+    let container = document.getElementById('pekon-toast-container') || document.getElementById('toast-container');
     if (!container) {
         container = document.createElement('div');
-        container.id = 'toast-container';
-        container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;';
+        container.id = 'pekon-toast-container';
         document.body.appendChild(container);
     }
+
+    const normalizedType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+    
+    const defaultTitles = {
+        success: 'Berhasil!',
+        error: 'Gagal!',
+        warning: 'Peringatan!',
+        info: 'Informasi'
+    };
+    const toastTitle = title || defaultTitles[normalizedType];
+
+    const icons = {
+        success: `<svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`,
+        error: `<svg class="w-5 h-5 flex-shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>`,
+        warning: `<svg class="w-5 h-5 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`,
+        info: `<svg class="w-5 h-5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+    };
+
     const toast = document.createElement('div');
-    const bg = type === 'success' ? '#15803d' : (type === 'error' ? '#b91c1c' : '#0f172a');
-    toast.style.cssText = `background:${bg};color:#fff;padding:12px 20px;border-radius:8px;font-family:Poppins,sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transform:translateX(20px);transition:all .3s;max-width:320px;`;
-    toast.textContent = message;
+    toast.className = `pekon-toast toast-${normalizedType}`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="toast-icon-box">${icons[normalizedType]}</div>
+        <div class="toast-content">
+            <div class="toast-title">${escapeHtml(toastTitle)}</div>
+            <div class="toast-message">${escapeHtml(message)}</div>
+        </div>
+        <button type="button" class="toast-close" aria-label="Tutup">&times;</button>
+        <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
+    `;
+
+    const closeBtn = toast.querySelector('.toast-close');
+    let timer;
+
+    const dismiss = () => {
+        if (timer) clearTimeout(timer);
+        toast.classList.remove('toast-show');
+        toast.classList.add('toast-hide');
+        setTimeout(() => toast.remove(), 350);
+    };
+
+    closeBtn.addEventListener('click', dismiss);
     container.appendChild(toast);
+
     requestAnimationFrame(() => {
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateX(0)';
+        toast.classList.add('toast-show');
     });
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(20px)';
-        setTimeout(() => toast.remove(), 300);
-    }, 3500);
+
+    timer = setTimeout(dismiss, duration);
 }
 
 // ===== Public Data Loading from Backend =====
@@ -905,7 +949,7 @@ const suratForm = document.getElementById('surat-form');
 suratForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('surat-msg');
-    msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
+    if (msg) msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
 
     const nama = document.getElementById('s-nama').value.trim();
     const ktp = document.getElementById('s-ktp').value.trim();
@@ -913,34 +957,34 @@ suratForm?.addEventListener('submit', async (e) => {
     const alamat = document.getElementById('s-alamat').value.trim();
     const jenisSurat = document.getElementById('s-jenis').value.trim();
 
-    // Validasi Frontend
+    // Validasi Frontend dengan Toast Peringatan
     if (nama.length < 3) {
-        msg.textContent = 'Nama lengkap minimal 3 karakter.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Nama lengkap minimal 3 karakter.', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Nama lengkap minimal 3 karakter.'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (!/^\d{8,20}$/.test(ktp)) {
-        msg.textContent = 'Nomor KTP/NIK harus berupa angka (minimal 8 s/d 16 digit).';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Nomor KTP/NIK harus berupa angka (minimal 8 s/d 16 digit).', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Nomor KTP/NIK harus berupa angka (minimal 8 s/d 16 digit).'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (!/^[0-9+\s-]{10,18}$/.test(hp)) {
-        msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Nomor WhatsApp / HP tidak valid (minimal 10 digit).', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (alamat.length < 5) {
-        msg.textContent = 'Alamat domisili terlalu singkat (minimal 5 karakter).';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Alamat domisili terlalu singkat (minimal 5 karakter).', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Alamat domisili terlalu singkat (minimal 5 karakter).'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (!jenisSurat) {
-        msg.textContent = 'Silakan pilih jenis surat yang diajukan.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Silakan pilih jenis surat yang diajukan.', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Silakan pilih jenis surat yang diajukan.'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
 
-    msg.textContent = 'Mengirim pengajuan...';
+    if (msg) msg.textContent = 'Mengirim pengajuan...';
     try {
         const payload = { nama, ktp, hp, alamat, jenisSurat };
         const res = await fetch('/api/pengajuan', {
@@ -950,16 +994,25 @@ suratForm?.addEventListener('submit', async (e) => {
         });
         const data = await res.json();
         if (data.success) {
-            msg.textContent = '✓ Pengajuan berhasil dikirim! Admin akan segera memproses surat Anda.';
-            msg.classList.add('bg-green-50', 'text-green-700');
+            showToast('Pengajuan surat berhasil dikirim! Admin akan segera memproses surat Anda.', 'success', 'Pengajuan Berhasil');
+            if (msg) {
+                msg.textContent = '✓ Pengajuan berhasil dikirim! Admin akan segera memproses surat Anda.';
+                msg.classList.add('bg-green-50', 'text-green-700');
+            }
             suratForm.reset();
         } else {
-            msg.textContent = data.message || 'Gagal mengirim pengajuan. Silakan coba lagi.';
-            msg.classList.add('bg-red-50', 'text-red-700');
+            showToast(data.message || 'Gagal mengirim pengajuan. Silakan coba lagi.', 'error', 'Pengajuan Gagal');
+            if (msg) {
+                msg.textContent = data.message || 'Gagal mengirim pengajuan. Silakan coba lagi.';
+                msg.classList.add('bg-red-50', 'text-red-700');
+            }
         }
     } catch (err) {
-        msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Terjadi kesalahan jaringan. Pastikan koneksi Anda aktif.', 'error', 'Koneksi Error');
+        if (msg) {
+            msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
+            msg.classList.add('bg-red-50', 'text-red-700');
+        }
     }
 });
 
@@ -974,7 +1027,7 @@ keluhanBuktiInput?.addEventListener('change', (e) => {
 
     const check = validateClientImageFile(file);
     if (!check.valid) {
-        alert(check.message);
+        showToast(check.message, 'warning', 'Peringatan Berkas');
         keluhanBuktiInput.value = '';
         if (keluhanBuktiPreview) keluhanBuktiPreview.classList.add('hidden');
         return;
@@ -989,7 +1042,7 @@ keluhanBuktiInput?.addEventListener('change', (e) => {
 keluhanForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('keluhan-msg');
-    msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
+    if (msg) msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
 
     const nama = document.getElementById('keluhan-nama').value.trim();
     const hp = document.getElementById('keluhan-hp').value.trim();
@@ -997,38 +1050,38 @@ keluhanForm?.addEventListener('submit', async (e) => {
     const kronologi = document.getElementById('keluhan-kronologi').value.trim();
     const lokasi = document.getElementById('keluhan-lokasi').value.trim();
 
-    // Validasi Frontend
+    // Validasi Frontend dengan Toast Peringatan
     if (nama.length < 3) {
-        msg.textContent = 'Nama pelapor minimal 3 karakter.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Nama pelapor minimal 3 karakter.', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Nama pelapor minimal 3 karakter.'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (!/^[0-9+\s-]{10,18}$/.test(hp)) {
-        msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Nomor WhatsApp / HP tidak valid (minimal 10 digit).', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (judul.length < 3) {
-        msg.textContent = 'Judul pengaduan / keluhan minimal 3 karakter.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Judul pengaduan / keluhan minimal 3 karakter.', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Judul pengaduan / keluhan minimal 3 karakter.'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
     if (kronologi.length < 8) {
-        msg.textContent = 'Isi kronologi pengaduan minimal 8 karakter.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Isi kronologi pengaduan minimal 8 karakter.', 'warning', 'Peringatan Form');
+        if (msg) { msg.textContent = 'Isi kronologi pengaduan minimal 8 karakter.'; msg.classList.add('bg-red-50', 'text-red-700'); }
         return;
     }
 
     if (keluhanBuktiInput && keluhanBuktiInput.files[0]) {
         const fileCheck = validateClientImageFile(keluhanBuktiInput.files[0]);
         if (!fileCheck.valid) {
-            msg.textContent = fileCheck.message;
-            msg.classList.add('bg-red-50', 'text-red-700');
+            showToast(fileCheck.message, 'warning', 'Peringatan Berkas');
+            if (msg) { msg.textContent = fileCheck.message; msg.classList.add('bg-red-50', 'text-red-700'); }
             return;
         }
     }
 
-    msg.textContent = 'Mengirim keluhan...';
+    if (msg) msg.textContent = 'Mengirim keluhan...';
 
     const formData = new FormData();
     formData.append('nama', nama);
@@ -1047,17 +1100,26 @@ keluhanForm?.addEventListener('submit', async (e) => {
         });
         const data = await res.json();
         if (data.success) {
-            msg.textContent = '✓ Keluhan berhasil dikirim! Terima kasih atas laporannya.';
-            msg.classList.add('bg-green-50', 'text-green-700');
+            showToast('Laporan keluhan warga berhasil dikirim! Terima kasih atas partisipasi Anda.', 'success', 'Laporan Terkirim');
+            if (msg) {
+                msg.textContent = '✓ Keluhan berhasil dikirim! Terima kasih atas laporannya.';
+                msg.classList.add('bg-green-50', 'text-green-700');
+            }
             keluhanForm.reset();
             if (keluhanBuktiPreview) keluhanBuktiPreview.classList.add('hidden');
         } else {
-            msg.textContent = data.message || 'Gagal mengirim keluhan. Silakan coba lagi.';
-            msg.classList.add('bg-red-50', 'text-red-700');
+            showToast(data.message || 'Gagal mengirim keluhan. Silakan coba lagi.', 'error', 'Laporan Gagal');
+            if (msg) {
+                msg.textContent = data.message || 'Gagal mengirim keluhan. Silakan coba lagi.';
+                msg.classList.add('bg-red-50', 'text-red-700');
+            }
         }
     } catch (err) {
-        msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
-        msg.classList.add('bg-red-50', 'text-red-700');
+        showToast('Terjadi kesalahan jaringan. Pastikan server aktif.', 'error', 'Koneksi Error');
+        if (msg) {
+            msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
+            msg.classList.add('bg-red-50', 'text-red-700');
+        }
     }
 });
 
@@ -1076,14 +1138,12 @@ keluhanForm?.addEventListener('submit', async (e) => {
         if (data.success) {
             const p = data.data;
             if (document.getElementById('pd-judul')) document.getElementById('pd-judul').textContent = p.judul;
-if (document.getElementById('pd-tanggal')) document.getElementById('pd-tanggal').textContent = '📅 ' + (p.tanggal || '');
+            if (document.getElementById('pd-tanggal')) document.getElementById('pd-tanggal').textContent = '📅 ' + (p.tanggal || '');
             if (document.getElementById('pd-ringkasan')) document.getElementById('pd-ringkasan').textContent = p.ringkasan || '';
             if (document.getElementById('pd-isi')) {
                 const isiEl = document.getElementById('pd-isi');
-                // Gunakan isi jika tersedia, jika kosong gunakan ringkasan sebagai fallback
                 const isi = (p.isi && p.isi.trim()) ? p.isi : (p.ringkasan || '');
                 if (isi) {
-                    // Render paragraf per baris kosong (menghormati baris baru)
                     isiEl.innerHTML = renderParagraphs(isi);
                 } else {
                     isiEl.innerHTML = '<p class="text-gray-400 italic">Belum ada isi lengkap untuk pengumuman ini.</p>';
@@ -1115,7 +1175,7 @@ if (document.getElementById('pd-tanggal')) document.getElementById('pd-tanggal')
         }
     }
 
-    // Handle komentar form (tanpa login, terbuka untuk publik)
+    // Handle komentar form
     const komentarForm = document.getElementById('komentar-form');
     if (komentarForm) {
         komentarForm.addEventListener('submit', async (e) => {
@@ -1123,7 +1183,7 @@ if (document.getElementById('pd-tanggal')) document.getElementById('pd-tanggal')
             const nama = document.getElementById('k-nama').value.trim();
             const isi = document.getElementById('k-isi').value.trim();
             if (!isi) {
-                alert('Komentar tidak boleh kosong.');
+                showToast('Komentar tidak boleh kosong.', 'warning', 'Peringatan Form');
                 return;
             }
             try {
@@ -1134,16 +1194,17 @@ if (document.getElementById('pd-tanggal')) document.getElementById('pd-tanggal')
                 });
                 const data = await res.json();
                 if (data.success) {
+                    showToast('Komentar Anda berhasil dipublikasikan!', 'success', 'Komentar Terkirim');
                     document.getElementById('k-isi').value = '';
                     // Reload komentar
                     const res2 = await fetch(`/api/pengumuman/${id}/komentar`);
                     const data2 = await res2.json();
                     renderKomentar(data2.data || []);
                 } else {
-                    alert(data.message || 'Gagal mengirim komentar.');
+                    showToast(data.message || 'Gagal mengirim komentar.', 'error', 'Komentar Gagal');
                 }
             } catch (err) {
-                alert('Terjadi kesalahan. Pastikan server berjalan.');
+                showToast('Terjadi kesalahan saat mengirim komentar.', 'error', 'Koneksi Error');
             }
         });
     }

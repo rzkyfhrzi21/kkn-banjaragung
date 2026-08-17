@@ -84,28 +84,71 @@ tabBtns.forEach(btn => {
   });
 });
 
-function adminToast(message, type = 'success') {
-  let container = document.getElementById('admin-toast-container');
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function adminToast(message, type = 'success', title = '', duration = 4000) {
+  let container = document.getElementById('pekon-toast-container') || document.getElementById('admin-toast-container');
   if (!container) {
     container = document.createElement('div');
     container.id = 'admin-toast-container';
-    container.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;';
     document.body.appendChild(container);
   }
+
+  const normalizedType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+  const defaultTitles = {
+    success: 'Aksi Berhasil',
+    error: 'Gagal Menyimpan',
+    warning: 'Peringatan',
+    info: 'Informasi'
+  };
+  const toastTitle = title || defaultTitles[normalizedType];
+
+  const icons = {
+    success: `<svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`,
+    error: `<svg class="w-5 h-5 flex-shrink-0 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>`,
+    warning: `<svg class="w-5 h-5 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`,
+    info: `<svg class="w-5 h-5 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
+  };
+
   const toast = document.createElement('div');
-  const bg = type === 'success' ? '#15803d' : (type === 'error' ? '#b91c1c' : '#0f172a');
-  toast.style.cssText = `background:${bg};color:#fff;padding:12px 20px;border-radius:8px;font-family:Poppins,sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transform:translateX(20px);transition:all .3s;max-width:320px;`;
-  toast.textContent = message;
+  toast.className = `pekon-toast toast-${normalizedType}`;
+  toast.setAttribute('role', 'alert');
+  toast.innerHTML = `
+    <div class="toast-icon-box">${icons[normalizedType]}</div>
+    <div class="toast-content">
+      <div class="toast-title">${escapeHtml(toastTitle)}</div>
+      <div class="toast-message">${escapeHtml(message)}</div>
+    </div>
+    <button type="button" class="toast-close" aria-label="Tutup">&times;</button>
+    <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
+  `;
+
+  const closeBtn = toast.querySelector('.toast-close');
+  let timer;
+
+  const dismiss = () => {
+    if (timer) clearTimeout(timer);
+    toast.classList.remove('toast-show');
+    toast.classList.add('toast-hide');
+    setTimeout(() => toast.remove(), 350);
+  };
+
+  closeBtn.addEventListener('click', dismiss);
   container.appendChild(toast);
+
   requestAnimationFrame(() => {
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(0)';
+    toast.classList.add('toast-show');
   });
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(20px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+
+  timer = setTimeout(dismiss, duration);
 }
 
 function validateFileClient(file) {
@@ -600,7 +643,10 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
 
 document.getElementById('save-kontak')?.addEventListener('click', async () => {
   const msg = document.getElementById('kontak-msg');
-  msg.textContent = 'Menyimpan...';
+  if (msg) {
+    msg.textContent = 'Menyimpan...';
+    msg.className = 'ml-3 text-sm text-blue-600';
+  }
   try {
     const payload = {
       alamat: document.getElementById('k-alamat').value.trim(),
@@ -616,10 +662,23 @@ document.getElementById('save-kontak')?.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    if (res.status === 401) {
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
+      if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
     const data = await res.json();
-    msg.textContent = data.success ? 'Kontak berhasil disimpan' : 'Gagal menyimpan';
+    if (data.success) {
+      adminToast('Informasi kontak desa berhasil diperbarui!', 'success', 'Kontak Disimpan');
+      if (msg) { msg.textContent = '✓ Kontak berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
+    } else {
+      adminToast(data.message || 'Gagal menyimpan kontak', 'error', 'Simpan Gagal');
+      if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
+    }
   } catch (err) {
-    msg.textContent = 'Terjadi kesalahan';
+    adminToast('Terjadi kesalahan saat menyimpan kontak', 'error', 'Koneksi Error');
+    if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
   }
 });
 
@@ -1042,15 +1101,36 @@ jadwalPosyandu: {
       deskripsi: document.getElementById('ap-deskripsi').value.trim(),
       perdes: collectDataRows('ap-perdes-items', ['no', 'peraturan', 'tahun', 'tentang']),
       perkades: collectDataRows('ap-perkades-items', ['no', 'peraturan', 'tahun', 'tentang'])
-    }
   };
+  const msg = document.getElementById('layanan-msg');
+  if (msg) {
+    msg.textContent = 'Menyimpan...';
+    msg.className = 'ml-3 text-sm text-blue-600';
+  }
   try {
     const res = await fetch(API_BASE + '/api/admin/layanan', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+    if (res.status === 401) {
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
+      if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
     const data = await res.json();
-    msg.textContent = data.success ? 'Layanan berhasil disimpan' : 'Gagal menyimpan';
-  } catch (e) { msg.textContent = 'Terjadi kesalahan'; }
+    if (data.success) {
+      adminToast('Data layanan publik, posyandu & kependudukan berhasil disimpan!', 'success', 'Layanan Disimpan');
+      if (msg) { msg.textContent = '✓ Layanan berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
+    } else {
+      adminToast(data.message || 'Gagal menyimpan layanan', 'error', 'Simpan Gagal');
+      if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
+    }
+  } catch (e) {
+    adminToast('Terjadi kesalahan saat menyimpan layanan', 'error', 'Koneksi Error');
+    if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
+  }
 });
 
 function renderPotensiItems(containerId, items, addBtnId) {
@@ -1129,7 +1209,10 @@ function fillPotensi(p) {
 
 document.getElementById('save-potensi')?.addEventListener('click', async () => {
   const msg = document.getElementById('potensi-msg');
-  msg.textContent = 'Menyimpan...';
+  if (msg) {
+    msg.textContent = 'Menyimpan...';
+    msg.className = 'ml-3 text-sm text-blue-600';
+  }
   try {
     const umkmItems = await collectPotensiItems('umkm-items');
     const wisataItems = await collectPotensiItems('wisata-items');
@@ -1152,17 +1235,29 @@ document.getElementById('save-potensi')?.addEventListener('click', async () => {
       }
     };
     const res = await fetch(API_BASE + '/api/admin/potensi', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
+    if (res.status === 401) {
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
+      if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
     const data = await res.json();
     if (data.success) {
-      msg.textContent = 'Potensi berhasil disimpan';
+      if (msg) { msg.textContent = '✓ Potensi berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
       fillPotensi(data.data || payload);
-      adminToast('Potensi berhasil disimpan', 'success');
+      adminToast('Data potensi UMKM, Wisata & Kegiatan berhasil diperbarui!', 'success', 'Potensi Disimpan');
     } else {
-      msg.textContent = 'Gagal menyimpan';
+      adminToast(data.message || 'Gagal menyimpan potensi desa', 'error', 'Simpan Gagal');
+      if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
     }
-  } catch (e) { msg.textContent = 'Terjadi kesalahan'; }
+  } catch (e) {
+    adminToast('Terjadi kesalahan saat menyimpan potensi desa', 'error', 'Koneksi Error');
+    if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
+  }
 });
 
 async function renderPengajuan() {
