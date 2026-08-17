@@ -108,13 +108,52 @@ function adminToast(message, type = 'success') {
   }, 3500);
 }
 
+function validateFileClient(file) {
+  if (!file) return { valid: false, message: 'Tidak ada berkas yang dipilih.' };
+  if (file.size === 0) return { valid: false, message: 'Berkas kosong (0 bytes).' };
+  if (file.size > 5 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 5MB.' };
+
+  const rawName = (file.name || '').toLowerCase();
+  const dangerousPatterns = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
+  const nameWithoutLastExt = rawName.substring(0, rawName.lastIndexOf('.'));
+  if (dangerousPatterns.test(nameWithoutLastExt)) {
+    return { valid: false, message: 'Nama berkas mencurigakan (Double Extension terdeteksi).' };
+  }
+
+  const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  const ext = rawName.substring(rawName.lastIndexOf('.'));
+  if (!allowedExts.includes(ext)) {
+    return { valid: false, message: 'Format foto tidak didukung. Harus berupa gambar (JPG, PNG, GIF, WEBP).' };
+  }
+
+  if (file.type && !file.type.startsWith('image/')) {
+    return { valid: false, message: 'Tipe berkas bukan gambar valid.' };
+  }
+
+  return { valid: true };
+}
+
 async function uploadFile(file) {
   if (!file) return null;
+  const check = validateFileClient(file);
+  if (!check.valid) {
+    adminToast(check.message, 'error');
+    return null;
+  }
   const formData = new FormData();
   formData.append('foto', file);
-  const res = await fetch(API_BASE + '/api/admin/upload', { method: 'POST', body: formData });
-  const data = await res.json();
-  if (data.success) return data.url;
+  try {
+    const res = await fetch(API_BASE + '/api/admin/upload', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + (adminToken || '') },
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success) return data.url;
+    adminToast(data.message || 'Gagal mengupload berkas', 'error');
+  } catch (err) {
+    adminToast('Terjadi kesalahan jaringan saat upload berkas', 'error');
+  }
   return null;
 }
 

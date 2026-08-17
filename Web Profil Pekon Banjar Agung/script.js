@@ -874,21 +874,75 @@ function updateSyaratKhusus() {
     });
 }
 
+// ===== Frontend Validation Helper =====
+function validateClientImageFile(file) {
+    if (!file) return { valid: false, message: 'Tidak ada berkas yang dipilih.' };
+    if (file.size === 0) return { valid: false, message: 'Berkas kosong (0 bytes).' };
+    if (file.size > 5 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 5MB.' };
+
+    const rawName = (file.name || '').toLowerCase();
+    const dangerousPatterns = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
+    const nameWithoutLastExt = rawName.substring(0, rawName.lastIndexOf('.'));
+    if (dangerousPatterns.test(nameWithoutLastExt)) {
+        return { valid: false, message: 'Nama berkas mencurigakan (Double Extension terdeteksi).' };
+    }
+
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const ext = rawName.substring(rawName.lastIndexOf('.'));
+    if (!allowedExts.includes(ext)) {
+        return { valid: false, message: 'Format foto tidak didukung. Gunakan format JPG, PNG, GIF, atau WEBP.' };
+    }
+
+    if (file.type && !file.type.startsWith('image/')) {
+        return { valid: false, message: 'Berkas yang dipilih bukan gambar valid.' };
+    }
+
+    return { valid: true };
+}
+
 // ===== Pengajuan Surat form submit =====
 const suratForm = document.getElementById('surat-form');
 suratForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('surat-msg');
-    msg.classList.remove('hidden');
+    msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
+
+    const nama = document.getElementById('s-nama').value.trim();
+    const ktp = document.getElementById('s-ktp').value.trim();
+    const hp = document.getElementById('s-hp').value.trim();
+    const alamat = document.getElementById('s-alamat').value.trim();
+    const jenisSurat = document.getElementById('s-jenis').value.trim();
+
+    // Validasi Frontend
+    if (nama.length < 3) {
+        msg.textContent = 'Nama lengkap minimal 3 karakter.';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (!/^\d{8,20}$/.test(ktp)) {
+        msg.textContent = 'Nomor KTP/NIK harus berupa angka (minimal 8 s/d 16 digit).';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (!/^[0-9+\s-]{10,18}$/.test(hp)) {
+        msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (alamat.length < 5) {
+        msg.textContent = 'Alamat domisili terlalu singkat (minimal 5 karakter).';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (!jenisSurat) {
+        msg.textContent = 'Silakan pilih jenis surat yang diajukan.';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+
     msg.textContent = 'Mengirim pengajuan...';
     try {
-        const payload = {
-            nama: document.getElementById('s-nama').value.trim(),
-            ktp: document.getElementById('s-ktp').value.trim(),
-            hp: document.getElementById('s-hp').value.trim(),
-            alamat: document.getElementById('s-alamat').value.trim(),
-            jenisSurat: document.getElementById('s-jenis').value.trim()
-        };
+        const payload = { nama, ktp, hp, alamat, jenisSurat };
         const res = await fetch('/api/pengajuan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -900,10 +954,12 @@ suratForm?.addEventListener('submit', async (e) => {
             msg.classList.add('bg-green-50', 'text-green-700');
             suratForm.reset();
         } else {
-            msg.textContent = 'Gagal mengirim pengajuan. Silakan coba lagi.';
+            msg.textContent = data.message || 'Gagal mengirim pengajuan. Silakan coba lagi.';
+            msg.classList.add('bg-red-50', 'text-red-700');
         }
     } catch (err) {
         msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
+        msg.classList.add('bg-red-50', 'text-red-700');
     }
 });
 
@@ -914,7 +970,17 @@ const keluhanBuktiPreview = document.getElementById('keluhan-bukti-preview');
 
 keluhanBuktiInput?.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file && keluhanBuktiPreview) {
+    if (!file) return;
+
+    const check = validateClientImageFile(file);
+    if (!check.valid) {
+        alert(check.message);
+        keluhanBuktiInput.value = '';
+        if (keluhanBuktiPreview) keluhanBuktiPreview.classList.add('hidden');
+        return;
+    }
+
+    if (keluhanBuktiPreview) {
         keluhanBuktiPreview.src = URL.createObjectURL(file);
         keluhanBuktiPreview.classList.remove('hidden');
     }
@@ -923,15 +989,53 @@ keluhanBuktiInput?.addEventListener('change', (e) => {
 keluhanForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const msg = document.getElementById('keluhan-msg');
-    msg.classList.remove('hidden');
+    msg.classList.remove('hidden', 'bg-green-50', 'text-green-700', 'bg-red-50', 'text-red-700');
+
+    const nama = document.getElementById('keluhan-nama').value.trim();
+    const hp = document.getElementById('keluhan-hp').value.trim();
+    const judul = document.getElementById('keluhan-judul').value.trim();
+    const kronologi = document.getElementById('keluhan-kronologi').value.trim();
+    const lokasi = document.getElementById('keluhan-lokasi').value.trim();
+
+    // Validasi Frontend
+    if (nama.length < 3) {
+        msg.textContent = 'Nama pelapor minimal 3 karakter.';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (!/^[0-9+\s-]{10,18}$/.test(hp)) {
+        msg.textContent = 'Nomor WhatsApp / HP tidak valid (minimal 10 digit).';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (judul.length < 3) {
+        msg.textContent = 'Judul pengaduan / keluhan minimal 3 karakter.';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+    if (kronologi.length < 8) {
+        msg.textContent = 'Isi kronologi pengaduan minimal 8 karakter.';
+        msg.classList.add('bg-red-50', 'text-red-700');
+        return;
+    }
+
+    if (keluhanBuktiInput && keluhanBuktiInput.files[0]) {
+        const fileCheck = validateClientImageFile(keluhanBuktiInput.files[0]);
+        if (!fileCheck.valid) {
+            msg.textContent = fileCheck.message;
+            msg.classList.add('bg-red-50', 'text-red-700');
+            return;
+        }
+    }
+
     msg.textContent = 'Mengirim keluhan...';
 
     const formData = new FormData();
-    formData.append('nama', document.getElementById('keluhan-nama').value.trim());
-    formData.append('hp', document.getElementById('keluhan-hp').value.trim());
-    formData.append('judul', document.getElementById('keluhan-judul').value.trim());
-    formData.append('kronologi', document.getElementById('keluhan-kronologi').value.trim());
-    formData.append('lokasi', document.getElementById('keluhan-lokasi').value.trim());
+    formData.append('nama', nama);
+    formData.append('hp', hp);
+    formData.append('judul', judul);
+    formData.append('kronologi', kronologi);
+    formData.append('lokasi', lokasi);
     if (keluhanBuktiInput && keluhanBuktiInput.files[0]) {
         formData.append('bukti', keluhanBuktiInput.files[0]);
     }
@@ -948,12 +1052,12 @@ keluhanForm?.addEventListener('submit', async (e) => {
             keluhanForm.reset();
             if (keluhanBuktiPreview) keluhanBuktiPreview.classList.add('hidden');
         } else {
-            msg.textContent = 'Gagal mengirim keluhan. Silakan coba lagi.';
-            msg.classList.remove('bg-green-50', 'text-green-700');
+            msg.textContent = data.message || 'Gagal mengirim keluhan. Silakan coba lagi.';
+            msg.classList.add('bg-red-50', 'text-red-700');
         }
     } catch (err) {
         msg.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
-        msg.classList.remove('bg-green-50', 'text-green-700');
+        msg.classList.add('bg-red-50', 'text-red-700');
     }
 });
 
