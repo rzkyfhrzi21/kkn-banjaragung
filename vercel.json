@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "Web Profil Pekon Banjar Agung/**,data/**,uploads/**"
+      "includeFiles": "src/**,Web Profil Pekon Banjar Agung/**,data/**,uploads/**"
     }
   },
   "rewrites": [

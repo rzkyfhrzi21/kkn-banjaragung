@@ -1,0 +1,158 @@
+// src/middleware/security.middleware.js
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const {
+  UPLOAD_DIR,
+  ALLOWED_IMAGE_EXTENSIONS,
+  DANGEROUS_EXTENSIONS_PATTERN,
+  DANGEROUS_BINARY_SIGNATURES
+} = require('../config/constants');
+
+// 1. Anti-Webshell & True MIME / Magic Byte Buffer Validation
+function validateFileBuffer(filePath) {
+  if (!fs.existsSync(filePath)) return true;
+  const buffer = fs.readFileSync(filePath);
+  if (buffer.length === 0) {
+    try { fs.unlinkSync(filePath); } catch (e) {}
+    throw new Error('Berkas tidak boleh kosong (0 bytes).');
+  }
+
+  // Check Magic Bytes (True Image Headers)
+  const isJpeg = buffer.length >= 3 && buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
+  const isPng = buffer.length >= 8 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
+  const isGif = buffer.length >= 6 && buffer.toString('ascii', 0, 6).startsWith('GIF8');
+  const isWebp = buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+
+  if (!isJpeg && !isPng && !isGif && !isWebp) {
+    try { fs.unlinkSync(filePath); } catch (e) {}
+    throw new Error('Header berkas tidak valid. Berkas bukan gambar asli (Magic Byte Mismatch).');
+  }
+
+  // Scan for malicious executable scripts in binary buffer
+  const contentLower = buffer.toString('binary').toLowerCase();
+  for (const sig of DANGEROUS_BINARY_SIGNATURES) {
+    if (contentLower.includes(sig)) {
+      try { fs.unlinkSync(filePath); } catch (e) {}
+      throw new Error(`Webshell/Payload berbahaya terdeteksi (${sig}). Berkas ditolak demi keamanan server.`);
+    }
+  }
+
+  return true;
+}
+
+// 2. Multer Configuration for Safe Image Uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    try {
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      }
+    } catch (e) {}
+    cb(null, UPLOAD_DIR);
+  },
+  filename: (req, file, cb) => {
+    const rawExt = path.extname(file.originalname).toLowerCase();
+    const safeExt = ALLOWED_IMAGE_EXTENSIONS.includes(rawExt) ? rawExt : '.jpg';
+    const name = Date.now() + '-' + crypto.randomBytes(8).toString('hex') + safeExt;
+    cb(null, name);
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  const originalName = (file.originalname || '').toLowerCase();
+
+  // Anti Double Extension (e.g. shell.php.jpg, test.phtml.png)
+  const nameWithoutLastExt = originalName.substring(0, originalName.lastIndexOf('.'));
+  if (DANGEROUS_EXTENSIONS_PATTERN.test(nameWithoutLastExt)) {
+    return cb(new Error('Nama file mencurigakan (Double Extension terdeteksi). Upload ditolak demi keamanan.'), false);
+  }
+
+  // Allowed Image Extensions Only
+  const allowed = /\.(jpeg|jpg|png|gif|webp)$/i;
+  if (!allowed.test(path.extname(originalName))) {
+    return cb(new Error('Format file tidak didukung. File harus berupa gambar (jpeg, jpg, png, gif, webp).'), false);
+  }
+
+  cb(null, true);
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// 3. Input Sanitization & Anti-Spam Honeypot Filter
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:text\/html/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+}
+
+function checkHoneypot(req, res, next) {
+  if (req.body && (req.body._hp || req.body.website || req.body.bot_trap)) {
+    return res.json({ success: true, message: 'Data berhasil diterima' });
+  }
+  next();
+}
+
+// 4. Rate Limiters
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 5000 : 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Terlalu banyak permintaan, coba lagi nanti.' }
+});
+
+const adminLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 5000 : 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Terlalu banyak percobaan, coba lagi nanti.' }
+});
+
+const publicFormLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 5000 : 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Terlalu banyak pengiriman formulir. Coba lagi dalam 15 menit.' }
+});
+
+// 5. Helmet Security Headers Config
+const securityHeaders = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'", 'https:'],
+      scriptSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https:'],
+      connectSrc: ["'self'", 'https:'],
+      frameAncestors: ["'self'"]
+    }
+  }
+});
+
+module.exports = {
+  validateFileBuffer,
+  upload,
+  sanitizeInput,
+  checkHoneypot,
+  apiLimiter,
+  adminLimiter,
+  publicFormLimiter,
+  securityHeaders
+};
