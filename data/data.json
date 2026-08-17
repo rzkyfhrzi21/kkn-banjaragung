@@ -399,6 +399,86 @@
   },
   "pengajuan": [
     {
+      "id": 1786980493103,
+      "nama": "",
+      "ktp": "1806000000000001",
+      "hp": "08123456789",
+      "alamat": "Lampung",
+      "jenisSurat": "Surat Domisili",
+      "tanggal": "17/8/2026, 22.28.13",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980493046,
+      "nama": "admin' --",
+      "ktp": "admin' --",
+      "hp": "08123456789",
+      "alamat": "admin' --",
+      "jenisSurat": "admin' --",
+      "tanggal": "17/8/2026, 22.28.13",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980493030,
+      "nama": "\" OR \"\"=\"",
+      "ktp": "\" OR \"\"=\"",
+      "hp": "08123456789",
+      "alamat": "\" OR \"\"=\"",
+      "jenisSurat": "\" OR \"\"=\"",
+      "tanggal": "17/8/2026, 22.28.13",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980493015,
+      "nama": "' OR 1=1 /*",
+      "ktp": "' OR 1=1 /*",
+      "hp": "08123456789",
+      "alamat": "' OR 1=1 /*",
+      "jenisSurat": "' OR 1=1 /*",
+      "tanggal": "17/8/2026, 22.28.13",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980492999,
+      "nama": "1 UNION SELECT null, username, password FROM users --",
+      "ktp": "1 UNION SELECT null, username, password FROM users --",
+      "hp": "08123456789",
+      "alamat": "1 UNION SELECT null, username, password FROM users --",
+      "jenisSurat": "1 UNION SELECT null, username, password FROM users --",
+      "tanggal": "17/8/2026, 22.28.12",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980492983,
+      "nama": "'; DROP TABLE app; --",
+      "ktp": "'; DROP TABLE app; --",
+      "hp": "08123456789",
+      "alamat": "'; DROP TABLE app; --",
+      "jenisSurat": "'; DROP TABLE app; --",
+      "tanggal": "17/8/2026, 22.28.12",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980492967,
+      "nama": "' OR '1'='1",
+      "ktp": "' OR '1'='1",
+      "hp": "08123456789",
+      "alamat": "' OR '1'='1",
+      "jenisSurat": "' OR '1'='1",
+      "tanggal": "17/8/2026, 22.28.12",
+      "status": "Baru"
+    },
+    {
+      "id": 1786980492272,
+      "nama": "Siti Aminah",
+      "ktp": "1806012345678901",
+      "hp": "081298765432",
+      "alamat": "Dusun 1, RT 02/01",
+      "jenisSurat": "Surat Keterangan Domisili",
+      "tanggal": "17/8/2026, 22.28.12",
+      "status": "Baru"
+    },
+    {
       "id": 1786980235377,
       "nama": "",
       "ktp": "1806000000000001",

@@ -12,3 +12,4 @@ graphify-out/
 .vscode/
 securi
 AGENTS.md
+sync-to-vercel.bat

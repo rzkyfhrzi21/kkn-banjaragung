@@ -456,16 +456,15 @@ function fillPemerintahan(p) {
 }
 
 function renderPerangkat(list) {
-  const container = document.getElementById('perangkat-list');
-  container.innerHTML = '';
+  const container = document.getElementById('perangkat-list');  container.innerHTML = '';
   list.forEach((item, idx) => {
     const row = document.createElement('div');
-    row.className = 'flex flex-col md:flex-row gap-2 items-center bg-gray-50 p-3 rounded';
+    row.className = 'flex flex-col md:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
     const fotoPreview = item.foto
-      ? `<img src="${item.foto}" alt="Foto" class="w-16 h-16 rounded-full object-cover border border-gray-200">`
-      : `<div class="w-16 h-16 rounded-full border border-gray-200 flex items-center justify-center text-gray-300 text-2xl"></div>`;
-row.innerHTML = `
-      <div class="flex flex-col items-center gap-1">
+      ? `<img src="${item.foto}" alt="Foto" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`
+      : `<div class="w-20 h-20 rounded-2xl border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-1">No Foto</div>`;
+    row.innerHTML = `
+      <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
         ${fotoPreview}
         <div class="admin-file-input w-full max-w-[180px] text-xs">
           <span class="file-btn">Pilih File</span>
@@ -473,8 +472,8 @@ row.innerHTML = `
           <input type="file" data-foto-input accept="image/*">
         </div>
       </div>
-      <input data-idx="${idx}" data-field="jabatan" value="${item.jabatan}" placeholder="Jabatan" class="flex-1 border border-gray-300 rounded px-3 py-2">
-      <input data-idx="${idx}" data-field="nama" value="${item.nama}" placeholder="Nama" class="flex-1 border border-gray-300 rounded px-3 py-2">
+      <input data-idx="${idx}" data-field="jabatan" value="${item.jabatan}" placeholder="Jabatan" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
+      <input data-idx="${idx}" data-field="nama" value="${item.nama}" placeholder="Nama" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
       <button type="button" class="remove-perangkat bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200 whitespace-nowrap" data-idx="${idx}">Hapus</button>
     `;
 
@@ -484,8 +483,8 @@ row.innerHTML = `
     fotoInput.addEventListener('change', () => {
       const f = fotoInput.files[0];
       if (f && imgEl) imgEl.src = URL.createObjectURL(f);
-      else if (!imgEl) {
-        row.querySelector('div').innerHTML = '<img src="" class="w-16 h-16 rounded-full object-cover border border-gray-200">';
+      else if (f && !imgEl) {
+        row.querySelector('div').innerHTML = `<img src="${URL.createObjectURL(f)}" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`;
       }
       if (nameSpan) {
         nameSpan.textContent = f ? f.name : 'No file chosen';
@@ -503,18 +502,18 @@ row.innerHTML = `
 document.getElementById('add-perangkat')?.addEventListener('click', () => {
   const container = document.getElementById('perangkat-list');
   const row = document.createElement('div');
-  row.className = 'flex flex-col md:flex-row gap-2 items-center bg-gray-50 p-3 rounded';
-row.innerHTML = `
-    <div class="flex flex-col items-center gap-1">
-      <div class="w-16 h-16 rounded-full border border-gray-200 flex items-center justify-center text-gray-300 text-2xl"></div>
+  row.className = 'flex flex-col md:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
+  row.innerHTML = `
+    <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
+      <div class="w-20 h-20 rounded-2xl border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-1">No Foto</div>
       <div class="admin-file-input w-full max-w-[180px] text-xs">
         <span class="file-btn">Pilih File</span>
         <span class="file-name">No file chosen</span>
         <input type="file" data-foto-input accept="image/*">
       </div>
     </div>
-    <input data-field="jabatan" value="" placeholder="Jabatan" class="flex-1 border border-gray-300 rounded px-3 py-2">
-    <input data-field="nama" value="" placeholder="Nama" class="flex-1 border border-gray-300 rounded px-3 py-2">
+    <input data-field="jabatan" value="" placeholder="Jabatan" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
+    <input data-field="nama" value="" placeholder="Nama" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
     <button type="button" class="remove-perangkat bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200 whitespace-nowrap">Hapus</button>
   `;
   container.appendChild(row);
@@ -524,7 +523,7 @@ row.innerHTML = `
   fotoInput.addEventListener('change', () => {
     const f = fotoInput.files[0];
     if (f) {
-      row.querySelector('div').innerHTML = `<img src="${URL.createObjectURL(f)}" class="w-16 h-16 rounded-full object-cover border border-gray-200">`;
+      row.querySelector('div').innerHTML = `<img src="${URL.createObjectURL(f)}" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`;
     }
     if (nameSpan) {
       nameSpan.textContent = f ? f.name : 'No file chosen';
@@ -982,13 +981,13 @@ function renderGaleriAll(gal) {
       container.innerHTML = '<p class="text-gray-400 text-sm col-span-full">Belum ada foto.</p>';
       return;
     }
-list.forEach((url, idx) => {
+    list.forEach((url, idx) => {
       const div = document.createElement('div');
-      div.className = 'relative group';
+      div.className = 'relative group bg-gray-50 border border-gray-200 rounded-xl p-2 shadow-xs flex items-center justify-center min-h-[160px] overflow-hidden';
       div.innerHTML = `
-        <img src="${url}" alt="Galeri" class="w-full h-32 object-cover rounded shadow">
-        <button class="delete-galeri absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700" data-cat="${cat.key}" data-idx="${idx}" title="Hapus foto">&times;</button>
-        <span class="absolute bottom-1 left-1 bg-black bg-opacity-60 text-white text-[10px] px-2 py-0.5 rounded">${cat.label}</span>
+        <img src="${url}" alt="Galeri" class="w-full max-h-44 object-contain rounded-lg transition-transform duration-200 group-hover:scale-105">
+        <button class="delete-galeri absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all z-10" data-cat="${cat.key}" data-idx="${idx}" title="Hapus foto">&times;</button>
+        <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded-md font-medium z-10">${cat.label}</span>
       `;
       container.appendChild(div);
     });
@@ -1043,7 +1042,7 @@ function renderGalPicker() {
     const img = document.createElement('img');
     img.src = url;
     img.alt = 'Galeri';
-    img.className = 'w-full h-24 object-cover rounded cursor-pointer border-2 border-transparent hover:border-maroon';
+    img.className = 'w-full h-28 object-contain bg-gray-50 rounded-xl p-1 cursor-pointer border-2 border-gray-200 hover:border-green-600 shadow-xs transition-all';
     img.addEventListener('click', () => {
       document.getElementById(galPickerTarget).value = url;
       closeGalPicker();
@@ -1306,8 +1305,8 @@ function addPotensiRow(container, item) {
   row.className = 'flex flex-col lg:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
   row.dataset.foto = item.foto || '';
   const preview = item.foto
-    ? `<img src="${item.foto}" alt="Pratinjau foto potensi" class="potensi-preview w-24 h-20 object-cover rounded-lg border border-gray-200">`
-    : `<div class="potensi-preview w-24 h-20 rounded-lg bg-gray-200 text-gray-400 text-xs flex items-center justify-center text-center">Belum ada foto</div>`;
+    ? `<img src="${item.foto}" alt="Pratinjau foto potensi" class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs">`
+    : `<div class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 rounded-xl bg-gray-100 text-gray-400 text-xs flex items-center justify-center text-center p-1">Belum ada foto</div>`;
   row.innerHTML = `
     ${preview}
     <div class="flex-1 w-full grid md:grid-cols-2 gap-2">
@@ -1331,7 +1330,7 @@ function addPotensiRow(container, item) {
     const image = document.createElement('img');
     image.src = row.dataset.foto;
     image.alt = 'Pratinjau foto potensi';
-    image.className = 'potensi-preview w-24 h-20 object-cover rounded-lg border border-gray-200';
+    image.className = 'potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs';
     oldPreview.replaceWith(image);
   });
   row.querySelector('.remove-potensi').addEventListener('click', () => row.remove());
@@ -1472,7 +1471,7 @@ async function renderKeluhan() {
       const div = document.createElement('div');
       div.className = 'bg-gray-50 rounded p-4 border-l-4 border-amber-500';
       const buktiImg = item.bukti
-        ? `<a href="${item.bukti}" target="_blank" class="inline-block mt-2"><img src="${item.bukti}" alt="Bukti" class="w-40 h-28 object-cover rounded shadow hover:opacity-80"></a>`
+        ? `<a href="${item.bukti}" target="_blank" class="inline-block mt-2"><img src="${item.bukti}" alt="Bukti" class="max-w-xs max-h-48 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs hover:border-amber-500 transition-colors"></a>`
         : '<p class="text-xs text-gray-400 mt-2">Tidak ada foto bukti.</p>';
       div.innerHTML = `
         <div class="flex items-start justify-between gap-3">
