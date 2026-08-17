@@ -27,21 +27,33 @@ router.post('/api/admin/login', (req, res) => {
     currentAttempt = { count: 0, resetAt: Date.now() + 15 * 60 * 1000 };
   }
   if (currentAttempt.count >= 5) {
+    const retryAfter = Math.max(1, Math.ceil((currentAttempt.resetAt - Date.now()) / 1000));
+    res.set('Retry-After', String(retryAfter));
     return res.status(429).json({ success: false, message: 'Terlalu banyak percobaan. Coba lagi beberapa saat lagi.' });
   }
   if (username !== ADMIN_USER || !verifyPassword(password)) {
     currentAttempt.count += 1;
     loginAttempts.set(ip, currentAttempt);
+    console.warn(`[AUDIT] Login gagal dari IP ${ip} (percobaan ke-${currentAttempt.count})`);
     return res.status(401).json({ success: false, message: 'Username atau password salah.' });
   }
   loginAttempts.delete(ip);
   const token = generateAdminToken();
+  console.info(`[AUDIT] Login sukses admin dari IP ${ip}`);
   res.set('Cache-Control', 'no-store');
   res.json({ success: true, token, expiresIn: 8 * 60 * 60 * 1000 });
 });
 
 // Apply admin authentication guard for all routes below
 router.use('/api/admin', requireAdmin);
+
+// Audit trail ringan untuk semua mutasi data (OWASP A09)
+router.use('/api/admin', (req, res, next) => {
+  if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+    console.info(`[AUDIT] Mutasi ${req.method} ${req.originalUrl} dari IP ${req.ip}`);
+  }
+  next();
+});
 
 // 2. Check Session
 router.get('/api/admin/check-session', (req, res) => {
@@ -267,8 +279,9 @@ router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
     validateFileBuffer(localPath);
 
     // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
+    // URL yang dikembalikan selalu /uploads/<nama>; di Vercel file diserve via proxy dari Blob
     const blobUrl = await putFileToBlob(localPath);
-    const url = blobUrl || '/uploads/' + filename;
+    const url = '/uploads/' + filename;
     if (blobUrl) {
       try { fs.unlinkSync(localPath); } catch (e) {}
     }
@@ -297,7 +310,7 @@ router.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, 
 
       // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
       const blobUrl = await putFileToBlob(localPath);
-      urls.push(blobUrl || '/uploads/' + filename);
+      urls.push('/uploads/' + filename);
       if (blobUrl) {
         try { fs.unlinkSync(localPath); } catch (e) {}
       }

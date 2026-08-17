@@ -23,16 +23,23 @@ const logoutBtn = document.getElementById('logout-btn');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.tab-panel');
 
-function checkSession() {
+async function checkSession() {
   const authed = sessionStorage.getItem('adminAuth') === 'true' && !!sessionStorage.getItem('adminToken');
   if (authed) {
-    loginGate.classList.add('hidden');
-    dashboard.classList.remove('hidden');
-    loadAllData();
-  } else {
-    loginGate.classList.remove('hidden');
-    dashboard.classList.add('hidden');
+    try {
+      const res = await fetch(API_BASE + '/api/admin/check-session');
+      if (res.ok) {
+        loginGate.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        loadAllData();
+        return;
+      }
+    } catch (err) {}
+    sessionStorage.removeItem('adminAuth');
+    sessionStorage.removeItem('adminToken');
   }
+  loginGate.classList.remove('hidden');
+  dashboard.classList.add('hidden');
 }
 
 adminLoginForm?.addEventListener('submit', async (e) => {
@@ -46,7 +53,8 @@ adminLoginForm?.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
-    const data = await res.json();
+    let data = { success: false };
+    try { data = await res.json(); } catch (e) {}
     if (data.success) {
       sessionStorage.setItem('adminAuth', 'true');
       sessionStorage.setItem('adminToken', data.token);
@@ -59,7 +67,7 @@ adminLoginForm?.addEventListener('submit', async (e) => {
       adminLoginError.classList.remove('hidden');
     }
   } catch (err) {
-    adminLoginError.textContent = 'Terjadi kesalahan. Pastikan server berjalan.';
+    adminLoginError.textContent = 'Terjadi kesalahan jaringan. Pastikan server berjalan dan koneksi stabil.';
     adminLoginError.classList.remove('hidden');
   }
 });
@@ -94,7 +102,7 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-function adminToast(message, type = 'success', title = '', duration = 4000) {
+function adminToast(message, type = 'success', title = '', duration = 2000) {
   let container = document.getElementById('pekon-toast-container') || document.getElementById('admin-toast-container');
   if (!container) {
     container = document.createElement('div');
@@ -148,7 +156,13 @@ function adminToast(message, type = 'success', title = '', duration = 4000) {
     toast.classList.add('toast-show');
   });
 
-  timer = setTimeout(dismiss, duration);
+  if (normalizedType === 'error') {
+    // Standar: toast error DILARANG auto-dismiss — wajib ditutup manual via tombol ×
+    const progress = toast.querySelector('.toast-progress');
+    if (progress) progress.style.display = 'none';
+  } else {
+    timer = setTimeout(dismiss, duration);
+  }
 }
 
 function validateFileClient(file) {
@@ -1280,8 +1294,8 @@ jadwalPosyandu: {
       deskripsi: document.getElementById('ap-deskripsi').value.trim(),
       perdes: collectDataRows('ap-perdes-items', ['no', 'peraturan', 'tahun', 'tentang']),
       perkades: collectDataRows('ap-perkades-items', ['no', 'peraturan', 'tahun', 'tentang'])
+    },
   };
-  const msg = document.getElementById('layanan-msg');
   if (msg) {
     msg.textContent = 'Menyimpan...';
     msg.className = 'ml-3 text-sm text-blue-600';

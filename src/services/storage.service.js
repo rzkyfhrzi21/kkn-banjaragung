@@ -9,6 +9,10 @@ const {
   USE_SQLITE
 } = require('../config/constants');
 
+const { isBlobAvailable, putJsonToBlob, fetchBlobText } = require('./blob.service');
+
+const BLOB_DATA_KEY = 'data.json';
+
 let Database = null; // Loaded lazily if SQLite is enabled
 
 function defaultData() {
@@ -280,6 +284,10 @@ function loadData() {
 function saveData(data) {
   try { saveDataToFile(data); } catch (e) {}
 
+  if (isBlobAvailable()) {
+    putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(data)).catch(() => {});
+  }
+
   if (USE_SQLITE) {
     try {
       if (!Database) Database = require('better-sqlite3');
@@ -294,10 +302,35 @@ function saveData(data) {
   }
 }
 
+async function syncDataFromBlob() {
+  if (!isBlobAvailable()) return false;
+  try {
+    const text = await fetchBlobText(BLOB_DATA_KEY);
+    if (text) {
+      const parsed = JSON.parse(text);
+      const merged = deepMerge(defaultData(), parsed);
+      saveDataToFile(merged);
+      console.log('[Blob] Data berhasil dimuat dari Vercel Blob');
+      return true;
+    }
+    const current = loadData();
+    const url = await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(current));
+    if (url) {
+      console.log('[Blob] Data seed pertama berhasil disimpan ke Vercel Blob');
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.warn('[Blob] Gagal sinkronisasi data dari Vercel Blob: ' + (err.message || err));
+    return false;
+  }
+}
+
 module.exports = {
   defaultData,
   deepMerge,
   readJsonFileSafe,
   loadData,
-  saveData
+  saveData,
+  syncDataFromBlob
 };

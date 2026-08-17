@@ -36,7 +36,7 @@ mobileMenu?.addEventListener('click', (e) => {
                 list.forEach(url => {
                     const div = document.createElement('div');
                     div.className = 'aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden';
-                    div.innerHTML = `<img src="${url}" alt="Galeri" class="object-cover w-full h-full">`;
+div.innerHTML = `<img src="${url}" alt="Galeri" data-lightbox class="object-cover w-full h-full cursor-zoom-in">`;
                     grid.appendChild(div);
                 });
             }
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
         photos.forEach((url, idx) => {
             const div = document.createElement('div');
             div.className = 'aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden';
-            div.innerHTML = `<img src="${url}" alt="Galeri ${idx + 1}" class="object-cover w-full h-full">`;
+            div.innerHTML = `<img src="${url}" alt="Galeri ${idx + 1}" data-lightbox class="object-cover w-full h-full cursor-zoom-in">`;
             galGrid.appendChild(div);
         });
     }
@@ -1425,5 +1425,51 @@ function updateButtonText(subscribed) {
     // Re-check when returning to page
     document.addEventListener('visibilitychange', () => {
         if (!document.hidden) checkSubscription();
+    });
+})();
+
+// ===== Lightbox Global (Foto & Video) — dark glassmorphism, ESC & backdrop close =====
+(function initLightbox() {
+    let lightboxEl = null;
+
+    function openLightbox(src, alt) {
+        if (!lightboxEl) {
+            lightboxEl = document.createElement('div');
+            lightboxEl.className = 'pekon-lightbox hidden';
+            lightboxEl.setAttribute('role', 'dialog');
+            lightboxEl.setAttribute('aria-modal', 'true');
+            lightboxEl.innerHTML = `
+                <button type="button" class="pekon-lightbox-close" aria-label="Tutup">&times;</button>
+                <div class="pekon-lightbox-media"></div>`;
+            lightboxEl.addEventListener('click', (e) => {
+                if (e.target === lightboxEl || e.target.classList.contains('pekon-lightbox-close')) closeLightbox();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightboxEl && !lightboxEl.classList.contains('hidden')) closeLightbox();
+            });
+            document.body.appendChild(lightboxEl);
+        }
+        const media = lightboxEl.querySelector('.pekon-lightbox-media');
+        if (src && /\.(mp4|webm|mkv|mov)(\?|#|$)/i.test(src)) {
+            media.innerHTML = `<video src="${src}" controls class="pekon-lightbox-video" autoplay></video>`;
+        } else {
+            media.innerHTML = `<img src="${src}" alt="${alt || 'Preview'}" class="pekon-lightbox-img">`;
+        }
+        lightboxEl.classList.remove('hidden');
+        document.body.classList.add('pekon-lightbox-open');
+    }
+
+    function closeLightbox() {
+        if (!lightboxEl) return;
+        lightboxEl.classList.add('hidden');
+        lightboxEl.querySelector('.pekon-lightbox-media').innerHTML = '';
+        document.body.classList.remove('pekon-lightbox-open');
+    }
+
+    document.addEventListener('click', (e) => {
+        const img = e.target.closest('img[data-lightbox], .gallery-img, .galeri-item img, .pekon-lightbox-trigger');
+        if (!img) return;
+        const src = img.getAttribute('data-full') || img.currentSrc || img.src;
+        if (src) openLightbox(src, img.alt || '');
     });
 })();
