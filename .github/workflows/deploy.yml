@@ -15,18 +15,9 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (verifikasi build & dependency sebelum dikirim)
-      - name: 🛠️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      # 3. Install dependencies (validasi lockfile)
-      - name: 📦 Install dependencies
-        run: npm ci
-
-      # 4. Kompres file proyek dengan mengecualikan folder/file sensitif & dinamis
+      # 2. Kompres file proyek dengan mengecualikan folder/file sensitif & dinamis.
+      #    node_modules & .env TIDAK dikirim — diinstall/dikelola manual di cPanel.
+      - name: 📦 Compress files
       - name: 📦 Compress files
         run: |
           tar -czvf ../deploy.tar.gz \
@@ -61,8 +52,8 @@ jobs:
           source: "deploy.tar.gz"
           target: ${{ secrets.SSH_DIRECTORY }}
 
-      # 6. Ekstrak, install dependensi produksi, dan setup/restart PM2
-      - name: 🛠️ Deploy on Server
+      # 4. Ekstrak arsip di server (tanpa npm/PM2 — dikelola manual via cPanel)
+      - name: 🛠️ Extract on Server
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -74,42 +65,3 @@ jobs:
             cd ${{ secrets.SSH_DIRECTORY }}
             tar -xzf deploy.tar.gz
             rm deploy.tar.gz
-
-            # ===== Bootstrap Node.js (nvm) jika belum terpasang =====
-            export NVM_DIR="$HOME/.nvm"
-            if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-              if [ -s "$NVM_DIR/nvm.sh" ]; then
-                . "$NVM_DIR/nvm.sh"
-              else
-                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-                . "$NVM_DIR/nvm.sh"
-              fi
-              nvm install 20
-              nvm use 20
-              nvm alias default 20
-            fi
-
-            # Pastikan path node/npm tersedia untuk sesi ini
-            export PATH="$NVM_DIR/versions/node/$(node -v | sed 's/v//')/bin:$PATH"
-
-            # .env tidak pernah ditimpa saat deploy (dikelola manual di server)
-            if [ ! -f .env ]; then cp .env.example .env; fi
-
-            # Install hanya dependency produksi
-            npm ci --omit=dev
-
-            # Setup PM2 otomatis (start jika belum ada, restart jika sudah).
-            # Redirect semua FD ke /dev/null agar daemon PM2 tidak mewarisi
-            # stdout/stderr sesi SSH (menyebabkan hang/timeout).
-            if [ -x ./node_modules/.bin/pm2 ]; then
-              PM2=./node_modules/.bin/pm2
-            else
-              PM2=pm2
-            fi
-
-            if $PM2 describe pekon-banjar-agung > /dev/null 2>&1; then
-              $PM2 restart pekon-banjar-agung --update-env < /dev/null > /dev/null 2>&1
-            else
-              $PM2 start ecosystem.config.js --env production < /dev/null > /dev/null 2>&1
-            fi
-            $PM2 save < /dev/null > /dev/null 2>&1 || true
