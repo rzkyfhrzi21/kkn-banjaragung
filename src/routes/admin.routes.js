@@ -16,6 +16,7 @@ const {
   upload,
   validateFileBuffer
 } = require('../middleware/security.middleware');
+const { putFileToBlob } = require('../services/blob.service');
 
 // 1. Admin Login Endpoint (Unauthenticated, Rate-limited)
 router.post('/api/admin/login', (req, res) => {
@@ -265,7 +266,12 @@ router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
     // Validate Magic Bytes and scan for webshell payloads
     validateFileBuffer(localPath);
 
-    const url = '/uploads/' + filename;
+    // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
+    const blobUrl = await putFileToBlob(localPath);
+    const url = blobUrl || '/uploads/' + filename;
+    if (blobUrl) {
+      try { fs.unlinkSync(localPath); } catch (e) {}
+    }
     res.json({ success: true, url });
   } catch (err) {
     if (req.file && req.file.path) {
@@ -288,7 +294,13 @@ router.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, 
 
       // Validate Magic Bytes and scan for webshell payloads
       validateFileBuffer(localPath);
-      urls.push('/uploads/' + filename);
+
+      // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
+      const blobUrl = await putFileToBlob(localPath);
+      urls.push(blobUrl || '/uploads/' + filename);
+      if (blobUrl) {
+        try { fs.unlinkSync(localPath); } catch (e) {}
+      }
     }
     res.json({ success: true, urls });
   } catch (err) {
