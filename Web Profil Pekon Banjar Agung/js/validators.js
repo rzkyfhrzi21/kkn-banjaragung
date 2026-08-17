@@ -8,7 +8,7 @@
 
   const ALLOWED_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
   const DANGEROUS_EXTS_REGEX = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB (aman di bawah limit body request 4.5MB hosting Vercel)
 
   /**
    * Memvalidasi berkas upload di sisi frontend sebelum dikirim ke backend
@@ -21,7 +21,7 @@
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return { valid: false, message: 'Ukuran berkas maksimal 5MB. Silakan pilih foto lain.' };
+      return { valid: false, message: 'Ukuran berkas maksimal 4MB. Silakan pilih foto lain.' };
     }
 
     const name = file.name.toLowerCase();

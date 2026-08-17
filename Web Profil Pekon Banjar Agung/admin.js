@@ -154,7 +154,7 @@ function adminToast(message, type = 'success', title = '', duration = 4000) {
 function validateFileClient(file) {
   if (!file) return { valid: false, message: 'Tidak ada berkas yang dipilih.' };
   if (file.size === 0) return { valid: false, message: 'Berkas kosong (0 bytes).' };
-  if (file.size > 5 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 5MB.' };
+  if (file.size > 4 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 4MB.' };
 
   const rawName = (file.name || '').toLowerCase();
   const dangerousPatterns = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
@@ -318,7 +318,17 @@ function uploadFile(file, options = {}) {
     });
 
     xhr.addEventListener('error', () => {
-      progressToast.error('Terjadi kesalahan jaringan saat upload.');
+      progressToast.error('Terjadi kesalahan jaringan saat upload. Pastikan koneksi stabil dan ukuran foto maksimal 4MB.');
+      fetch(API_BASE + '/api/admin/check-session')
+        .then((r) => {
+          if (!r.ok) {
+            sessionStorage.removeItem('adminToken');
+            sessionStorage.removeItem('adminAuth');
+            adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error');
+            setTimeout(() => checkSession(), 1200);
+          }
+        })
+        .catch(() => {});
       resolve(null);
     });
 
@@ -356,7 +366,11 @@ function fillProfil(p) {
   document.getElementById('p-panel-judul').value = panel.judul || 'Admin Panel';
   document.getElementById('p-panel-deskripsi').value = panel.deskripsi || 'Kelola data dan biodata desa';
   document.getElementById('p-panel-ringkasan').value = panel.ringkasan || 'Ringkasan Profil Website';
-  if (panel.foto) document.getElementById('p-panel-foto-preview').src = panel.foto;
+  if (panel.foto) {
+    const panelPreview = document.getElementById('p-panel-foto-preview');
+    panelPreview.src = panel.foto;
+    panelPreview.dataset.savedUrl = panel.foto;
+  }
   document.getElementById('p-deskripsi').value = p.deskripsi || '';
   document.getElementById('p-tentang-judul').value = p.tentangJudul || 'Mengenal Desa Kami';
   document.getElementById('p-komitmen').value = p.komitmen || '';
@@ -364,14 +378,20 @@ function fillProfil(p) {
   renderProfilDataSingkat(p.dataSingkat || []);
   renderProfilMisi(p.misi || []);
   if (p.logo) {
-    document.getElementById('p-logo-preview').src = p.logo;
+    const logoPreview = document.getElementById('p-logo-preview');
+    logoPreview.src = p.logo;
+    logoPreview.dataset.savedUrl = p.logo;
     document.getElementById('header-logo').src = p.logo;
   }
-if (p.heroFoto) {
-    document.getElementById('p-hero-preview').src = p.heroFoto;
+  if (p.heroFoto) {
+    const heroPreview = document.getElementById('p-hero-preview');
+    heroPreview.src = p.heroFoto;
+    heroPreview.dataset.savedUrl = p.heroFoto;
   }
   if (p.fotoTentang) {
-    document.getElementById('p-tentang-preview').src = p.fotoTentang;
+    const tentangPreview = document.getElementById('p-tentang-preview');
+    tentangPreview.src = p.fotoTentang;
+    tentangPreview.dataset.savedUrl = p.fotoTentang;
   }
 
   const dashLogo = document.getElementById('dash-logo');

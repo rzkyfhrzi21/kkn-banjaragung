@@ -83,7 +83,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 4 * 1024 * 1024 } // 4MB limit (below Vercel's 4.5MB request body limit)
 });
 
 // 3. Input Sanitization & Anti-Spam Honeypot Filter
@@ -118,7 +118,7 @@ const apiLimiter = rateLimit({
 
 const adminLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'test' ? 5000 : 30,
+  max: process.env.NODE_ENV === 'test' ? 5000 : 300,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Terlalu banyak percobaan, coba lagi nanti.' }
@@ -139,7 +139,8 @@ const securityHeaders = helmet({
       defaultSrc: ["'self'", 'https:'],
       scriptSrc: ["'self'", 'https:', "'unsafe-inline'"],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
+      imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+      mediaSrc: ["'self'", 'blob:', 'https:'],
       connectSrc: ["'self'", 'https:'],
       frameAncestors: ["'self'"]
     }
