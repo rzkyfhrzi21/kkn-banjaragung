@@ -35,7 +35,7 @@
         "nilai": "[xxxxx]"
       }
     ],
-    "visi": "Mewujudkan Pekon Banjar Agung yang mandiri, sejahtera, dan berbudaya berbasis partisipasi masyarakat.",
+    "visi": "Mewujudkan Pekon Banjar Agung yang mandiri, sejahtera, dan berbudaya.",
     "misi": [
       "Meningkatkan kualitas pendidikan dan kesehatan masyarakat.",
       "Mendorong pertumbuhan ekonomi berbasis potensi lokal.",
@@ -55,64 +55,22 @@
     "perangkat": [
       {
         "jabatan": "Sekretaris Desa",
-        "nama": "[Nama Sekretaris]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kaur Keuangan",
-        "nama": "[Nama Kaur Keuangan]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kaur Umum & Perencanaan",
-        "nama": "[Nama Kaur Umum]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kasi Pemerintahan",
-        "nama": "[Nama Kasi Pemerintahan]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kasi Kesejahteraan",
-        "nama": "[Nama Kasi Kesejahteraan]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kasi Pelayanan",
-        "nama": "[Nama Kasi Pelayanan]",
-        "foto": ""
-      },
-      {
-        "jabatan": "Kepala Dusun",
-        "nama": "[Nama Kepala Dusun]",
+        "nama": "Budi Santoso",
         "foto": ""
       }
     ],
     "bpd": {
-      "ketua": "[Nama Ketua BPD]",
-      "wakil": "[Nama Wakil Ketua BPD]",
-      "sekretaris": "[Nama Sekretaris BPD]",
-      "anggota": "[Nama-nama Anggota BPD]"
+      "ketua": "H. Suryadi",
+      "wakil": "Ahmad Fauzi",
+      "sekretaris": "Siti Rahma",
+      "anggota": "Bambang, Joko"
     },
     "lembaga": [
       {
-        "nama": "PKK (Pemberdayaan Kesejahteraan Keluarga)"
+        "nama": "PKK"
       },
       {
         "nama": "Karang Taruna"
-      },
-      {
-        "nama": "LPMD (Lembaga Pemberdayaan Masyarakat Desa)"
-      },
-      {
-        "nama": "Posyandu"
-      },
-      {
-        "nama": "Kelompok Tani"
-      },
-      {
-        "nama": "Dan lain-lain"
       }
     ]
   },
@@ -439,7 +397,28 @@
       ]
     }
   },
-  "pengajuan": [],
+  "pengajuan": [
+    {
+      "id": 1786977797848,
+      "nama": "<script>alert(\"XSS\")</script>",
+      "ktp": "1806000000000001",
+      "hp": "08123456789",
+      "alamat": "Lampung",
+      "jenisSurat": "Surat Domisili",
+      "tanggal": "17/8/2026, 21.43.17",
+      "status": "Baru"
+    },
+    {
+      "id": 1786977797635,
+      "nama": "Siti Aminah",
+      "ktp": "1806012345678901",
+      "hp": "081298765432",
+      "alamat": "Dusun 1, RT 02/01",
+      "jenisSurat": "Surat Keterangan Domisili",
+      "tanggal": "17/8/2026, 21.43.17",
+      "status": "Baru"
+    }
+  ],
   "users": [],
   "komentar": [],
   "keluhan": [
