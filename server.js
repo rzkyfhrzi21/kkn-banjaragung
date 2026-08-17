@@ -920,28 +920,34 @@ function checkPosyanduReminders() {
   }
 }
 
-setInterval(checkPosyanduReminders, 60 * 60 * 1000);
-checkPosyanduReminders();
-
-const server = app.listen(PORT, () => {
-  logger.info(`Server berjalan di http://localhost:${PORT}`);
-  logger.info('Web Push notifications siap.');
-});
-
-// Graceful shutdown
-function shutdown() {
-  logger.info('Shutting down...');
-  try {
-    server.close(() => {
-      logger.info('HTTP server closed');
-      process.exit(0);
-    });
-    // force exit after 10s
-    setTimeout(() => process.exit(1), 10000);
-  } catch (e) {
-    logger.error('Error during shutdown: ' + (e.message || e));
-    process.exit(1);
-  }
+if (!process.env.VERCEL) {
+  setInterval(checkPosyanduReminders, 60 * 60 * 1000);
+  checkPosyanduReminders();
 }
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
+
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    logger.info(`Server berjalan di http://localhost:${PORT}`);
+    logger.info('Web Push notifications siap.');
+  });
+
+  // Graceful shutdown
+  function shutdown() {
+    logger.info('Shutting down...');
+    try {
+      server.close(() => {
+        logger.info('HTTP server closed');
+        process.exit(0);
+      });
+      // force exit after 10s
+      setTimeout(() => process.exit(1), 10000);
+    } catch (e) {
+      logger.error('Error during shutdown: ' + (e.message || e));
+      process.exit(1);
+    }
+  }
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
+}
+
+module.exports = app;
