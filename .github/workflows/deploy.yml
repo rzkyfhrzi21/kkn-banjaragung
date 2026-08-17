@@ -70,9 +70,27 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             cd ${{ secrets.SSH_DIRECTORY }}
             tar -xzf deploy.tar.gz
             rm deploy.tar.gz
+
+            # ===== Bootstrap Node.js (nvm) jika belum terpasang =====
+            export NVM_DIR="$HOME/.nvm"
+            if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+              if [ -s "$NVM_DIR/nvm.sh" ]; then
+                . "$NVM_DIR/nvm.sh"
+              else
+                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+                . "$NVM_DIR/nvm.sh"
+              fi
+              nvm install 20
+              nvm use 20
+              nvm alias default 20
+            fi
+
+            # Pastikan path node/npm tersedia untuk sesi ini
+            export PATH="$NVM_DIR/versions/node/$(node -v | sed 's/v//')/bin:$PATH"
 
             # .env tidak pernah ditimpa saat deploy (dikelola manual di server)
             if [ ! -f .env ]; then cp .env.example .env; fi
