@@ -25,6 +25,9 @@ function startTestServer() {
 }
 
 async function loginAdmin(baseUrl) {
+  if (typeof app._resetLoginAttempts === 'function') {
+    app._resetLoginAttempts();
+  }
   const res = await fetch(`${baseUrl}/api/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
