@@ -33,30 +33,42 @@ async function main() {
 
   let passed = 0;
   let failed = 0;
+  const dataPath = path.join(__dirname, '..', 'data', 'data.json');
+  let dataBackup = null;
+  if (fs.existsSync(dataPath)) {
+    dataBackup = fs.readFileSync(dataPath, 'utf8');
+  }
   const startTime = Date.now();
 
-  for (const file of testFiles) {
-    const relPath = path.relative(path.join(__dirname, '..'), file);
-    const testName = path.basename(file);
-    process.stdout.write(`Testing [${BOLD}${relPath}${RESET}] ... `);
+  try {
+    for (const file of testFiles) {
+      const relPath = path.relative(path.join(__dirname, '..'), file);
+      const testName = path.basename(file);
+      process.stdout.write(`Testing [${BOLD}${relPath}${RESET}] ... `);
 
-    try {
-      // Clear require cache for isolated execution
-      delete require.cache[require.resolve(file)];
-      const testFn = require(file);
-      if (typeof testFn === 'function') {
-        await testFn();
+      try {
+        // Clear require cache for isolated execution
+        delete require.cache[require.resolve(file)];
+        const testFn = require(file);
+        if (typeof testFn === 'function') {
+          await testFn();
+        }
+        console.log(`${GREEN}${BOLD}[PASS]${RESET}`);
+        passed++;
+      } catch (err) {
+        console.log(`${RED}${BOLD}[FAIL]${RESET}`);
+        console.error(`  ${RED}Error:${RESET} ${err.message || err}`);
+        if (err.stack) {
+          const stackLines = err.stack.split('\n').slice(1, 4).join('\n');
+          console.error(`  ${YELLOW}${stackLines}${RESET}`);
+        }
+        failed++;
       }
-      console.log(`${GREEN}${BOLD}[PASS]${RESET}`);
-      passed++;
-    } catch (err) {
-      console.log(`${RED}${BOLD}[FAIL]${RESET}`);
-      console.error(`  ${RED}Error:${RESET} ${err.message || err}`);
-      if (err.stack) {
-        const stackLines = err.stack.split('\n').slice(1, 4).join('\n');
-        console.error(`  ${YELLOW}${stackLines}${RESET}`);
-      }
-      failed++;
+    }
+  } finally {
+    // Restore original pristine data.json so test payloads never pollute production database
+    if (dataBackup !== null && fs.existsSync(dataPath)) {
+      fs.writeFileSync(dataPath, dataBackup, 'utf8');
     }
   }
 
