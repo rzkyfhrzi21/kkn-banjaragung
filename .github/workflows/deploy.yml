@@ -1,0 +1,92 @@
+name: Deploy to Production (SSH Tar)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  production-deploy:
+    name: 🚀 Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Ambil kode terbaru dari GitHub
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js (verifikasi build & dependency sebelum dikirim)
+      - name: 🛠️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # 3. Install dependencies (validasi lockfile)
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # 4. Kompres file proyek dengan mengecualikan folder/file sensitif & dinamis
+      - name: 📦 Compress files
+        run: |
+          tar -czvf ../deploy.tar.gz \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.grok' \
+            --exclude='.rtk' \
+            --exclude='.vscode' \
+            --exclude='@agents' \
+            --exclude='docs' \
+            --exclude='Zzz' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='data' \
+            --exclude='uploads' \
+            --exclude='AGENTS.md' \
+            --exclude='CLAUDE.md' \
+            --exclude='GEMINI.md' \
+            --exclude='README.md' \
+            --exclude='nginx-pekon-banjaragung.conf' \
+            .
+          mv ../deploy.tar.gz .
+
+      # 5. Unggah file tar.gz ke server
+      - name: 🚀 Upload via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "deploy.tar.gz"
+          target: ${{ secrets.SSH_DIRECTORY }}
+
+      # 6. Ekstrak, install dependensi produksi, dan setup/restart PM2
+      - name: 🛠️ Deploy on Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.SSH_DIRECTORY }}
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+
+            # .env tidak pernah ditimpa saat deploy (dikelola manual di server)
+            if [ ! -f .env ]; then cp .env.example .env; fi
+
+            # Install hanya dependency produksi
+            npm ci --omit=dev
+
+            # Setup PM2 otomatis (start jika belum ada, restart jika sudah)
+            if [ -x ./node_modules/.bin/pm2 ]; then
+              PM2=./node_modules/.bin/pm2
+            else
+              PM2=pm2
+            fi
+            $PM2 describe pekon-banjar-agung > /dev/null 2>&1 \
+              || $PM2 start ecosystem.config.js --env production
+            $PM2 restart pekon-banjar-agung --update-env
+            $PM2 save
