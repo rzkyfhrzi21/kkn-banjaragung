@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemerintahan Desa | Pekon Banjar Agung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+<!-- Header -->
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between py-3 px-6">
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover">
+                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"></span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white leading-tight">Pekon Banjar Agung</h1>
+                    <p class="text-xs text-red-100">Bersama membangun desa yang mandiri dan sejahtera</p>
+                </div>
+            </a>
+
+            <button id="menu-toggle" class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <nav class="hidden lg:flex gap-1 items-center">
+                <a href="index.html" class="px-3 py-2 rounded-lg text-white font-semibold hover:bg-white/15 transition">Beranda</a>
+                <a href="profil.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Kontak</a>
+                <button id="notif-btn" title="Aktifkan Notifikasi" class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition" aria-label="Aktifkan Notifikasi">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                </button>
+            </nav>
+        </div>
+        <nav id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden">
+            <div class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-bold text-red-800 text-lg">Menu</span>
+                    <button id="menu-close" class="text-gray-600 hover:text-gray-900" aria-label="Tutup Menu">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <a href="index.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Beranda</a>
+                <a href="profil.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Kontak</a>
+                <button id="notif-btn-mobile" class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900">🔔 Aktifkan Notifikasi</button>
+            </div>
+        </nav>
+    </header>
+
+<!-- Pemerintahan Desa -->
+    <main class="container mx-auto py-12 px-4 flex-1">
+
+        <!-- Hero Banner -->
+        <div class="relative overflow-hidden rounded-2xl shadow-xl mb-12 bg-gradient-to-r from-red-900 via-red-800 to-red-700 p-8 md:p-12 text-center">
+            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image:linear-gradient(45deg,#c0392b 25%,transparent 25%,transparent 75%,#c0392b 75%),linear-gradient(45deg,#c0392b 25%,#f4d03f 25%,#f4d03f 75%,#c0392b 75%);background-size:40px 40px;"></div>
+            <div class="relative">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Struktur Pemerintahan Desa</h2>
+                <p class="text-red-100 max-w-2xl mx-auto">Informasi tentang perangkat desa, BPD, dan lembaga desa lainnya.</p>
+            </div>
+        </div>
+
+<!-- Kepala Desa -->
+        <div class="max-w-3xl mx-auto mb-12">
+            <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-3xl shadow-lg p-8 md:p-10 text-center border-t-4 border-red-800">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800">Kepala <span class="text-red-800">Desa</span></h3>
+                <div class="relative w-44 h-44 md:w-52 md:h-52 mx-auto mb-4">
+                    <div class="absolute inset-0 bg-red-300 rounded-full blur-xl opacity-60"></div>
+                    <img id="kepala-foto" src="https://randomuser.me/api/portraits/men/9.jpg" alt="Kepala Desa" class="relative w-44 h-44 md:w-52 md:h-52 rounded-full object-cover border-4 border-white shadow-xl">
+                </div>
+                <p id="kepala-nama" class="font-bold text-2xl text-gray-800">[Nama Kepala Desa]</p>
+                <p class="text-red-800 font-semibold">Kepala Desa</p>
+            </div>
+        </div>
+        <div class="mb-12">
+            <div class="text-center mb-8">
+                <h4 class="text-2xl font-bold text-gray-800">Perangkat <span class="text-red-800">Desa</span></h4>
+                <p class="text-gray-500">Aparatur yang menjalankan roda pemerintahan desa.</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="perangkat-tbody">
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-red-100 text-red-800 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Sekretaris Desa</p>
+                    <p class="text-sm text-gray-500">[Nama Sekretaris]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kaur Keuangan</p>
+                    <p class="text-sm text-gray-500">[Nama Kaur Keuangan]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-red-100 text-red-800 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kaur Umum & Perencanaan</p>
+                    <p class="text-sm text-gray-500">[Nama Kaur Umum]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kasi Pemerintahan</p>
+                    <p class="text-sm text-gray-500">[Nama Kasi Pemerintahan]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-red-100 text-red-800 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kasi Kesejahteraan</p>
+                    <p class="text-sm text-gray-500">[Nama Kasi Kesejahteraan]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kasi Pelayanan</p>
+                    <p class="text-sm text-gray-500">[Nama Kasi Pelayanan]</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800">
+                    <div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-red-100 text-red-800 rounded-full flex items-center justify-center text-4xl overflow-hidden mb-3"></div>
+                    <p class="font-bold text-gray-800">Kepala Dusun</p>
+                    <p class="text-sm text-gray-500">[Nama Kepala Dusun]</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 shadow-md border-t-4 border-red-800">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">BPD</h3>
+                <p class="text-sm text-gray-500 mb-4">Badan Permusyawaratan Desa</p>
+                <ul class="space-y-3">
+                    <li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Ketua:</span> <span class="text-gray-600">[Nama Ketua BPD]</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Wakil Ketua:</span> <span class="text-gray-600">[Nama Wakil Ketua BPD]</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Sekretaris:</span> <span class="text-gray-600">[Nama Sekretaris BPD]</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Anggota:</span> <span class="text-gray-600">[Nama-nama Anggota BPD]</span></li>
+                </ul>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-8 shadow-md border-t-4 border-yellow-500">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Lembaga Desa Lainnya</h3>
+                <p class="text-sm text-gray-500 mb-4">Lembaga kemasyarakatan yang mendukung desa.</p>
+                <ul id="lembaga-list" class="space-y-2">
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">PKK (Pemberdayaan Kesejahteraan Keluarga)</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">Karang Taruna</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">LPMD (Lembaga Pemberdayaan Masyarakat Desa)</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">Posyandu</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">Kelompok Tani</span></li>
+                    <li class="bg-white rounded-xl p-3 shadow-sm hover:shadow-md transition"><span class="text-gray-700 font-medium">Dan lain-lain</span></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+<footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
+            <div class="flex items-center space-x-2 mb-2 md:mb-0">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+            </div>
+            <div class="flex space-x-4 mb-2 md:mb-0">
+                <a href="#" class="hover:underline">Instagram</a>
+                <a href="#" class="hover:underline">Facebook</a>
+                <a href="#" class="hover:underline">YouTube</a>
+            </div>
+            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

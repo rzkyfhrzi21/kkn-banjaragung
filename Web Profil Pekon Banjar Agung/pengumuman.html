@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman | Pekon Banjar Agung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between py-3 px-6">
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover">
+                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"></span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white leading-tight">Pekon Banjar Agung</h1>
+                    <p class="text-xs text-red-100">Bersama membangun desa yang mandiri dan sejahtera</p>
+                </div>
+            </a>
+            <button id="menu-toggle" class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <nav class="hidden lg:flex gap-1 items-center">
+                <a href="index.html" class="px-3 py-2 rounded-lg text-white font-semibold hover:bg-white/15 transition">Beranda</a>
+                <a href="profil.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Kontak</a>
+                <button id="notif-btn" title="Aktifkan Notifikasi" class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition" aria-label="Aktifkan Notifikasi">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                </button>
+            </nav>
+        </div>
+        <nav id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden">
+            <div class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-bold text-red-800 text-lg">Menu</span>
+                    <button id="menu-close" class="text-gray-600 hover:text-gray-900" aria-label="Tutup Menu">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <a href="index.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Beranda</a>
+                <a href="profil.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Kontak</a>
+                <button id="notif-btn-mobile" class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900">🔔 Aktifkan Notifikasi</button>
+            </div>
+        </nav>
+    </header>
+    <main class="container mx-auto py-12 px-4 flex-1">
+        <h2 class="text-3xl font-bold mb-2 text-red-800 text-center">Pengumuman</h2>
+        <p class="text-gray-500 mb-8 text-base text-center">Kumpulan pengumuman dari Pekon Banjar Agung.</p>
+        <section>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                <h3 class="text-2xl font-semibold text-red-800">Semua Pengumuman</h3>
+                <div class="w-full md:w-1/3">
+                    <div class="relative">
+                        <input type="text" id="cari-pengumuman" placeholder="Cari pengumuman..." class="w-full pl-10 pr-4 py-2 border border-red-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400 bg-white shadow-sm transition" />
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-red-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                            </svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div id="pengumuman-grid" class="grid md:grid-cols-3 gap-8">
+                <div class="text-center text-gray-500 py-12 col-span-full">Memuat pengumuman...</div>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
+            <div class="flex items-center space-x-2 mb-2 md:mb-0">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+            </div>
+            <div class="flex space-x-4 mb-2 md:mb-0">
+                <a href="#" class="hover:underline">Instagram</a>
+                <a href="#" class="hover:underline">Facebook</a>
+                <a href="#" class="hover:underline">YouTube</a>
+            </div>
+            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

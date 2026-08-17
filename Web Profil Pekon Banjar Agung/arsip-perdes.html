@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arsip Perdes | Desa [Nama Desa]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow sticky top-0 z-50">
+        <div class="container mx-auto flex items-center justify-between py-4 px-6">
+            <a href="index.html" class="flex items-center space-x-3">
+                <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full">
+                <div>
+                    <h1 class="text-xl font-bold">Desa [Nama Desa]</h1>
+                    <p class="text-sm text-gray-500">Bersama membangun desa yang mandiri dan sejahtera</p>
+                </div>
+            </a>
+            <a href="layanan-publik.html" class="text-green-700 font-medium hover:underline">Kembali ke Layanan</a>
+        </div>
+    </header>
+
+    <!-- Arsip Perdes -->
+    <main class="container mx-auto py-12 px-4 flex-1">
+        <nav class="text-sm mb-6">
+            <a href="index.html" class="text-green-700 hover:underline">Beranda</a> >
+            <a href="layanan-publik.html" class="text-green-700 hover:underline">Layanan Publik</a> >
+            <span class="text-gray-500">Arsip Perdes</span>
+        </nav>
+<h2 class="text-3xl font-bold mb-2 text-green-700" id="ap-title">Arsip Peraturan Desa (Perdes)</h2>
+        <p class="text-gray-500 mb-8" id="ap-desc">Akses dokumen dan arsip peraturan desa secara digital untuk transparansi informasi.</p>
+
+        <div class="bg-white rounded shadow p-6 mb-8">
+            <h3 class="text-2xl font-semibold mb-4">Peraturan Desa (Perdes)</h3>
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="bg-green-100">
+                        <th class="py-2 px-4 text-left font-semibold">No</th>
+                        <th class="py-2 px-4 text-left font-semibold">Peraturan</th>
+                        <th class="py-2 px-4 text-left font-semibold">Tahun</th>
+                        <th class="py-2 px-4 text-left font-semibold">Tentang</th>
+                    </tr>
+                </thead>
+                <tbody id="ap-perdes-tbody">
+                    <tr><td class="py-2 px-4">1</td><td class="py-2 px-4">Perdes No. 1</td><td class="py-2 px-4">2025</td><td class="py-2 px-4">APBDes Tahun Anggaran 2025</td></tr>
+                    <tr><td class="py-2 px-4">2</td><td class="py-2 px-4">Perdes No. 2</td><td class="py-2 px-4">2025</td><td class="py-2 px-4">Rencana Pembangunan Jangka Menengah Desa</td></tr>
+                    <tr><td class="py-2 px-4">3</td><td class="py-2 px-4">Perdes No. 3</td><td class="py-2 px-4">2024</td><td class="py-2 px-4">Retribusi dan Pendapatan Desa</td></tr>
+                    <tr><td class="py-2 px-4">4</td><td class="py-2 px-4">Perdes No. 4</td><td class="py-2 px-4">2024</td><td class="py-2 px-4">Badan Usaha Milik Desa (BUMDes)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-white rounded shadow p-6">
+            <h3 class="text-2xl font-semibold mb-4">Peraturan Kepala Desa (Perkades)</h3>
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="bg-green-100">
+                        <th class="py-2 px-4 text-left font-semibold">No</th>
+                        <th class="py-2 px-4 text-left font-semibold">Peraturan</th>
+                        <th class="py-2 px-4 text-left font-semibold">Tahun</th>
+                        <th class="py-2 px-4 text-left font-semibold">Tentang</th>
+                    </tr>
+                </thead>
+                <tbody id="ap-perkades-tbody">
+                    <tr><td class="py-2 px-4">1</td><td class="py-2 px-4">Perkades No. 1</td><td class="py-2 px-4">2025</td><td class="py-2 px-4">Penjabaran APBDes</td></tr>
+                    <tr><td class="py-2 px-4">2</td><td class="py-2 px-4">Perkades No. 2</td><td class="py-2 px-4">2025</td><td class="py-2 px-4">Struktur Organisasi dan Tata Kerja Pemerintah Desa</td></tr>
+                    <tr><td class="py-2 px-4">3</td><td class="py-2 px-4">Perkades No. 3</td><td class="py-2 px-4">2024</td><td class="py-2 px-4">Pengelolaan Keuangan Desa</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
+            <div class="flex items-center space-x-2 mb-2 md:mb-0">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+            </div>
+            <div class="flex space-x-4 mb-2 md:mb-0">
+                <a href="#" class="hover:underline">Instagram</a>
+                <a href="#" class="hover:underline">Facebook</a>
+                <a href="#" class="hover:underline">YouTube</a>
+            </div>
+            <div class="text-sm">&copy; 2025 Desa [Nama Desa]. All rights reserved.</div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
+</content>

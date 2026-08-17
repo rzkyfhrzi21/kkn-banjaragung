@@ -1,0 +1,22 @@
+{
+  "name": "Pekon Banjar Agung",
+  "short_name": "Pekon Banjar Agung",
+  "description": "Website resmi Pemerintah Pekon (Pekon) Banjar Agung - informasi, layanan, dan pengumuman pekon.",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#15803d",
+  "icons": [
+    {
+      "src": "/uploads/1786086805685-340973016.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/uploads/1786086805685-340973016.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

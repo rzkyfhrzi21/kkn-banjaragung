@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Desa | Pekon Banjar Agung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between py-3 px-6">
+            <a href="index.html" class="flex items-center space-x-3 group">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover">
+                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"></span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white leading-tight">Pekon Banjar Agung</h1>
+                    <p class="text-xs text-red-100">Bersama membangun desa yang mandiri dan sejahtera</p>
+                </div>
+            </a>
+            <button id="menu-toggle" class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none" aria-label="Toggle Menu">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <nav class="hidden lg:flex gap-1 items-center">
+                <a href="index.html" class="px-3 py-2 rounded-lg text-white font-semibold hover:bg-white/15 transition">Beranda</a>
+                <a href="profil.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Kontak</a>
+                <button id="notif-btn" title="Aktifkan Notifikasi" class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition" aria-label="Aktifkan Notifikasi">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                </button>
+            </nav>
+        </div>
+        <nav id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden">
+            <div class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-bold text-red-800 text-lg">Menu</span>
+                    <button id="menu-close" class="text-gray-600 hover:text-gray-900" aria-label="Tutup Menu">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <a href="index.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Beranda</a>
+                <a href="profil.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Profil Desa</a>
+                <a href="pemerintahan.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pemerintahan</a>
+                <a href="layanan-publik.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Layanan Publik</a>
+                <a href="pengumuman.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pengumuman</a>
+                <a href="galeri.html" class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100">Galeri</a>
+                <a href="kontak.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Kontak</a>
+                <button id="notif-btn-mobile" class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900">🔔 Aktifkan Notifikasi</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto py-12 px-4 flex-1">
+        <h2 class="text-3xl font-bold mb-2 text-green-700 text-center">Galeri Desa</h2>
+        <p class="text-gray-500 mb-8 text-center text-base">Dokumentasi foto dan video kegiatan serta keindahan desa.</p>
+        <div class="flex justify-center mb-10">
+            <div class="inline-flex rounded-xl shadow-lg overflow-hidden border border-green-200 divide-x divide-green-200" id="galeri-tabs">
+                <button data-page="1" class="galeri-tab active px-6 py-3 text-sm font-semibold bg-green-700 text-white transition-all duration-300 flex items-center gap-2 hover:bg-green-800">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-white text-green-700 text-xs font-bold">1</span>
+                    Kegiatan Desa
+                </button>
+                <button data-page="2" class="galeri-tab px-6 py-3 text-sm font-semibold bg-white text-green-700 transition-all duration-300 flex items-center gap-2 hover:bg-red-50">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-xs font-bold">2</span>
+                    Pembangunan
+                </button>
+                <button data-page="3" class="galeri-tab px-6 py-3 text-sm font-semibold bg-white text-green-700 transition-all duration-300 flex items-center gap-2 hover:bg-red-50">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-green-100 text-green-700 text-xs font-bold">3</span>
+                    Wisata & Budaya
+                </button>
+            </div>
+        </div>
+        <div class="text-center mb-6">
+            <h3 id="galeri-category-title" class="text-2xl font-bold text-green-700">Kegiatan Desa</h3>
+            <p id="galeri-category-desc" class="text-gray-500 text-sm mt-1">Dokumentasi kegiatan desa</p>
+        </div>
+        <div id="galeri-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+            <div class="aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden">
+                <img src="https://picsum.photos/id/159/400/300" alt="Galeri 1" class="object-cover w-full h-full">
+            </div>
+            <div class="aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden">
+                <img src="https://picsum.photos/id/108/400/300" alt="Galeri 2" class="object-cover w-full h-full">
+            </div>
+            <div class="aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden">
+                <img src="https://picsum.photos/id/109/400/300" alt="Galeri 3" class="object-cover w-full h-full">
+            </div>
+        </div>
+        <div class="flex justify-center mt-8">
+            <nav class="inline-flex items-center gap-3" aria-label="Galeri Pages">
+                <button id="galeri-prev" class="flex items-center gap-1 px-4 py-2 rounded-lg border border-green-300 text-green-700 font-medium text-sm hover:bg-red-50 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    Sebelumnya
+                </button>
+                <div class="flex gap-2">
+                    <button data-page="1" class="galeri-page-btn w-10 h-10 rounded-lg border-2 border-green-700 bg-green-700 text-white font-bold text-sm transition hover:bg-green-800">1</button>
+                    <button data-page="2" class="galeri-page-btn w-10 h-10 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium text-sm transition hover:bg-red-50">2</button>
+                    <button data-page="3" class="galeri-page-btn w-10 h-10 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium text-sm transition hover:bg-red-50">3</button>
+                </div>
+                <button id="galeri-next" class="flex items-center gap-1 px-4 py-2 rounded-lg border border-green-300 text-green-700 font-medium text-sm hover:bg-red-50 transition">
+                    Selanjutnya
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </nav>
+        </div>
+    </main>
+
+    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
+            <div class="flex items-center space-x-2 mb-2 md:mb-0">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+            </div>
+            <div class="flex space-x-4 mb-2 md:mb-0">
+                <a href="#" class="hover:underline">Instagram</a>
+                <a href="#" class="hover:underline">Facebook</a>
+                <a href="#" class="hover:underline">YouTube</a>
+            </div>
+            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

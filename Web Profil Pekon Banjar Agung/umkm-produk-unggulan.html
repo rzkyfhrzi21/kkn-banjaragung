@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMKM & Produk Unggulan | Desa [Nama Desa]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow sticky top-0 z-50">
+        <div class="container mx-auto flex items-center justify-between py-4 px-6">
+            <a href="index.html" class="flex items-center space-x-3">
+                <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full">
+                <div>
+                    <h1 class="text-xl font-bold">Desa [Nama Desa]</h1>
+                    <p class="text-sm text-gray-500">Bersama membangun desa yang mandiri dan sejahtera</p>
+                </div>
+            </a>
+            <a href="index.html" class="text-green-700 font-medium hover:underline">Kembali ke Beranda</a>
+        </div>
+    </header>
+
+    <!-- UMKM & Produk Unggulan -->
+    <main class="container mx-auto py-12 px-4 flex-1">
+        <nav class="text-sm mb-6">
+            <a href="index.html" class="text-green-700 hover:underline">Beranda</a> >
+            <span class="text-gray-500">UMKM & Produk Unggulan</span>
+        </nav>
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-900 via-red-800 to-red-700 p-8 md:p-10 mb-8 shadow-xl">
+            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image:linear-gradient(45deg,#c0392b 25%,transparent 25%,transparent 75%,#c0392b 75%);background-size:36px 36px;"></div>
+            <div class="relative"><h2 class="text-3xl font-bold mb-2 text-white" id="um-title">UMKM & Produk Unggulan</h2><p class="text-red-100" id="um-desc">Produk lokal berkualitas dari warga Desa [Nama Desa] yang menjadi kebanggaan dan penggerak ekonomi desa.</p></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8" id="um-card-grid">
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🍚</span>
+                <h3 class="text-xl font-bold mb-2">Beras Organik</h3>
+                <p class="text-sm text-gray-600">Beras organik hasil pertanian warga desa yang diolah tanpa bahan kimia, berkualitas premium dan menjadi komoditas utama desa.</p>
+            </div>
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🥥</span>
+                <h3 class="text-xl font-bold mb-2">Kopi Bubuk</h3>
+                <p class="text-sm text-gray-600">Kopi bubuk lokal dengan cita rasa khas yang diproses oleh kelompok tani desa, siap bersaing di pasar regional.</p>
+            </div>
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🍯</span>
+                <h3 class="text-xl font-bold mb-2">Madu Hutan</h3>
+                <p class="text-sm text-gray-600">Madu murni dari hutan desa yang dikelola oleh kelompok sadar wisata, kaya manfaat untuk kesehatan.</p>
+            </div>
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🧵</span>
+                <h3 class="text-xl font-bold mb-2">Kain Tenun Khas</h3>
+                <p class="text-sm text-gray-600">Kain tenun dengan motif khas Lampung hasil karya pengrajin lokal, bernilai seni dan budaya tinggi.</p>
+            </div>
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🍮</span>
+                <h3 class="text-xl font-bold mb-2">Oleh-oleh Kuliner</h3>
+                <p class="text-sm text-gray-600">Berbagai oleh-oleh kuliner khas desa seperti kue tradisional dan makanan olahan yang digemari wisatawan.</p>
+            </div>
+            <div class="bg-white rounded shadow p-6">
+                <span class="text-4xl mb-2 block">🪴</span>
+                <h3 class="text-xl font-bold mb-2">Tanaman Hias</h3>
+                <p class="text-sm text-gray-600">Budidaya tanaman hias yang dikembangkan kelompok warga sebagai peluang usaha ekonomi kreatif desa.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
+            <div class="flex items-center space-x-2 mb-2 md:mb-0">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+            </div>
+            <div class="flex space-x-4 mb-2 md:mb-0">
+                <a href="#" class="hover:underline">Instagram</a>
+                <a href="#" class="hover:underline">Facebook</a>
+                <a href="#" class="hover:underline">YouTube</a>
+            </div>
+            <div class="text-sm">&copy; 2025 Desa [Nama Desa]. All rights reserved.</div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
+</content>

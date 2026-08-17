@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Pekon Banjar Agung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <header class="bg-white shadow sticky top-0 z-50">
+        <div class="container mx-auto flex items-center justify-between py-4 px-6">
+            <div class="flex items-center space-x-3">
+                <img id="header-logo" src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full">
+                <div>
+                    <h1 id="admin-panel-judul" class="text-xl font-bold">Admin Panel</h1>
+                    <p id="admin-panel-deskripsi" class="text-sm text-gray-500">Kelola data dan biodata desa</p>
+                </div>
+            </div>
+<div class="flex items-center gap-3">
+                <a href="index.html" class="text-green-700 font-medium hover:underline">Lihat Website</a>
+                <button id="logout-btn" class="bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-red-700">Keluar</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="login-gate" class="flex-1 flex items-center justify-center py-12 px-4">
+        <div class="w-full max-w-sm bg-white rounded shadow-lg p-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-green-700">Login Admin</h2>
+                <p class="text-gray-500 text-sm mt-1">Masuk untuk mengelola website desa</p>
+            </div>
+            <form id="admin-login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Username</label>
+                    <input type="text" id="admin-username" required class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Password</label>
+                    <input type="password" id="admin-password" required class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600">
+                </div>
+                <div id="admin-login-error" class="hidden bg-red-50 text-red-600 text-sm rounded px-3 py-2"></div>
+                <button type="submit" class="w-full bg-green-700 text-white font-semibold py-2 rounded hover:bg-green-800">Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <main id="dashboard" class="container mx-auto py-8 px-4 flex-1 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 flex flex-col md:flex-row md:items-center gap-4">
+            <img id="dash-logo" src="profil-pkpm.jpeg" alt="Foto Profil Panel Admin" class="h-20 w-20 rounded-full object-cover border-2 border-green-700 shadow-md">
+            <div class="flex-1">
+                <p id="admin-panel-ringkasan" class="text-xs text-gray-400 uppercase tracking-wide">Ringkasan Profil Website</p>
+                <h2 id="dash-nama" class="text-2xl font-bold text-green-700">Pekon Banjar Agung</h2>
+                <p id="dash-tagline" class="text-sm text-gray-500">Bersama membangun pekon yang mandiri dan sejahtera</p>
+                <p id="dash-kecamatan" class="text-xs text-gray-400 mt-1">Kecamatan Gunung Alip, Kabupaten Tanggamus</p>
+            </div>
+            <div class="flex flex-col gap-2 md:items-end">
+                <a href="profil.html" class="bg-green-700 text-white px-5 py-2 rounded font-semibold hover:bg-green-800 text-center">Lihat Halaman Profil</a>
+                <a href="index.html" class="text-green-700 font-medium hover:underline text-center text-sm">Lihat Beranda</a>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold mb-6 text-green-700">Dashboard Admin</h2>
+
+        <div class="flex flex-wrap gap-2 mb-8">
+            <button class="tab-btn bg-green-700 text-white px-4 py-2 rounded font-medium" data-tab="profil">Profil Desa</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="pemerintahan">Pemerintahan</button>
+<button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="kontak">Kontak</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="pengumuman">Pengumuman</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="layanan">Layanan</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="potensi">Potensi</button>
+<button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="pengajuan">Pengajuan Surat</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="keluhan">Keluhan Masyarakat</button>
+            <button class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100" data-tab="galeri">Galeri</button>
+        </div>
+
+        <section id="tab-profil" class="bg-white rounded shadow p-6 mb-8 tab-panel">
+            <h3 class="text-2xl font-bold mb-4">Profil Desa</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Nama Desa</label>
+                    <input type="text" id="p-nama" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Kecamatan</label>
+                    <input type="text" id="p-kecamatan" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Kabupaten</label>
+                    <input type="text" id="p-kabupaten" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Tagline</label>
+                    <input type="text" id="p-tagline" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul Panel Admin</label>
+                    <input type="text" id="p-panel-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi Panel Admin</label>
+                    <input type="text" id="p-panel-deskripsi" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Label Ringkasan Dashboard</label>
+                    <input type="text" id="p-panel-ringkasan" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Foto Profil Panel Admin</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="p-panel-foto-file" accept="image/*">
+                    </div>
+                    <img id="p-panel-foto-preview" src="profil-pkpm.jpeg" alt="Pratinjau Profil Panel Admin" class="w-24 h-24 object-cover rounded-full mt-2 border-2 border-green-700">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi Desa</label>
+                    <textarea id="p-deskripsi" rows="3" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul Bagian Tentang Desa</label>
+                    <input type="text" id="p-tentang-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Komitmen Desa</label>
+                    <textarea id="p-komitmen" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+<div>
+                    <label class="block text-sm font-medium mb-1">Upload Logo Desa</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="p-logo-file" accept="image/*">
+                    </div>
+                    <img id="p-logo-preview" class="w-24 h-24 object-cover rounded mt-2 border border-gray-200" alt="Pratinjau Logo">
+                    <p class="text-xs text-gray-400 mt-1">Klik untuk memilih file dari galeri perangkat Anda.</p>
+                </div>
+<div>
+                    <label class="block text-sm font-medium mb-1">Upload Foto Hero</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="p-hero-file" accept="image/*">
+                    </div>
+                    <img id="p-hero-preview" class="w-full h-28 object-cover rounded mt-2 border border-gray-200" alt="Pratinjau Hero">
+                    <p class="text-xs text-gray-400 mt-1">Klik untuk memilih file dari galeri perangkat Anda.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Upload Foto Tentang Desa</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="p-tentang-file" accept="image/*">
+                    </div>
+                    <img id="p-tentang-preview" class="w-full h-28 object-cover rounded mt-2 border border-gray-200" alt="Pratinjau Foto Tentang Desa">
+                    <p class="text-xs text-gray-400 mt-1">Foto ini muncul di bagian "Tentang Desa" pada Beranda & halaman Profil.</p>
+                </div>
+            </div>
+            <h4 class="text-lg font-semibold mt-6 mb-2">Data Singkat Desa</h4>
+            <div id="p-data-singkat-items" class="space-y-2 mb-3"></div>
+            <button type="button" id="add-p-data-singkat" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100">+ Tambah Data Singkat</button>
+
+            <h4 class="text-lg font-semibold mt-6 mb-2">Visi</h4>
+            <textarea id="p-visi" rows="3" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+
+            <h4 class="text-lg font-semibold mt-6 mb-2">Misi</h4>
+            <div id="p-misi-items" class="space-y-2 mb-3"></div>
+            <button type="button" id="add-p-misi" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100">+ Tambah Misi</button>
+            <button id="save-profil" class="mt-6 bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800">Simpan Profil</button>
+            <span id="profil-msg" class="ml-3 text-sm text-green-600"></span>
+        </section>
+
+        <section id="tab-pemerintahan" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Pemerintahan Desa</h3>
+            <h4 class="text-lg font-semibold mb-2">Kepala Desa</h4>
+            <div class="grid md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Nama Kepala Desa</label>
+                    <input type="text" id="kd-nama" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Jabatan</label>
+                    <input type="text" id="kd-jabatan" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+<div>
+                    <label class="block text-sm font-medium mb-1">Foto Kepala Desa</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="kd-foto-file" accept="image/*">
+                    </div>
+                    <img id="kd-foto-preview" class="w-32 h-32 object-cover rounded-full mt-2 border border-gray-200" alt="Pratinjau Foto Kepala Desa">
+                </div>
+            </div>
+
+            <h4 class="text-lg font-semibold mb-2">Perangkat Desa</h4>
+            <p class="text-sm text-gray-500 mb-3">Setiap perangkat dapat memiliki foto profil.</p>
+            <div id="perangkat-list" class="space-y-3 mb-4"></div>
+            <button id="add-perangkat" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Perangkat</button>
+
+            <h4 class="text-lg font-semibold mb-2">BPD (Badan Permusyawaratan Desa)</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Ketua BPD</label>
+                    <input type="text" id="bpd-ketua" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Wakil Ketua BPD</label>
+                    <input type="text" id="bpd-wakil" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Sekretaris BPD</label>
+                    <input type="text" id="bpd-sekretaris" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Anggota BPD</label>
+                    <input type="text" id="bpd-anggota" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+            </div>
+
+            <h4 class="text-lg font-semibold mb-2 mt-6">Lembaga Desa Lainnya</h4>
+            <p class="text-sm text-gray-500 mb-3">Kelola daftar lembaga kemasyarakatan yang mendukung desa.</p>
+            <div id="lembaga-list" class="space-y-3 mb-4"></div>
+            <button id="add-lembaga" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Lembaga</button>
+
+            <button id="save-pemerintahan" class="mt-6 bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800">Simpan Pemerintahan</button>
+            <span id="pemerintahan-msg" class="ml-3 text-sm text-green-600"></span>
+        </section>
+
+        <section id="tab-kontak" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Kontak Desa</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Alamat</label>
+                    <input type="text" id="k-alamat" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Telepon</label>
+                    <input type="text" id="k-telepon" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Email</label>
+                    <input type="text" id="k-email" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+<div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">URL Google Maps (embed)</label>
+                    <input type="text" id="k-maps" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">URL Instagram</label>
+                    <input type="text" id="k-instagram" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="https://instagram.com/...">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">URL Facebook</label>
+                    <input type="text" id="k-facebook" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="https://facebook.com/...">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">URL YouTube</label>
+                    <input type="text" id="k-youtube" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="https://youtube.com/...">
+                </div>
+            </div>
+            <button id="save-kontak" class="mt-6 bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800">Simpan Kontak</button>
+            <span id="kontak-msg" class="ml-3 text-sm text-green-600"></span>
+        </section>
+
+        <section id="tab-pengumuman" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Pengumuman</h3>
+
+            <h4 class="text-lg font-semibold mb-2">Tambah Pengumuman</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="peng-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Tanggal</label>
+                    <input type="text" id="peng-tanggal" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="10 Agustus 2026">
+                </div>
+<div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Ringkasan</label>
+                    <textarea id="peng-ringkasan" rows="3" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Isi Pengumuman</label>
+                    <textarea id="peng-isi" rows="6" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="Tulis isi pengumuman lengkap di sini. Gunakan baris kosong untuk membuat paragraf baru."></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Upload Foto Pengumuman</label>
+                    <div class="admin-file-input">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="peng-foto-file" accept="image/*">
+                    </div>
+                    <img id="peng-foto-preview" class="w-full h-40 object-cover rounded mt-2 border border-gray-200" alt="Pratinjau Foto Pengumuman">
+                    <p class="text-xs text-gray-400 mt-1">Foto ini akan tampil di halaman pengumuman website.</p>
+                </div>
+            </div>
+            <button id="add-pengumuman" class="bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800 mb-6">Tambah Pengumuman</button>
+            <div id="pengumuman-list" class="space-y-2"></div>
+        </section>
+
+        <section id="tab-layanan" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Layanan Unggulan</h3>
+
+            <h4 class="text-lg font-semibold mb-2">Pengajuan Surat</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="ps-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="ps-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Jenis Surat</label>
+                    <input type="text" id="ps-jenis" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Syarat</label>
+                    <input type="text" id="ps-syarat" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Email Desa Tujuan</label>
+                    <input type="text" id="ps-email" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+            </div>
+
+            <h4 class="text-lg font-semibold mb-2">Data Kependudukan</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="dk-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="dk-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Total Penduduk</label>
+                    <input type="text" id="dk-total" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Kepala Keluarga</label>
+                    <input type="text" id="dk-kk" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Laki-laki</label>
+                    <input type="text" id="dk-laki" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Perempuan</label>
+                    <input type="text" id="dk-perempuan" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+            </div>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Kelompok Umur</h5>
+            <div id="dk-umur-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-dk-umur" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Kelompok Umur</button>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Tingkat Pendidikan</h5>
+            <div id="dk-pendidikan-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-dk-pendidikan" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Tingkat Pendidikan</button>
+
+            <h4 class="text-lg font-semibold mb-2">Jadwal Posyandu</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="jp-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="jp-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Posyandu Balita</h5>
+            <div id="posyandu-balita-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-posyandu-balita" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Posyandu Balita</button>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Posyandu Lansia</h5>
+            <div id="posyandu-lansia-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-posyandu-lansia" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Posyandu Lansia</button>
+
+            <h4 class="text-lg font-semibold mb-2">Arsip Perdes</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="ap-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="ap-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Daftar Perdes</h5>
+            <div id="ap-perdes-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-ap-perdes" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Perdes</button>
+
+            <h5 class="text-md font-semibold mb-2 text-green-700">Daftar Perkades</h5>
+            <div id="ap-perkades-items" class="space-y-2 mb-4"></div>
+            <button type="button" id="add-ap-perkades" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Perkades</button>
+
+            <button id="save-layanan" class="mt-2 bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800">Simpan Layanan</button>
+            <span id="layanan-msg" class="ml-3 text-sm text-green-600"></span>
+        </section>
+
+        <section id="tab-potensi" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Potensi Desa</h3>
+
+            <h4 class="text-lg font-semibold mb-2">UMKM & Produk Unggulan</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="um-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="um-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div id="umkm-items" class="space-y-2 mb-4"></div>
+            <button id="add-umkm" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Item UMKM</button>
+
+            <h4 class="text-lg font-semibold mb-2">Wisata Alam & Budaya</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="wi-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="wi-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div id="wisata-items" class="space-y-2 mb-4"></div>
+            <button id="add-wisata" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Item Wisata</button>
+
+            <h4 class="text-lg font-semibold mb-2">Kegiatan Masyarakat</h4>
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Judul</label>
+                    <input type="text" id="kg-judul" class="w-full border border-gray-300 rounded px-3 py-2">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">Deskripsi</label>
+                    <textarea id="kg-deskripsi" rows="2" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+                </div>
+            </div>
+            <div id="kegiatan-items" class="space-y-2 mb-4"></div>
+            <button id="add-kegiatan" class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6">+ Tambah Item Kegiatan</button>
+
+            <button id="save-potensi" class="mt-2 bg-green-700 text-white px-6 py-2 rounded font-semibold hover:bg-green-800">Simpan Potensi</button>
+            <span id="potensi-msg" class="ml-3 text-sm text-green-600"></span>
+        </section>
+
+        <section id="tab-pengajuan" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Pengajuan Surat Masuk</h3>
+            <div id="pengajuan-list" class="space-y-2"></div>
+        </section>
+
+        <section id="tab-keluhan" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Keluhan Masyarakat</h3>
+            <p class="text-gray-500 mb-6 text-base">Laporan/keluhan yang masuk dari masyarakat beserta bukti foto pendukung.</p>
+            <div id="keluhan-list" class="space-y-3"></div>
+        </section>
+
+        <section id="tab-galeri" class="bg-white rounded shadow p-6 mb-8 tab-panel hidden">
+            <h3 class="text-2xl font-bold mb-4">Galeri Foto</h3>
+            <p class="text-gray-500 mb-6 text-base">Kelola galeri foto dalam 3 kategori. Upload foto dari galeri perangkat Anda.</p>
+            <div class="border border-gray-200 rounded p-4 mb-6">
+                <h4 class="text-lg font-semibold mb-2">1. Kegiatan Desa</h4>
+<div class="flex items-center gap-3 mb-3">
+                    <div class="admin-file-input flex-1">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="g-file-1" accept="image/*" multiple>
+                    </div>
+                    <button id="add-galeri-1" class="bg-green-700 text-white px-4 py-2 rounded font-semibold hover:bg-green-800 whitespace-nowrap">Upload</button>
+                </div>
+                <div id="galeri-grid-1" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </div>
+            <div class="border border-gray-200 rounded p-4 mb-6">
+                <h4 class="text-lg font-semibold mb-2">2. Pembangunan</h4>
+<div class="flex items-center gap-3 mb-3">
+                    <div class="admin-file-input flex-1">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="g-file-2" accept="image/*" multiple>
+                    </div>
+                    <button id="add-galeri-2" class="bg-green-700 text-white px-4 py-2 rounded font-semibold hover:bg-green-800 whitespace-nowrap">Upload</button>
+                </div>
+                <div id="galeri-grid-2" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </div>
+
+            <div class="border border-gray-200 rounded p-4">
+                <h4 class="text-lg font-semibold mb-2">3. Wisata & Budaya</h4>
+<div class="flex items-center gap-3 mb-3">
+                    <div class="admin-file-input flex-1">
+                        <span class="file-btn">Pilih File</span>
+                        <span class="file-name">No file chosen</span>
+                        <input type="file" id="g-file-3" accept="image/*" multiple>
+                    </div>
+                    <button id="add-galeri-3" class="bg-green-700 text-white px-4 py-2 rounded font-semibold hover:bg-green-800 whitespace-nowrap">Upload</button>
+                </div>
+                <div id="galeri-grid-3" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </div>
+        </section>
+    </main>
+    <div id="gal-picker-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white rounded shadow-lg w-full max-w-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold">Pilih Foto dari Galeri</h3>
+                <button type="button" id="gal-picker-close" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="text-sm text-gray-500 mb-3">Klik sebuah foto untuk memilihnya. Jika galeri kosong, upload foto terlebih dahulu di tab Galeri.</div>
+            <div id="gal-picker-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-80 overflow-y-auto"></div>
+        </div>
+    </div>
+
+<footer class="bg-green-700 text-white py-6 mt-8">
+        <div class="container mx-auto text-center px-4 text-sm">
+            &copy; 2026 Pemerintah Pekon Banjar Agung. All rights reserved.
+        </div>
+    </footer>
+    <script src="admin.js"></script>
+</body>
+
+</html>
