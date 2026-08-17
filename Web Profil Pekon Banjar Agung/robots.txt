@@ -1,0 +1,26 @@
+# ==============================================================================
+# ROBOTS.TXT RESMI PEKON BANJAR AGUNG (SEO-OPTIMIZED & SECURE)
+# Domain: https://banjaragung-tanggamus.web.id
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+Allow: /uploads/
+
+# Blokir akses ke area administrasi dan API internal
+Disallow: /admin.html
+Disallow: /admin/
+Disallow: /api/admin/
+Disallow: /api/
+Disallow: /tmp/
+Disallow: /data/
+
+# Lokasi Peta Situs Resmi (XML Sitemap)
+Sitemap: https://banjaragung-tanggamus.web.id/sitemap.xml

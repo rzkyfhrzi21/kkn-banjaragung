@@ -73,7 +73,14 @@ function validateFileBuffer(filePath) {
 
 // ===== Multer config for photo upload with Double Extension Protection =====
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  destination: (req, file, cb) => {
+    try {
+      if (!fs.existsSync(UPLOAD_DIR)) {
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      }
+    } catch (e) {}
+    cb(null, UPLOAD_DIR);
+  },
   filename: (req, file, cb) => {
     const rawExt = path.extname(file.originalname).toLowerCase();
     const safeExt = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(rawExt) ? rawExt : '.jpg';
@@ -157,6 +164,36 @@ if (process.env.CORS_ORIGIN) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Robots.txt & Sitemap.xml SEO Routes
+app.get('/robots.txt', (req, res) => {
+  const robotsPath = path.join(__dirname, 'robots.txt');
+  if (fs.existsSync(robotsPath)) {
+    res.type('text/plain').sendFile(robotsPath);
+  } else {
+    res.type('text/plain').send('User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: https://banjaragung-tanggamus.web.id/sitemap.xml');
+  }
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const sitemapPath = path.join(__dirname, 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    res.type('application/xml').sendFile(sitemapPath);
+  } else {
+    res.status(404).send('Sitemap not found');
+  }
+});
+
+// Privacy & SEO Header Isolation for Admin & API Routes
+app.use('/admin.html', (req, res, next) => {
+  res.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+  next();
+});
+app.use('/api', (req, res, next) => {
+  res.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'Web Profil Pekon Banjar Agung')));
 app.use('/uploads', express.static(UPLOAD_DIR));
 if (IS_VERCEL) {
@@ -400,6 +437,9 @@ function readJsonFileSafe(file) {
 
 function saveDataToFile(data) {
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
   } catch (e) {
     logger && logger.warn && logger.warn('Failed to write DATA_FILE: ' + (e.message || e));

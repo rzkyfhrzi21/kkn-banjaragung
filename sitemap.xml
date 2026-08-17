@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- 1. Halaman Beranda (Home) -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg</image:loc>
+            <image:title>Profil Pekon Banjar Agung</image:title>
+        </image:image>
+    </url>
+
+    <!-- 2. Profil Desa -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/profil.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- 3. Pemerintahan & Aparatur Desa -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/pemerintahan.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- 4. Layanan Publik Desa -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/layanan-publik.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- 5. Pengajuan Surat Online Warga -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/pengajuan-surat.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- 6. Berita & Pengumuman -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/berita-pengumuman.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- 7. Galeri Kegiatan Desa -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/galeri.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- 8. Kontak & Lokasi Kantor Pekon -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/kontak.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- 9. Data Kependudukan -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/data-kependudukan.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- 10. UMKM & Produk Unggulan -->
+    <url>
+        <loc>https://banjaragung-tanggamus.web.id/umkm-produk-unggulan.html</loc>
+        <lastmod>2026-08-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+</urlset>
