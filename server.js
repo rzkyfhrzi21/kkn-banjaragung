@@ -20,12 +20,19 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 
 // ===== Setup directories =====
-const DATA_DIR = path.join(__dirname, 'data');
-const UPLOAD_DIR = path.join(__dirname, 'uploads');
+const IS_VERCEL = !!process.env.VERCEL;
+const DATA_DIR = IS_VERCEL ? path.join('/tmp', 'data') : path.join(__dirname, 'data');
+const UPLOAD_DIR = IS_VERCEL ? path.join('/tmp', 'uploads') : path.join(__dirname, 'uploads');
+const STATIC_UPLOAD_DIR = path.join(__dirname, 'uploads');
+const BUNDLED_DATA_FILE = path.join(__dirname, 'data', 'data.json');
 const DATA_FILE = path.join(DATA_DIR, 'data.json');
 
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
+try {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+} catch (e) {
+  // ignore in read-only environment
+}
 
 // ===== Multer config for photo upload =====
 const storage = multer.diskStorage({
@@ -79,6 +86,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'Web Profil Pekon Banjar Agung')));
 app.use('/uploads', express.static(UPLOAD_DIR));
+if (IS_VERCEL) {
+  app.use('/uploads', express.static(STATIC_UPLOAD_DIR));
+}
 
 // Basic rate limiting
 const apiLimiter = rateLimit({
@@ -308,7 +318,11 @@ function readJsonFileSafe(file) {
 }
 
 function saveDataToFile(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  } catch (e) {
+    logger && logger.warn && logger.warn('Failed to write DATA_FILE: ' + (e.message || e));
+  }
 }
 
 function loadData() {
@@ -335,6 +349,15 @@ function loadData() {
 
   // Fallback to JSON file
   if (!fs.existsSync(DATA_FILE)) {
+    if (fs.existsSync(BUNDLED_DATA_FILE)) {
+      try {
+        const raw = readJsonFileSafe(BUNDLED_DATA_FILE) || '';
+        const parsed = raw ? JSON.parse(raw) : {};
+        const merged = deepMerge(defaultData(), parsed);
+        saveDataToFile(merged);
+        return merged;
+      } catch (e) { /* ignore */ }
+    }
     saveDataToFile(defaultData());
     return defaultData();
   }
@@ -480,7 +503,7 @@ app.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
       return res.json({ success: true, url });
     }
 
-    const url = (process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : '') + '/uploads/' + filename;
+    const url = '/uploads/' + filename;
     res.json({ success: true, url });
   } catch (err) {
     logger && logger.error && logger.error('Upload failed: ' + (err.message || err));
@@ -505,7 +528,7 @@ app.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, res
         const s3url = process.env.S3_BASE_URL || `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION || 'us-east-1'}.amazonaws.com/${key}`;
         urls.push(process.env.PUBLIC_URL && process.env.PUBLIC_URL.includes('s3') ? `${process.env.PUBLIC_URL}/uploads/${filename}` : s3url);
       } else {
-        urls.push((process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : '') + '/uploads/' + filename);
+        urls.push('/uploads/' + filename);
       }
     }
     res.json({ success: true, urls });
