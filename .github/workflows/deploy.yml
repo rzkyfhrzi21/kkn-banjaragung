@@ -98,13 +98,18 @@ jobs:
             # Install hanya dependency produksi
             npm ci --omit=dev
 
-            # Setup PM2 otomatis (start jika belum ada, restart jika sudah)
+            # Setup PM2 otomatis (start jika belum ada, restart jika sudah).
+            # Redirect semua FD ke /dev/null agar daemon PM2 tidak mewarisi
+            # stdout/stderr sesi SSH (menyebabkan hang/timeout).
             if [ -x ./node_modules/.bin/pm2 ]; then
               PM2=./node_modules/.bin/pm2
             else
               PM2=pm2
             fi
-            $PM2 describe pekon-banjar-agung > /dev/null 2>&1 \
-              || $PM2 start ecosystem.config.js --env production
-            $PM2 restart pekon-banjar-agung --update-env
-            $PM2 save
+
+            if $PM2 describe pekon-banjar-agung > /dev/null 2>&1; then
+              $PM2 restart pekon-banjar-agung --update-env < /dev/null > /dev/null 2>&1
+            else
+              $PM2 start ecosystem.config.js --env production < /dev/null > /dev/null 2>&1
+            fi
+            $PM2 save < /dev/null > /dev/null 2>&1 || true
