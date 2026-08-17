@@ -34,20 +34,72 @@ try {
   // ignore in read-only environment
 }
 
-// ===== Multer config for photo upload =====
+// ===== Anti-Webshell & True MIME Validation =====
+function validateFileBuffer(filePath) {
+  if (!fs.existsSync(filePath)) return true;
+  const buffer = fs.readFileSync(filePath);
+  if (buffer.length === 0) {
+    try { fs.unlinkSync(filePath); } catch (e) {}
+    throw new Error('Berkas tidak boleh kosong (0 bytes).');
+  }
+
+  // 1. Check Magic Bytes (True Image Headers)
+  const isJpeg = buffer.length >= 3 && buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
+  const isPng = buffer.length >= 8 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
+  const isGif = buffer.length >= 6 && buffer.toString('ascii', 0, 6).startsWith('GIF8');
+  const isWebp = buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+
+  if (!isJpeg && !isPng && !isGif && !isWebp) {
+    try { fs.unlinkSync(filePath); } catch (e) {}
+    throw new Error('Header berkas tidak valid. Berkas bukan gambar asli (Magic Byte Mismatch).');
+  }
+
+  // 2. Anti-Webshell: Scan for malicious executable scripts in binary buffer
+  const contentLower = buffer.toString('binary').toLowerCase();
+  const dangerousSignatures = [
+    '<?php', '<?=', '<%', '<script', 'eval(', 'base64_decode(', 'passthru(',
+    'shell_exec(', 'system(', 'popen(', 'proc_open(', 'assert('
+  ];
+
+  for (const sig of dangerousSignatures) {
+    if (contentLower.includes(sig)) {
+      try { fs.unlinkSync(filePath); } catch (e) {}
+      throw new Error(`Webshell/Payload berbahaya terdeteksi (${sig}). Berkas ditolak demi keamanan server.`);
+    }
+  }
+
+  return true;
+}
+
+// ===== Multer config for photo upload with Double Extension Protection =====
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOAD_DIR),
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const name = Date.now() + '-' + Math.round(Math.random() * 1e9) + ext;
+    const rawExt = path.extname(file.originalname).toLowerCase();
+    const safeExt = ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(rawExt) ? rawExt : '.jpg';
+    const name = Date.now() + '-' + crypto.randomBytes(8).toString('hex') + safeExt;
     cb(null, name);
   }
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png|gif|webp/;
-  const ok = allowed.test(path.extname(file.originalname).toLowerCase());
-  cb(ok ? null : new Error('File harus berupa gambar (jpeg, jpg, png, gif, webp)'), ok);
+  const originalName = (file.originalname || '').toLowerCase();
+
+  // Anti Double Extension (e.g. shell.php.jpg, test.phtml.png)
+  const dangerousPatterns = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
+  const nameWithoutLastExt = originalName.substring(0, originalName.lastIndexOf('.'));
+  if (dangerousPatterns.test(nameWithoutLastExt)) {
+    return cb(new Error('Nama file mencurigakan (Double Extension terdeteksi). Upload ditolak demi keamanan.'), false);
+  }
+
+  // Allowed Image Extensions Only
+  const allowed = /\.(jpeg|jpg|png|gif|webp)$/i;
+  const ok = allowed.test(path.extname(originalName));
+  if (!ok) {
+    return cb(new Error('Format file tidak didukung. File harus berupa gambar (jpeg, jpg, png, gif, webp).'), false);
+  }
+
+  cb(null, true);
 };
 
 const upload = multer({
@@ -55,6 +107,27 @@ const upload = multer({
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
+
+// ===== Input Sanitization & Anti-Spam Honeypot =====
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/data:text\/html/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
+}
+
+function checkHoneypot(req, res, next) {
+  if (req.body && (req.body._hp || req.body.website || req.body.bot_trap)) {
+    return res.json({ success: true, message: 'Data berhasil diterima' });
+  }
+  next();
+}
 
 // ===== Middleware =====
 // CSP: conservative defaults, allow https resources and inline where needed
@@ -93,18 +166,26 @@ if (IS_VERCEL) {
 // Basic rate limiting
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300, // limit each IP to 300 requests per windowMs
+  max: process.env.NODE_ENV === 'test' ? 5000 : 300, // limit each IP to 300 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Terlalu banyak permintaan, coba lagi nanti.' }
 });
 const adminLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30, // stricter for admin routes
+  max: process.env.NODE_ENV === 'test' ? 5000 : 30, // stricter for admin routes
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Terlalu banyak percobaan, coba lagi nanti.' }
 });
+const publicFormLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 5000 : 30, // rate limit for public submissions to prevent spam floods
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Terlalu banyak pengiriman formulir. Coba lagi dalam 15 menit.' }
+});
+
 app.use('/api', apiLimiter);
 app.use('/api/admin', adminLimiter);
 
@@ -491,6 +572,10 @@ app.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
   try {
     const filename = req.file.filename;
     const localPath = req.file.path;
+
+    // Validate Magic Bytes and scan for webshell payloads
+    validateFileBuffer(localPath);
+
     // If S3 configured, upload and remove local copy
     if (s3) {
       const key = `uploads/${filename}`;
@@ -506,8 +591,11 @@ app.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
     const url = '/uploads/' + filename;
     res.json({ success: true, url });
   } catch (err) {
+    if (req.file && req.file.path) {
+      try { fs.unlinkSync(req.file.path); } catch (e) {}
+    }
     logger && logger.error && logger.error('Upload failed: ' + (err.message || err));
-    res.status(500).json({ success: false, message: 'Gagal mengupload file' });
+    res.status(400).json({ success: false, message: err.message || 'Gagal mengupload file' });
   }
 });
 
@@ -520,6 +608,10 @@ app.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, res
     for (const f of req.files) {
       const filename = f.filename;
       const localPath = f.path;
+
+      // Validate Magic Bytes and scan for webshell payloads
+      validateFileBuffer(localPath);
+
       if (s3) {
         const key = `uploads/${filename}`;
         const params = { Bucket: process.env.AWS_S3_BUCKET, Key: key, Body: fs.createReadStream(localPath), ContentType: f.mimetype, ACL: process.env.AWS_S3_ACL || 'public-read' };
@@ -533,8 +625,13 @@ app.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, res
     }
     res.json({ success: true, urls });
   } catch (err) {
+    if (req.files) {
+      for (const f of req.files) {
+        try { if (f.path) fs.unlinkSync(f.path); } catch (e) {}
+      }
+    }
     logger && logger.error && logger.error('Multi upload failed: ' + (err.message || err));
-    res.status(500).json({ success: false, message: 'Gagal mengupload file' });
+    res.status(400).json({ success: false, message: err.message || 'Gagal mengupload file' });
   }
 });
 
@@ -654,15 +751,15 @@ app.post('/api/admin/potensi', (req, res) => {
   res.json({ success: true, data: data.potensi });
 });
 
-app.post('/api/pengajuan', (req, res) => {
+app.post('/api/pengajuan', publicFormLimiter, checkHoneypot, (req, res) => {
   const data = loadData();
   const item = {
     id: Date.now(),
-    nama: req.body.nama || '',
-    ktp: req.body.ktp || '',
-    hp: req.body.hp || '',
-    alamat: req.body.alamat || '',
-    jenisSurat: req.body.jenisSurat || '',
+    nama: sanitizeInput(req.body.nama || ''),
+    ktp: sanitizeInput(req.body.ktp || ''),
+    hp: sanitizeInput(req.body.hp || ''),
+    alamat: sanitizeInput(req.body.alamat || ''),
+    jenisSurat: sanitizeInput(req.body.jenisSurat || ''),
     tanggal: new Date().toLocaleString('id-ID'),
     status: 'Baru'
   };
@@ -677,24 +774,35 @@ app.get('/api/admin/pengajuan', (req, res) => {
   res.json({ success: true, data: data.pengajuan || [] });
 });
 
-app.post('/api/keluhan', upload.single('bukti'), (req, res) => {
-  const data = loadData();
-  const bukti = req.file ? '/uploads/' + req.file.filename : '';
-  const item = {
-    id: Date.now(),
-    nama: req.body.nama || '',
-    hp: req.body.hp || '',
-    judul: req.body.judul || '',
-    kronologi: req.body.kronologi || '',
-    lokasi: req.body.lokasi || '',
-    bukti: bukti,
-    tanggal: new Date().toLocaleString('id-ID'),
-    status: 'Baru'
-  };
-  data.keluhan = data.keluhan || [];
-  data.keluhan.unshift(item);
-  saveData(data);
-  res.json({ success: true, data: item });
+app.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHoneypot, (req, res) => {
+  try {
+    let bukti = '';
+    if (req.file) {
+      validateFileBuffer(req.file.path);
+      bukti = '/uploads/' + req.file.filename;
+    }
+    const data = loadData();
+    const item = {
+      id: Date.now(),
+      nama: sanitizeInput(req.body.nama || ''),
+      hp: sanitizeInput(req.body.hp || ''),
+      judul: sanitizeInput(req.body.judul || ''),
+      kronologi: sanitizeInput(req.body.kronologi || ''),
+      lokasi: sanitizeInput(req.body.lokasi || ''),
+      bukti: bukti,
+      tanggal: new Date().toLocaleString('id-ID'),
+      status: 'Baru'
+    };
+    data.keluhan = data.keluhan || [];
+    data.keluhan.unshift(item);
+    saveData(data);
+    res.json({ success: true, data: item });
+  } catch (err) {
+    if (req.file && req.file.path) {
+      try { fs.unlinkSync(req.file.path); } catch (e) {}
+    }
+    res.status(400).json({ success: false, message: err.message || 'Gagal mengirim keluhan' });
+  }
 });
 
 app.get('/api/admin/keluhan', (req, res) => {
@@ -943,6 +1051,15 @@ function checkPosyanduReminders() {
   }
 }
 
+// Error handling middleware for Multer and validation errors (returns HTTP 400 with friendly JSON)
+app.use((err, req, res, next) => {
+  if (err) {
+    logger && logger.warn && logger.warn('Request error: ' + (err.message || err));
+    return res.status(400).json({ success: false, message: err.message || 'Terjadi kesalahan pada request' });
+  }
+  next();
+});
+
 if (!process.env.VERCEL) {
   setInterval(checkPosyanduReminders, 60 * 60 * 1000);
   checkPosyanduReminders();
@@ -972,5 +1089,7 @@ if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
 }
+
+app._resetLoginAttempts = () => loginAttempts.clear();
 
 module.exports = app;

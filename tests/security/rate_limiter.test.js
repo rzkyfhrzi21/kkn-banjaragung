@@ -9,6 +9,9 @@ async function run() {
   const baseUrl = appInstance.url;
 
   try {
+    const app = require('../../server');
+    if (typeof app._resetLoginAttempts === 'function') app._resetLoginAttempts();
+
     const wrongCredentials = { username: 'admin', password: 'wrong_password_test' };
 
     // 5 kali percobaan login gagal berturut-turut harus mengembalikan HTTP 401
