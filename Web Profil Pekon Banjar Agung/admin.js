@@ -244,17 +244,34 @@ document.getElementById('p-panel-foto-file')?.addEventListener('change', (e) => 
 });
 document.getElementById('kd-foto-file')?.addEventListener('change', (e) => {
   const file = e.target.files[0];
-  if (file) {
-    document.getElementById('kd-foto-preview').src = URL.createObjectURL(file);
+  if (!file) return;
+  const check = validateFileClient(file);
+  if (!check.valid) {
+    adminToast(check.message, 'error');
+    e.target.value = '';
+    return;
+  }
+  const preview = document.getElementById('kd-foto-preview');
+  if (preview) {
+    preview.src = URL.createObjectURL(file);
+  }
+  const fileNameSpan = e.target.closest('.admin-file-input')?.querySelector('.file-name');
+  if (fileNameSpan) {
+    fileNameSpan.textContent = file.name;
+    fileNameSpan.classList.add('has-file');
   }
 });
 
 function fillPemerintahan(p) {
   if (!p) return;
-document.getElementById('kd-nama').value = p.kepalaDesa?.nama || '';
+  document.getElementById('kd-nama').value = p.kepalaDesa?.nama || '';
   document.getElementById('kd-jabatan').value = p.kepalaDesa?.jabatan || '';
-  if (p.kepalaDesa?.foto) {
-    document.getElementById('kd-foto-preview').src = p.kepalaDesa.foto;
+  const kdPreview = document.getElementById('kd-foto-preview');
+  if (kdPreview) {
+    const fotoUrl = p.kepalaDesa?.foto || 'profil-pkpm.jpeg';
+    kdPreview.src = fotoUrl;
+    kdPreview.dataset.savedUrl = p.kepalaDesa?.foto || '';
+    kdPreview.onerror = () => { kdPreview.src = 'profil-pkpm.jpeg'; };
   }
   document.getElementById('bpd-ketua').value = p.bpd?.ketua || '';
   document.getElementById('bpd-wakil').value = p.bpd?.wakil || '';
@@ -386,19 +403,39 @@ function fillKontak(k) {
 document.getElementById('save-profil')?.addEventListener('click', async () => {
   const msg = document.getElementById('profil-msg');
   msg.textContent = 'Menyimpan...';
-try {
-    let logo = document.getElementById('p-logo-preview').src || '';
-    let hero = document.getElementById('p-hero-preview').src || '';
-    let fotoTentang = document.getElementById('p-tentang-preview').src || '';
-    let panelFoto = document.getElementById('p-panel-foto-preview').src || '';
+  msg.className = 'ml-3 text-sm text-blue-600';
+  try {
+    let logo = document.getElementById('p-logo-preview').dataset.savedUrl || document.getElementById('p-logo-preview').src || '';
+    let hero = document.getElementById('p-hero-preview').dataset.savedUrl || document.getElementById('p-hero-preview').src || '';
+    let fotoTentang = document.getElementById('p-tentang-preview').dataset.savedUrl || document.getElementById('p-tentang-preview').src || '';
+    let panelFoto = document.getElementById('p-panel-foto-preview').dataset.savedUrl || document.getElementById('p-panel-foto-preview').src || '';
+    
     const logoFile = document.getElementById('p-logo-file').files[0];
     const heroFile = document.getElementById('p-hero-file').files[0];
     const tentangFile = document.getElementById('p-tentang-file').files[0];
     const panelFile = document.getElementById('p-panel-foto-file').files[0];
-    if (logoFile) logo = await uploadFile(logoFile) || logo;
-    if (heroFile) hero = await uploadFile(heroFile) || hero;
-    if (tentangFile) fotoTentang = await uploadFile(tentangFile) || fotoTentang;
-    if (panelFile) panelFoto = await uploadFile(panelFile) || panelFoto;
+    
+    if (logoFile) {
+      const up = await uploadFile(logoFile);
+      if (up) { logo = up; document.getElementById('p-logo-preview').dataset.savedUrl = up; }
+    }
+    if (heroFile) {
+      const up = await uploadFile(heroFile);
+      if (up) { hero = up; document.getElementById('p-hero-preview').dataset.savedUrl = up; }
+    }
+    if (tentangFile) {
+      const up = await uploadFile(tentangFile);
+      if (up) { fotoTentang = up; document.getElementById('p-tentang-preview').dataset.savedUrl = up; }
+    }
+    if (panelFile) {
+      const up = await uploadFile(panelFile);
+      if (up) { panelFoto = up; document.getElementById('p-panel-foto-preview').dataset.savedUrl = up; }
+    }
+
+    if (logo.startsWith('blob:')) logo = '';
+    if (hero.startsWith('blob:')) hero = '';
+    if (fotoTentang.startsWith('blob:')) fotoTentang = '';
+    if (panelFoto.startsWith('blob:')) panelFoto = '';
 
     const payload = {
       namaDesa: document.getElementById('p-nama').value.trim(),
@@ -409,7 +446,7 @@ try {
         judul: document.getElementById('p-panel-judul').value.trim(),
         deskripsi: document.getElementById('p-panel-deskripsi').value.trim(),
         ringkasan: document.getElementById('p-panel-ringkasan').value.trim(),
-        foto: panelFoto.startsWith('blob:') ? '' : panelFoto
+        foto: panelFoto
       },
       deskripsi: document.getElementById('p-deskripsi').value.trim(),
       tentangJudul: document.getElementById('p-tentang-judul').value.trim(),
@@ -426,44 +463,73 @@ try {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    
+    if (res.status === 401) {
+      msg.textContent = 'Sesi login telah berakhir. Silakan login kembali.';
+      msg.className = 'ml-3 text-sm text-red-600';
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error');
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
+
     const data = await res.json();
     if (data.success) {
-      msg.textContent = 'Profil berhasil disimpan';
+      msg.textContent = '✓ Profil berhasil disimpan';
+      msg.className = 'ml-3 text-sm text-green-600';
+      adminToast('Profil desa berhasil diperbarui!', 'success');
       if (data.data.logo) document.getElementById('header-logo').src = data.data.logo;
     } else {
-      msg.textContent = 'Gagal menyimpan';
+      msg.textContent = data.message || 'Gagal menyimpan profil';
+      msg.className = 'ml-3 text-sm text-red-600';
+      adminToast(data.message || 'Gagal menyimpan profil', 'error');
     }
   } catch (err) {
-    msg.textContent = 'Terjadi kesalahan';
+    msg.textContent = 'Terjadi kesalahan: ' + (err.message || err);
+    msg.className = 'ml-3 text-sm text-red-600';
+    adminToast('Terjadi kesalahan saat menyimpan data', 'error');
   }
 });
 
 document.getElementById('save-pemerintahan')?.addEventListener('click', async () => {
   const msg = document.getElementById('pemerintahan-msg');
   msg.textContent = 'Menyimpan...';
+  msg.className = 'ml-3 text-sm text-blue-600';
   try {
-    let kdFoto = document.getElementById('kd-foto-preview').src || '';
-    const kdFile = document.getElementById('kd-foto-file').files[0];
+    const preview = document.getElementById('kd-foto-preview');
+    let kdFoto = preview?.dataset.savedUrl || '';
+    const kdFileInput = document.getElementById('kd-foto-file');
+    const kdFile = kdFileInput?.files[0];
     if (kdFile) {
       const uploaded = await uploadFile(kdFile);
       if (uploaded) {
         kdFoto = uploaded;
+        if (preview) {
+          preview.dataset.savedUrl = uploaded;
+          preview.src = uploaded;
+        }
+      } else {
+        msg.textContent = 'Gagal mengunggah foto Kepala Desa';
+        msg.className = 'ml-3 text-sm text-red-600';
+        return;
       }
     }
-
-    if (kdFoto.startsWith('blob:')) kdFoto = '';
 
     const perangkat = [];
     const perangkatRows = document.querySelectorAll('#perangkat-list > div');
     for (const row of perangkatRows) {
-      const jabatan = row.querySelector('[data-field="jabatan"]').value.trim();
-      const nama = row.querySelector('[data-field="nama"]').value.trim();
+      const jabatanInput = row.querySelector('[data-field="jabatan"]');
+      const namaInput = row.querySelector('[data-field="nama"]');
+      const jabatan = jabatanInput ? jabatanInput.value.trim() : '';
+      const nama = namaInput ? namaInput.value.trim() : '';
       if (jabatan || nama) {
-        let foto = row.querySelector('img')?.src || '';
+        let foto = row.dataset.savedFoto || row.querySelector('img')?.src || '';
         const fotoInput = row.querySelector('[data-foto-input]');
         if (fotoInput && fotoInput.files[0]) {
           const uploaded = await uploadFile(fotoInput.files[0]);
-          if (uploaded) foto = uploaded;
+          if (uploaded) {
+            foto = uploaded;
+            row.dataset.savedFoto = uploaded;
+          }
         }
         if (foto.startsWith('blob:')) foto = '';
         perangkat.push({ jabatan, nama, foto });
@@ -472,7 +538,8 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
 
     const lembaga = [];
     document.querySelectorAll('#lembaga-list > div').forEach(row => {
-      const nama = row.querySelector('[data-field="nama"]').value.trim();
+      const namaInput = row.querySelector('[data-field="nama"]');
+      const nama = namaInput ? namaInput.value.trim() : '';
       if (nama) lembaga.push({ nama });
     });
 
@@ -482,14 +549,14 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
         jabatan: document.getElementById('kd-jabatan').value.trim(),
         foto: kdFoto
       },
-      perangkat: perangkat.length ? perangkat : undefined,
+      perangkat: perangkat,
       bpd: {
         ketua: document.getElementById('bpd-ketua').value.trim(),
         wakil: document.getElementById('bpd-wakil').value.trim(),
         sekretaris: document.getElementById('bpd-sekretaris').value.trim(),
         anggota: document.getElementById('bpd-anggota').value.trim()
       },
-      lembaga: lembaga.length ? lembaga : undefined
+      lembaga: lembaga
     };
 
     const res = await fetch(API_BASE + '/api/admin/pemerintahan', {
@@ -497,19 +564,37 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    
+    if (res.status === 401) {
+      msg.textContent = 'Sesi login telah berakhir. Silakan login kembali.';
+      msg.className = 'ml-3 text-sm text-red-600';
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error');
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
+
     const data = await res.json();
     if (data.success) {
-      msg.textContent = 'Pemerintahan berhasil disimpan';
-      if (data.data?.kepalaDesa?.foto) {
-        document.getElementById('kd-foto-preview').src = data.data.kepalaDesa.foto;
+      msg.textContent = '✓ Pemerintahan berhasil disimpan';
+      msg.className = 'ml-3 text-sm text-green-600';
+      adminToast('Data pemerintahan & lembaga berhasil disimpan!', 'success');
+      if (data.data?.kepalaDesa?.foto && preview) {
+        preview.src = data.data.kepalaDesa.foto;
+        preview.dataset.savedUrl = data.data.kepalaDesa.foto;
+      }
+      if (data.data?.lembaga) {
+        renderLembaga(data.data.lembaga);
       }
     } else {
-      msg.textContent = 'Gagal menyimpan';
-      console.error('Save pemerintahan gagal:', data);
+      msg.textContent = data.message || 'Gagal menyimpan data pemerintahan';
+      msg.className = 'ml-3 text-sm text-red-600';
+      adminToast(data.message || 'Gagal menyimpan data pemerintahan', 'error');
     }
   } catch (err) {
     console.error('Error save pemerintahan:', err);
-    msg.textContent = 'Terjadi kesalahan: ' + err.message;
+    msg.textContent = 'Terjadi kesalahan: ' + (err.message || err);
+    msg.className = 'ml-3 text-sm text-red-600';
+    adminToast('Terjadi kesalahan saat menyimpan data', 'error');
   }
 });
 
