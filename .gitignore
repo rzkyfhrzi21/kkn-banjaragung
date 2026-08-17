@@ -1,1 +1,14 @@
+# Development
 /TUTORIAL_HOSTING.md
+.grok/
+.rtk/
+@agents/
+docs/
+Zzz/
+CLAUDE.md
+GEMINI.md
+.codebase-memory/
+graphify-out/
+.vscode/
+securi
+AGENTS.md
