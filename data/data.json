@@ -49,37 +49,44 @@
   "pemerintahan": {
     "kepalaDesa": {
       "nama": "Muhammad Rifky Ramadhan S.Kom",
-      "jabatan": "Kepala Desa Dubai",
+      "jabatan": "Kepala Desa",
       "foto": "/uploads/1786086865405-493464091.jpeg"
     },
     "perangkat": [
       {
         "jabatan": "Sekretaris Desa",
-        "nama": "[Nama Sekretaris]"
+        "nama": "[Nama Sekretaris]",
+        "foto": ""
       },
       {
         "jabatan": "Kaur Keuangan",
-        "nama": "[Nama Kaur Keuangan]"
+        "nama": "[Nama Kaur Keuangan]",
+        "foto": ""
       },
       {
         "jabatan": "Kaur Umum & Perencanaan",
-        "nama": "[Nama Kaur Umum]"
+        "nama": "[Nama Kaur Umum]",
+        "foto": ""
       },
       {
         "jabatan": "Kasi Pemerintahan",
-        "nama": "[Nama Kasi Pemerintahan]"
+        "nama": "[Nama Kasi Pemerintahan]",
+        "foto": ""
       },
       {
         "jabatan": "Kasi Kesejahteraan",
-        "nama": "[Nama Kasi Kesejahteraan]"
+        "nama": "[Nama Kasi Kesejahteraan]",
+        "foto": ""
       },
       {
         "jabatan": "Kasi Pelayanan",
-        "nama": "[Nama Kasi Pelayanan]"
+        "nama": "[Nama Kasi Pelayanan]",
+        "foto": ""
       },
       {
         "jabatan": "Kepala Dusun",
-        "nama": "[Nama Kepala Dusun]"
+        "nama": "[Nama Kepala Dusun]",
+        "foto": ""
       }
     ],
     "bpd": {
@@ -90,28 +97,22 @@
     },
     "lembaga": [
       {
-        "nama": "PKK (Pemberdayaan Kesejahteraan Keluarga)",
-        "ikon": ""
+        "nama": "PKK (Pemberdayaan Kesejahteraan Keluarga)"
       },
       {
-        "nama": "Karang Taruna",
-        "ikon": ""
+        "nama": "Karang Taruna"
       },
       {
-        "nama": "LPMD (Lembaga Pemberdayaan Masyarakat Desa)",
-        "ikon": ""
+        "nama": "LPMD (Lembaga Pemberdayaan Masyarakat Desa)"
       },
       {
-        "nama": "Posyandu",
-        "ikon": ""
+        "nama": "Posyandu"
       },
       {
-        "nama": "Kelompok Tani",
-        "ikon": ""
+        "nama": "Kelompok Tani"
       },
       {
-        "nama": "Dan lain-lain",
-        "ikon": ""
+        "nama": "Dan lain-lain"
       }
     ]
   },
@@ -229,38 +230,31 @@
           "nama": "Posyandu Melati",
           "lokasi": "Balai Desa",
           "jadwal": "Setiap Kamis",
-          "waktu": "08.00 - 11.00",
-          "tanggalNext": ""
+          "waktu": "08.00 - 11.00"
         },
         {
           "nama": "Posyandu Mawar",
           "lokasi": "Dusun Krajan",
           "jadwal": "Setiap Jumat",
-          "waktu": "08.00 - 11.00",
-          "tanggalNext": ""
+          "waktu": "08.00 - 11.00"
         },
         {
           "nama": "Posyandu Kenanga",
           "lokasi": "Dusun Pasar",
           "jadwal": "Setiap Sabtu",
-          "waktu": "08.00 - 11.00",
-          "tanggalNext": ""
+          "waktu": "08.00 - 11.00"
         }
       ],
       "lansia": [
         {
           "nama": "Posyandu Lansia Sehat",
           "lokasi": "Balai Desa",
-          "jadwal": "Tanggal 15 setiap bulan",
-          "waktu": "08.00 - 11.00",
-          "tanggalNext": ""
+          "jadwal": "Tanggal 15 setiap bulan"
         },
         {
           "nama": "Posyandu Lansia Bahagia",
           "lokasi": "Dusun Krajan",
-          "jadwal": "Tanggal 25 setiap bulan",
-          "waktu": "08.00 - 11.00",
-          "tanggalNext": ""
+          "jadwal": "Tanggal 25 setiap bulan"
         }
       ]
     },
@@ -447,5 +441,18 @@
   },
   "pengajuan": [],
   "users": [],
-  "komentar": []
+  "komentar": [],
+  "keluhan": [
+    {
+      "id": 1786977432501,
+      "nama": "",
+      "hp": "",
+      "judul": "",
+      "kronologi": "",
+      "lokasi": "",
+      "bukti": "/uploads/1786977432498-210034985.jpg",
+      "tanggal": "17/8/2026, 21.37.12",
+      "status": "Baru"
+    }
+  ]
 }
