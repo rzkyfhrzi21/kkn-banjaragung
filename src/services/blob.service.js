@@ -34,7 +34,7 @@ async function putFileToBlob(localPath) {
     if (!blobClient) blobClient = require('@vercel/blob');
     const filename = path.basename(localPath);
     const result = await blobClient.put('uploads/' + filename, fs.readFileSync(localPath), {
-      access: 'private',
+      access: 'public',
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: guessContentType(filename),

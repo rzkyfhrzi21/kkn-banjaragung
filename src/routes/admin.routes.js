@@ -281,12 +281,15 @@ router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
     // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
     // URL yang dikembalikan selalu /uploads/<nama>; di Vercel file diserve via proxy dari Blob
     const blobUrl = await putFileToBlob(localPath);
-    const url = '/uploads/' + filename;
+    // Di Vercel, file disimpan ke Blob dan URL asli Blob dikembalikan (langsung bisa ditampilkan).
+    // Fallback /uploads/ hanya untuk development lokal.
+    const url = blobUrl || '/uploads/' + filename;
     if (blobUrl) {
       try { fs.unlinkSync(localPath); } catch (e) {}
     }
     res.json({ success: true, url });
   } catch (err) {
+    console.error('[UPLOAD ERROR]', err);
     if (req.file && req.file.path) {
       try { fs.unlinkSync(req.file.path); } catch (e) {}
     }
