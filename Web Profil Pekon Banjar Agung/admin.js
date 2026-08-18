@@ -499,7 +499,7 @@ function fillProfil(p) {
   const dashNama = document.getElementById('dash-nama');
   const dashTagline = document.getElementById('dash-tagline');
   const dashKecamatan = document.getElementById('dash-kecamatan');
-  if (dashLogo) dashLogo.src = panel.foto || p.logo || 'profil-pkpm.jpeg';
+  if (dashLogo) dashLogo.src = p.logo || panel.foto || 'profil-pkpm.jpeg';
   if (dashNama) dashNama.textContent = p.namaDesa || 'Desa';
   if (dashTagline) dashTagline.textContent = p.tagline || '';
   const panelJudul = document.getElementById('admin-panel-judul');
@@ -563,10 +563,8 @@ function fillPemerintahan(p) {
   document.getElementById('kd-jabatan').value = p.kepalaDesa?.jabatan || '';
   const kdPreview = document.getElementById('kd-foto-preview');
   if (kdPreview) {
-    const fotoUrl = p.kepalaDesa?.foto || 'profil-pkpm.jpeg';
-    kdPreview.src = fotoUrl;
+    kdPreview.src = p.kepalaDesa?.foto || 'profil-pkpm.jpeg';
     kdPreview.dataset.savedUrl = p.kepalaDesa?.foto || '';
-    kdPreview.onerror = () => { kdPreview.src = 'profil-pkpm.jpeg'; };
   }
   document.getElementById('bpd-ketua').value = p.bpd?.ketua || '';
   document.getElementById('bpd-wakil').value = p.bpd?.wakil || '';
