@@ -52,7 +52,7 @@ async function putJsonToBlob(key, jsonText) {
   try {
     if (!blobClient) blobClient = require('@vercel/blob');
     const result = await blobClient.put(key, Buffer.from(jsonText, 'utf8'), {
-      access: 'private',
+      access: 'public',
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType: 'application/json; charset=utf-8',
@@ -69,7 +69,7 @@ async function getBlob(key) {
   if (!isBlobAvailable()) return null;
   try {
     if (!blobClient) blobClient = require('@vercel/blob');
-    return await blobClient.get(key, { access: 'private', token: process.env.BLOB_READ_WRITE_TOKEN });
+    return await blobClient.get(key, { access: 'public', token: process.env.BLOB_READ_WRITE_TOKEN });
   } catch (err) {
     console.warn('[Blob] Gagal ambil ' + key + ' dari Vercel Blob: ' + (err.message || err));
     return null;

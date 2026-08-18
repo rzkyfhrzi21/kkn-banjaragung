@@ -23,9 +23,17 @@ router.get('/ready', (req, res) => {
   }
 });
 
-// 2. Full Site Data
+// 2. Full Site Data (publik)
+// Field sensitif (users, pengajuan, keluhan, komentar) TIDAK diekspos —
+// admin mengaksesnya via /api/admin/* yang dilindungi autentikasi.
 router.get('/api/data', (req, res) => {
-  res.json(loadData());
+  const data = loadData();
+  const publicData = { ...data };
+  delete publicData.users;
+  delete publicData.pengajuan;
+  delete publicData.keluhan;
+  delete publicData.komentar;
+  res.json(publicData);
 });
 
 // 3. Specific Public Resource Endpoints
