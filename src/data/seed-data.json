@@ -265,71 +265,6 @@
           "tentang": "Pengelolaan Keuangan Desa"
         }
       ]
-    },
-    "potensi": {
-      "umkm": {
-        "judul": "UMKM & Produk Unggulan",
-        "deskripsi": "Produk lokal berkualitas dari warga desa yang menjadi kebanggaan dan penggerak ekonomi desa.",
-        "items": [
-          {
-            "nama": "Beras Organik",
-            "deskripsi": "Beras organik hasil pertanian warga desa. addddddddddddddddddddddddddddddddddddddddddddddddd addddddddddddddddddddddddddddddddddddddddddddddddddddddddd daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa daaaaaaaaaadv daaaaaaaaaaaaaaa da",
-            "foto": "/uploads/1786431738917-813604463.jpeg"
-          },
-          {
-            "nama": "Kopi Bubuk",
-            "deskripsi": "Kopi bubuk lokal dengan cita rasa khas.",
-            "foto": ""
-          },
-          {
-            "nama": "Madu Hutan",
-            "deskripsi": "Madu murni dari hutan desa.",
-            "foto": ""
-          }
-        ]
-      },
-      "wisata": {
-        "judul": "Wisata Alam & Budaya",
-        "deskripsi": "Keindahan alam dan kekayaan tradisi budaya yang dimiliki desa.",
-        "items": [
-          {
-            "nama": "Pesona Alam Persawahan",
-            "deskripsi": "Hamparan sawah hijau yang memukau.",
-            "foto": ""
-          },
-          {
-            "nama": "Tradisi Budaya Lampung",
-            "deskripsi": "Tarian, musik, dan adat khas Lampung.",
-            "foto": ""
-          },
-          {
-            "nama": "Agrowisata",
-            "deskripsi": "Kunjungan edukatif ke kebun warga.",
-            "foto": ""
-          }
-        ]
-      },
-      "kegiatan": {
-        "judul": "Kegiatan Masyarakat",
-        "deskripsi": "Berbagai kegiatan sosial, budaya, dan kemasyarakatan di desa.",
-        "items": [
-          {
-            "nama": "Senam Bersama",
-            "deskripsi": "Senam pagi bersama warga setiap minggu.",
-            "foto": ""
-          },
-          {
-            "nama": "Gotong Royong",
-            "deskripsi": "Kegiatan membersihkan lingkungan desa.",
-            "foto": ""
-          },
-          {
-            "nama": "Belajar Mengajar TPQ",
-            "deskripsi": "Pendidikan agama untuk anak-anak.",
-            "foto": ""
-          }
-        ]
-      }
     }
   },
   "potensi": {
@@ -340,7 +275,7 @@
         {
           "nama": "Beras Organik",
           "deskripsi": "Beras organik hasil pertanian warga desa.",
-          "foto": ""
+          "foto": "/uploads/1786431738917-813604463.jpeg"
         },
         {
           "nama": "Kopi Bubuk",

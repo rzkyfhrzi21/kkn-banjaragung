@@ -234,6 +234,31 @@ function saveDataToFile(data) {
   }
 }
 
+// ===== Migrasi data lama =====
+// Potensi pernah tersimpan di layanan.potensi (misnested) sementara root potensi
+// fotonya kosong. Pindahkan foto yang hilang ke root potensi, lalu hapus duplikat.
+// Idempoten: setelah dipindah, layanan.potensi dihapus sehingga tidak jalan lagi.
+function migrateLegacyPotensi(data) {
+  const src = data && data.layanan && data.layanan.potensi;
+  const dst = data && data.potensi;
+  if (!src || !dst) return false;
+  let changed = false;
+  for (const cat of ['umkm', 'wisata', 'kegiatan']) {
+    const s = src[cat];
+    const d = dst[cat];
+    if (!s || !d || !Array.isArray(s.items) || !Array.isArray(d.items)) continue;
+    s.items.forEach((si, i) => {
+      const di = d.items[i];
+      if (di && si.foto && !di.foto) {
+        di.foto = si.foto;
+        changed = true;
+      }
+    });
+  }
+  if (changed) delete data.layanan.potensi;
+  return changed;
+}
+
 function loadData() {
   if (USE_SQLITE) {
     try {
@@ -273,6 +298,7 @@ function loadData() {
     const raw = readJsonFileSafe(DATA_FILE) || '';
     const parsed = raw ? JSON.parse(raw) : {};
     const merged = deepMerge(defaultData(), parsed);
+    if (migrateLegacyPotensi(merged)) saveDataToFile(merged);
     saveDataToFile(merged);
     return merged;
   } catch (e) {
@@ -338,7 +364,15 @@ async function syncDataFromBlob() {
     if (res.text) {
       const parsed = JSON.parse(res.text);
       const merged = deepMerge(defaultData(), parsed);
-      saveDataToFile(merged);
+      if (migrateLegacyPotensi(merged)) {
+        saveDataToFile(merged);
+        const url = await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(merged));
+        console.log(url
+          ? '[Blob] Migrasi potensi selesai — data terbaru disimpan kembali ke blob'
+          : '[Blob] Migrasi potensi gagal disimpan ke blob');
+      } else {
+        saveDataToFile(merged);
+      }
       console.log('[Blob] Data berhasil dimuat dari Vercel Blob');
       if (isSeedTemplate(merged)) {
         const real = loadBundledData();
@@ -369,6 +403,7 @@ async function syncDataFromBlob() {
 module.exports = {
   defaultData,
   deepMerge,
+  migrateLegacyPotensi,
   readJsonFileSafe,
   loadData,
   saveData,
