@@ -18,8 +18,10 @@ const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.av
 
 const DANGEROUS_EXTENSIONS_PATTERN = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
 
+// Catatan: hanya signature >= 4 karakter aman untuk biner acak (PNG/JPEG terkompresi).
+// Signature pendek seperti '<%' atau '<?=' muncul ~3x di setiap 200KB data acak (false positive 400).
 const DANGEROUS_BINARY_SIGNATURES = [
-  '<?php', '<?=', '<%', '<script', 'eval(', 'base64_decode(', 'passthru(',
+  '<?php', '<script', 'eval(', 'base64_decode(', 'passthru(',
   'shell_exec(', 'system(', 'popen(', 'proc_open(', 'assert('
 ];
 
