@@ -16,4 +16,5 @@ sync-to-vercel.bat
 # Runtime data (persisted via Vercel Blob in production)
 /data/
 /data.json
+/uploads/
 
