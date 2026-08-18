@@ -290,7 +290,11 @@ router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
     if (req.file && req.file.path) {
       try { fs.unlinkSync(req.file.path); } catch (e) {}
     }
-    res.status(400).json({ success: false, message: err.message || 'Gagal mengupload file' });
+    res.status(400).json({
+      success: false,
+      message: err.message || 'Gagal mengupload file',
+      detail: req.file ? { file: req.file.originalname, size: req.file.size } : undefined
+    });
   }
 });
 

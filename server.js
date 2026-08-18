@@ -150,6 +150,12 @@ app.use((req, res) => {
 // ===== 5. Global Error Handling Middleware =====
 app.use((err, req, res, next) => {
   if (err) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ success: false, message: 'File terlalu besar. Ukuran maksimal 4MB.', code: 'LIMIT_FILE_SIZE' });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({ success: false, message: 'Field upload tidak dikenali. Gunakan field "foto".', code: 'LIMIT_UNEXPECTED_FILE' });
+    }
     return res.status(400).json({ success: false, message: err.message || 'Terjadi kesalahan pada request' });
   }
   next();

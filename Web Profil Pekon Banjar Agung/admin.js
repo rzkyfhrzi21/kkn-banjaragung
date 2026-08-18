@@ -279,8 +279,10 @@ function createUploadProgressToast(fileName) {
       if (titleText) titleText.textContent = 'Unggah Gagal';
       if (percentText) percentText.textContent = 'Gagal';
       const msgEl = toast.querySelector('.toast-message');
-      if (msgEl) msgEl.textContent = message;
-      setTimeout(dismiss, 4500);
+      if (msgEl) {
+        msgEl.classList.remove('truncate');
+        msgEl.textContent = message;
+      }
     }
   };
 }
@@ -326,13 +328,25 @@ function uploadFile(file, options = {}) {
         setTimeout(() => checkSession(), 1500);
         resolve(null);
       } else {
-        progressToast.error('Terjadi kesalahan server (' + xhr.status + ')');
+        let serverMsg = 'Terjadi kesalahan server (HTTP ' + xhr.status + ')';
+        try {
+          const parsed = JSON.parse(xhr.responseText);
+          if (parsed && parsed.message) {
+            serverMsg = 'Ditolak server (HTTP ' + xhr.status + '): ' + parsed.message;
+            if (parsed.detail && parsed.detail.file) {
+              serverMsg += ' — File: ' + parsed.detail.file + ' (' + Math.round(parsed.detail.size / 1024) + ' KB)';
+            }
+          }
+        } catch (parseErr) {}
+        console.error('[Upload] Gagal:', xhr.status, xhr.responseText);
+        progressToast.error(serverMsg);
         resolve(null);
       }
     });
 
     xhr.addEventListener('error', () => {
-      progressToast.error('Terjadi kesalahan jaringan saat upload. Pastikan koneksi stabil dan ukuran foto maksimal 4MB.');
+      console.error('[Upload] Jaringan gagal untuk file:', file.name, 'ukuran:', Math.round(file.size / 1024) + ' KB');
+      progressToast.error('Gagal terhubung ke server saat upload "' + file.name + '" (' + Math.round(file.size / 1024) + ' KB). Periksa koneksi internet atau coba file yang lebih kecil (maks 4MB).');
       fetch(API_BASE + '/api/admin/check-session')
         .then((r) => {
           if (!r.ok) {
