@@ -142,6 +142,7 @@ const publicFormLimiter = rateLimit({
 // 5. Helmet Security Headers Config
 const securityHeaders = helmet({
   crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: false,
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'", 'https:'],
