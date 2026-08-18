@@ -452,9 +452,22 @@ async function loadAllData() {
    fillPotensi(data.potensi);
    renderPengumuman(data.pengumuman || []);
    renderGaleri(data.galeri || []);
+    fillLayanan(data.layanan);
+    renderPengajuan();
+    renderKeluhan();
+    const g = data.galeri || {};
+    if (Array.isArray(g)) {
+      cachedGaleri = g;
+    } else {
+      cachedGaleri = [
+        ...(g.galeri1 || []),
+        ...(g.galeri2 || []),
+        ...(g.galeri3 || [])
+      ];
+    }
  } catch (err) {
-   console.error('Gagal memuat data', err);
- }
+    console.error('Gagal memuat data', err);
+  }
 }
 
 function fillProfil(p) {
@@ -1193,27 +1206,6 @@ galPickerModal?.addEventListener('click', (e) => {
   if (e.target === galPickerModal) closeGalPicker();
 });
 
-const _origLoadAllData = loadAllData;
-loadAllData = async function () {
-  await _origLoadAllData();
-  try {
-    const res = await fetch(API_BASE + '/api/data');
-    const data = await res.json();
-    const g = data.galeri || {};
-    if (Array.isArray(g)) {
-      cachedGaleri = g;
-    } else {
-      cachedGaleri = [
-        ...(g.galeri1 || []),
-        ...(g.galeri2 || []),
-        ...(g.galeri3 || [])
-      ];
-    }
-  } catch (err) {
-    cachedGaleri = [];
-  }
-};
-
 function fillLayanan(l) {
   if (!l) return;
   const ps = l.pengajuanSurat || {}, dk = l.dataKependudukan || {}, jp = l.jadwalPosyandu || {}, ap = l.arsipPerdes || {};
@@ -1643,19 +1635,6 @@ async function renderKeluhan() {
     container.innerHTML = '<p class="text-gray-400 text-sm">Gagal memuat keluhan.</p>';
   }
 }
-
-const _origLoadAllData2 = loadAllData;
-loadAllData = async function () {
-  await _origLoadAllData2();
-  try {
-    const res = await fetch(API_BASE + '/api/data');
-    const data = await res.json();
-    fillLayanan(data.layanan);
-    fillPotensi(data.potensi);
-    renderPengajuan();
-    renderKeluhan();
-  } catch (e) { console.error('Gagal memuat data lanjutan', e); }
-};
 
 document.querySelectorAll('.admin-file-input input[type="file"]').forEach(input => {
   input.addEventListener('change', () => {
