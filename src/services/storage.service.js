@@ -328,9 +328,15 @@ function loadBundledData() {
 async function syncDataFromBlob() {
   if (!isBlobAvailable()) return false;
   try {
-    const text = await fetchBlobText(BLOB_DATA_KEY);
-    if (text) {
-      const parsed = JSON.parse(text);
+    const res = await fetchBlobText(BLOB_DATA_KEY);
+    if (!res.ok) {
+      // Network/API error — blob MUNGKIN berisi data terbaru user.
+      // JANGAN menimpa dengan data statis (itulah penyebab update "hilang").
+      console.warn('[Blob] Fetch gagal — blob TIDAK ditimpa, data di blob tetap aman');
+      return false;
+    }
+    if (res.text) {
+      const parsed = JSON.parse(res.text);
       const merged = deepMerge(defaultData(), parsed);
       saveDataToFile(merged);
       console.log('[Blob] Data berhasil dimuat dari Vercel Blob');
@@ -342,11 +348,11 @@ async function syncDataFromBlob() {
           console.log(url
             ? '[Blob] Template terdeteksi — data asli dipulihkan ke blob'
             : '[Blob] Template terdeteksi tapi gagal restore');
-          return true;
         }
       }
       return true;
     }
+    // Blob benar-benar 404 (belum pernah dibuat) — baru boleh seed pertama.
     const current = loadData();
     const url = await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(current));
     if (url) {

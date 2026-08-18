@@ -65,14 +65,19 @@ async function putJsonToBlob(key, jsonText) {
   }
 }
 
+// Hasil: { ok: true, notFound: boolean, data } atau { ok: false, error }
+// notFound=true berarti blob memang belum ada (404) — aman untuk seed.
+// ok=false berarti network/API error — JANGAN menimpa blob dengan data lain.
 async function getBlob(key, attempt = 1) {
-  if (!isBlobAvailable()) return null;
+  if (!isBlobAvailable()) return { ok: false, error: 'blob unavailable' };
   try {
     if (!blobClient) blobClient = require('@vercel/blob');
     // v2: authorization header di-set otomatis dari env (token tidak perlu dikirim).
     // get() fetch LANGSUNG ke domain CDN store ({storeId}.public.blob.vercel-storage.com) —
     // store baru butuh waktu DNS/CDN provisioning, makanya ada retry.
-    return await blobClient.get(key, { access: 'public' });
+    const result = await blobClient.get(key, { access: 'public' });
+    if (!result) return { ok: true, notFound: true, data: null };
+    return { ok: true, data: result };
   } catch (err) {
     const hint = /fetch failed|ENOTFOUND|EAI_AGAIN|UND_ERR_CONNECT/i.test(err && err.message)
       ? ' (domain CDN store belum siap/DNS — coba lagi dalam beberapa menit)'
@@ -82,33 +87,35 @@ async function getBlob(key, attempt = 1) {
       await new Promise((r) => setTimeout(r, 1500 * attempt));
       return getBlob(key, attempt + 1);
     }
-    return null;
+    return { ok: false, error: (err && err.message) || 'unknown' };
   }
 }
 
+// Hasil: { ok: true, text: string|null } atau { ok: false, error }
 async function fetchBlobText(key) {
   try {
-    const blob = await getBlob(key);
-    if (!blob) return null;
+    const { ok, notFound, data: blob } = await getBlob(key);
+    if (!ok) return { ok: false, error: 'fetch gagal' };
+    if (notFound || !blob) return { ok: true, text: null };
     if (blob.stream) {
       const res = new Response(blob.stream);
       const text = await res.text();
-      if (text) return text;
+      if (text) return { ok: true, text };
     }
     if (blob.blob && blob.blob.downloadUrl) {
       const r = await fetch(blob.blob.downloadUrl);
-      if (r.ok) return await r.text();
+      if (r.ok) return { ok: true, text: await r.text() };
     }
-    return null;
+    return { ok: true, text: null };
   } catch (err) {
     console.warn('[Blob] Gagal baca teks ' + key + ': ' + (err.message || err));
-    return null;
+    return { ok: false, error: (err && err.message) || 'unknown' };
   }
 }
 
 async function streamBlobFile(res, key) {
-  const blob = await getBlob(key);
-  if (!blob) return false;
+  const { ok, notFound, data: blob } = await getBlob(key);
+  if (!ok || notFound || !blob) return false;
   const contentType = (blob.blob && blob.blob.contentType) || 'application/octet-stream';
   if (blob.stream) {
     const nodeStream = Readable.fromWeb(blob.stream);
