@@ -451,26 +451,23 @@ footer.kebung-tikhai a:hover {
     overflow: hidden;
 }
 
-/* ===== Admin Save Progress (pojok kanan atas) ===== */
+/* ===== Admin Save Progress (berbaris di dalam container toast) ===== */
 #admin-save-progress {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 1000000;
-    width: 220px;
+    position: relative;
+    width: 100%;
     background: #1f2937;
     border: 1px solid #374151;
     border-radius: 10px;
     padding: 10px 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateX(110%);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #admin-save-progress.asp-show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
 }
 #admin-save-progress .asp-label {
     color: #e5e7eb;

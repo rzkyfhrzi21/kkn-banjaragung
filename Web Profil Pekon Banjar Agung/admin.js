@@ -182,6 +182,12 @@ let _saveProgTimer = null;
 
 function showSaveProgress() {
   hideSaveProgress();
+  let container = document.getElementById('pekon-toast-container') || document.getElementById('admin-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'admin-toast-container';
+    document.body.appendChild(container);
+  }
   let el = document.getElementById('admin-save-progress');
   if (!el) {
     el = document.createElement('div');
@@ -189,7 +195,7 @@ function showSaveProgress() {
     el.innerHTML =
       '<div class="asp-label">Menyimpan data <span class="asp-pct">0%</span></div>' +
       '<div class="asp-track"><div class="asp-bar"></div></div>';
-    document.body.appendChild(el);
+    container.appendChild(el);
   }
   el.classList.add('asp-show');
   updateSaveProgress(2);
@@ -303,7 +309,7 @@ function createUploadProgressToast(fileName) {
   };
   closeBtn.addEventListener('click', dismiss);
 
-  container.prepend(toast);
+  container.appendChild(toast);
   requestAnimationFrame(() => {
     toast.classList.add('toast-show');
   });
