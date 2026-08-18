@@ -259,6 +259,18 @@ function migrateLegacyPotensi(data) {
   return changed;
 }
 
+// Link share "maps.app.goo.gl/..." tidak bisa ditampilkan di iframe (google.com
+// refused to connect). Konversi ke URL embed maps.google.com dengan koordinat
+// yang sudah di-resolve (Kantor Pekon Banjar Agung). Idempoten.
+function migrateLegacyMapsUrl(data) {
+  const mapsUrl = data && data.kontak && data.kontak.mapsUrl;
+  if (mapsUrl && mapsUrl.includes('maps.app.goo.gl')) {
+    data.kontak.mapsUrl = 'https://maps.google.com/maps?q=-5.3973289,104.7597588&z=16&output=embed';
+    return true;
+  }
+  return false;
+}
+
 function loadData() {
   if (USE_SQLITE) {
     try {
@@ -299,6 +311,7 @@ function loadData() {
     const parsed = raw ? JSON.parse(raw) : {};
     const merged = deepMerge(defaultData(), parsed);
     if (migrateLegacyPotensi(merged)) saveDataToFile(merged);
+    if (migrateLegacyMapsUrl(merged)) saveDataToFile(merged);
     saveDataToFile(merged);
     return merged;
   } catch (e) {
@@ -373,6 +386,15 @@ async function syncDataFromBlob() {
       } else {
         saveDataToFile(merged);
       }
+      if (migrateLegacyMapsUrl(merged)) {
+        saveDataToFile(merged);
+        const url = await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(merged));
+        console.log(url
+          ? '[Blob] Migrasi mapsUrl selesai — URL embed disimpan kembali ke blob'
+          : '[Blob] Migrasi mapsUrl gagal disimpan ke blob');
+      } else {
+        saveDataToFile(merged);
+      }
       console.log('[Blob] Data berhasil dimuat dari Vercel Blob');
       if (isSeedTemplate(merged)) {
         const real = loadBundledData();
@@ -404,6 +426,7 @@ module.exports = {
   defaultData,
   deepMerge,
   migrateLegacyPotensi,
+  migrateLegacyMapsUrl,
   readJsonFileSafe,
   loadData,
   saveData,

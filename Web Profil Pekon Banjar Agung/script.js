@@ -467,10 +467,28 @@ function applyKontak(k) {
         if (text.startsWith('Telepon:')) el.textContent = 'Telepon: ' + (k.telepon || '');
         if (text.startsWith('Email:')) el.textContent = 'Email: ' + (k.email || '');
     });
-// Maps iframe
+// Maps iframe — konversi link share/place apa pun ke format embed yang valid
+    const toMapsEmbed = (url) => {
+        if (!url) return '';
+        if (url.includes('output=embed')) return url;
+        const m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (m) return `https://maps.google.com/maps?q=${m[1]},${m[2]}&z=16&output=embed`;
+        const q = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (q) return `https://maps.google.com/maps?q=${q[1]},${q[2]}&z=16&output=embed`;
+        const d = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+        if (d) return `https://maps.google.com/maps?q=${d[1]},${d[2]}&z=16&output=embed`;
+        return '';
+    };
     if (k.mapsUrl) {
+        const embedUrl = toMapsEmbed(k.mapsUrl);
         document.querySelectorAll('iframe').forEach(iframe => {
-            iframe.src = k.mapsUrl;
+            if (embedUrl) {
+                iframe.src = embedUrl;
+            } else if (iframe.src.includes('maps') || iframe.src.includes('google')) {
+                iframe.style.display = 'none';
+                iframe.insertAdjacentHTML('afterend',
+                    `<a href="${k.mapsUrl}" target="_blank" rel="noopener" class="inline-block mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">Buka di Google Maps</a>`);
+            }
         });
     }
     // Social media links (footer)
