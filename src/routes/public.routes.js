@@ -14,7 +14,7 @@ const {
 
 // 1. Health & Ready Endpoints
 router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: Date.now() }));
-router.get('/ready', (req, res) => {
+router.get('/ready', async (req, res) => {
   try {
     loadData();
     res.json({ ready: true });
@@ -26,7 +26,7 @@ router.get('/ready', (req, res) => {
 // 2. Full Site Data (publik)
 // Field sensitif (users, pengajuan, keluhan, komentar) TIDAK diekspos —
 // admin mengaksesnya via /api/admin/* yang dilindungi autentikasi.
-router.get('/api/data', (req, res) => {
+router.get('/api/data', async (req, res) => {
   const data = loadData();
   const publicData = { ...data };
   delete publicData.users;
@@ -37,42 +37,42 @@ router.get('/api/data', (req, res) => {
 });
 
 // 3. Specific Public Resource Endpoints
-router.get('/api/profil', (req, res) => {
+router.get('/api/profil', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.profil });
 });
 
-router.get('/api/pemerintahan', (req, res) => {
+router.get('/api/pemerintahan', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.pemerintahan });
 });
 
-router.get('/api/kontak', (req, res) => {
+router.get('/api/kontak', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.kontak });
 });
 
-router.get('/api/layanan', (req, res) => {
+router.get('/api/layanan', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.layanan });
 });
 
-router.get('/api/potensi', (req, res) => {
+router.get('/api/potensi', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.potensi });
 });
 
-router.get('/api/berita', (req, res) => {
+router.get('/api/berita', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.berita || [] });
 });
 
-router.get('/api/pengumuman', (req, res) => {
+router.get('/api/pengumuman', async (req, res) => {
   const data = loadData();
   res.json({ success: true, data: data.pengumuman || [] });
 });
 
-router.get('/api/pengumuman/:id', (req, res) => {
+router.get('/api/pengumuman/:id', async (req, res) => {
   const data = loadData();
   const item = (data.pengumuman || []).find(p => String(p.id) === req.params.id);
   if (!item) {
@@ -81,13 +81,13 @@ router.get('/api/pengumuman/:id', (req, res) => {
   res.json({ success: true, data: item });
 });
 
-router.get('/api/pengumuman/:id/komentar', (req, res) => {
+router.get('/api/pengumuman/:id/komentar', async (req, res) => {
   const data = loadData();
   const komentar = (data.komentar || []).filter(k => String(k.pengumumanId) === req.params.id);
   res.json({ success: true, data: komentar });
 });
 
-router.post('/api/pengumuman/:id/komentar', (req, res) => {
+router.post('/api/pengumuman/:id/komentar', async (req, res) => {
   const data = loadData();
   const { nama, isi } = req.body || {};
   if (!nama || !isi) {
@@ -102,12 +102,12 @@ router.post('/api/pengumuman/:id/komentar', (req, res) => {
   };
   data.komentar = data.komentar || [];
   data.komentar.unshift(newKomentar);
-  saveData(data);
+  await saveData(data);
   res.json({ success: true, data: newKomentar });
 });
 
 // 4. Form Pengajuan Surat Online
-router.post('/api/pengajuan', publicFormLimiter, checkHoneypot, (req, res) => {
+router.post('/api/pengajuan', publicFormLimiter, checkHoneypot, async (req, res) => {
   const data = loadData();
   const item = {
     id: Date.now(),
@@ -121,12 +121,12 @@ router.post('/api/pengajuan', publicFormLimiter, checkHoneypot, (req, res) => {
   };
   data.pengajuan = data.pengajuan || [];
   data.pengajuan.unshift(item);
-  saveData(data);
+  await saveData(data);
   res.json({ success: true, data: item });
 });
 
 // 5. Form Keluhan Masyarakat Online
-router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHoneypot, (req, res) => {
+router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHoneypot, async (req, res) => {
   try {
     let bukti = '';
     if (req.file) {
@@ -147,7 +147,7 @@ router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHone
     };
     data.keluhan = data.keluhan || [];
     data.keluhan.unshift(item);
-    saveData(data);
+    await saveData(data);
     res.json({ success: true, data: item });
   } catch (err) {
     if (req.file && req.file.path) {
@@ -158,7 +158,7 @@ router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHone
 });
 
 // 6. Statistics Endpoint
-router.get('/api/stats', (req, res) => {
+router.get('/api/stats', async (req, res) => {
   const data = loadData();
   res.json({
     success: true,

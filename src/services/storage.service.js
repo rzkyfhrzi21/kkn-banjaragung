@@ -281,11 +281,13 @@ function loadData() {
   }
 }
 
-function saveData(data) {
+async function saveData(data) {
   try { saveDataToFile(data); } catch (e) {}
 
   if (isBlobAvailable()) {
-    putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(data)).catch(() => {});
+    // WAJIB await: di Vercel serverless, promise fire-and-forget bisa dibekukan
+    // sebelum fetch keluar (gejala: log "No outgoing requests", perubahan hilang).
+    await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(data));
   }
 
   if (USE_SQLITE) {
@@ -302,6 +304,27 @@ function saveData(data) {
   }
 }
 
+function isSeedTemplate(data) {
+  const kd = data && data.pemerintahan && data.pemerintahan.kepalaDesa;
+  const foto = (kd && kd.foto) || '';
+  const logo = (data && data.profil && (data.profil.logo || data.profil.heroFoto)) || '';
+  return !!(kd &&
+    (kd.nama === '[Nama Kepala Desa]' ||
+     foto.includes('randomuser.me') ||
+     logo.includes('images.unsplash.com')));
+}
+
+function loadBundledData() {
+  try {
+    if (fs.existsSync(BUNDLED_DATA_FILE)) {
+      const raw = readJsonFileSafe(BUNDLED_DATA_FILE) || '';
+      const parsed = raw ? JSON.parse(raw) : {};
+      return deepMerge(defaultData(), parsed);
+    }
+  } catch (e) {}
+  return null;
+}
+
 async function syncDataFromBlob() {
   if (!isBlobAvailable()) return false;
   try {
@@ -311,6 +334,17 @@ async function syncDataFromBlob() {
       const merged = deepMerge(defaultData(), parsed);
       saveDataToFile(merged);
       console.log('[Blob] Data berhasil dimuat dari Vercel Blob');
+      if (isSeedTemplate(merged)) {
+        const real = loadBundledData();
+        if (real) {
+          saveDataToFile(real);
+          const url = await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(real));
+          console.log(url
+            ? '[Blob] Template terdeteksi — data asli dipulihkan ke blob'
+            : '[Blob] Template terdeteksi tapi gagal restore');
+          return true;
+        }
+      }
       return true;
     }
     const current = loadData();
