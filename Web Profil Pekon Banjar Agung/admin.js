@@ -1,6 +1,8 @@
 // ===== Admin Panel Logic =====
 const API_BASE = '';
 
+let lastUploadError = '';
+
 // Tambahkan token sesi ke setiap permintaan yang mengubah data admin.
 const nativeFetch = window.fetch.bind(window);
 window.fetch = (input, init = {}) => {
@@ -291,6 +293,7 @@ function uploadFile(file, options = {}) {
   if (!file) return Promise.resolve(null);
   const check = validateFileClient(file);
   if (!check.valid) {
+    lastUploadError = check.message;
     adminToast(check.message, 'error', 'Peringatan Berkas');
     return Promise.resolve(null);
   }
@@ -313,18 +316,22 @@ function uploadFile(file, options = {}) {
         try {
           const data = JSON.parse(xhr.responseText);
           if (data.success) {
+            lastUploadError = '';
             progressToast.success('Foto berhasil diunggah! Data sedang disimpan...', options.autoReload || false);
             resolve(data.url);
           } else {
-            progressToast.error(data.message || 'Gagal mengupload berkas');
+            lastUploadError = data.message || 'Gagal mengupload berkas';
+            progressToast.error(lastUploadError);
             resolve(null);
           }
         } catch (err) {
-          progressToast.error('Gagal membaca respon server');
+          lastUploadError = 'Gagal membaca respon server';
+          progressToast.error(lastUploadError);
           resolve(null);
         }
       } else if (xhr.status === 401) {
-        progressToast.error('Sesi login telah berakhir. Silakan login kembali.');
+        lastUploadError = 'Sesi login telah berakhir. Silakan login kembali.';
+        progressToast.error(lastUploadError);
         setTimeout(() => checkSession(), 1500);
         resolve(null);
       } else {
@@ -339,14 +346,17 @@ function uploadFile(file, options = {}) {
           }
         } catch (parseErr) {}
         console.error('[Upload] Gagal:', xhr.status, xhr.responseText);
+        lastUploadError = serverMsg;
         progressToast.error(serverMsg);
         resolve(null);
       }
     });
 
     xhr.addEventListener('error', () => {
+      const netMsg = 'Gagal terhubung ke server saat upload "' + file.name + '" (' + Math.round(file.size / 1024) + ' KB). Periksa koneksi internet atau coba file yang lebih kecil (maks 4MB).';
+      lastUploadError = netMsg;
       console.error('[Upload] Jaringan gagal untuk file:', file.name, 'ukuran:', Math.round(file.size / 1024) + ' KB');
-      progressToast.error('Gagal terhubung ke server saat upload "' + file.name + '" (' + Math.round(file.size / 1024) + ' KB). Periksa koneksi internet atau coba file yang lebih kecil (maks 4MB).');
+      progressToast.error(netMsg);
       fetch(API_BASE + '/api/admin/check-session')
         .then((r) => {
           if (!r.ok) {
@@ -730,8 +740,9 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
           preview.src = uploaded;
         }
       } else {
-        msg.textContent = 'Gagal mengunggah foto Kepala Desa';
-        msg.className = 'ml-3 text-sm text-red-600';
+        msg.textContent = 'Gagal mengunggah foto Kepala Desa' + (lastUploadError ? ' — ' + lastUploadError : '');
+        msg.className = 'ml-3 text-sm text-red-600 font-medium';
+        adminToast(lastUploadError || 'Gagal mengunggah foto Kepala Desa', 'error', 'Unggah Gagal');
         return;
       }
     }

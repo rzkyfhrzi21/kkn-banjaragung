@@ -70,7 +70,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const originalName = (file.originalname || '').toLowerCase();
+  const originalName = (file.originalname || '').trim().toLowerCase();
 
   // Anti Double Extension (e.g. shell.php.jpg, test.phtml.png)
   const nameWithoutLastExt = originalName.substring(0, originalName.lastIndexOf('.'));
