@@ -26,10 +26,17 @@ function validateFileBuffer(filePath) {
   const isPng = buffer.length >= 8 && buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
   const isGif = buffer.length >= 6 && buffer.toString('ascii', 0, 6).startsWith('GIF8');
   const isWebp = buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+  const isBmp = buffer.length >= 2 && buffer[0] === 0x42 && buffer[1] === 0x4D;
+  const isIco = buffer.length >= 4 && buffer[0] === 0x00 && buffer[1] === 0x00 && buffer[2] === 0x01 && buffer[3] === 0x00;
+  const isTiff = buffer.length >= 4 && ((buffer[0] === 0x49 && buffer[1] === 0x49 && buffer[2] === 0x2A && buffer[3] === 0x00) || (buffer[0] === 0x4D && buffer[1] === 0x4D && buffer[2] === 0x00 && buffer[3] === 0x2A));
+  const ftyp = buffer.length >= 12 ? buffer.toString('ascii', 4, 12) : '';
+  const isAvif = ftyp.startsWith('ftyp') && (buffer.toString('ascii', 8, 12) === 'avif' || buffer.toString('ascii', 8, 16).startsWith('avif'));
+  const isHeic = ftyp.startsWith('ftyp') && (['heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'].includes(buffer.toString('ascii', 8, 12)));
 
-  if (!isJpeg && !isPng && !isGif && !isWebp) {
+  if (!isJpeg && !isPng && !isGif && !isWebp && !isBmp && !isIco && !isTiff && !isAvif && !isHeic) {
     try { fs.unlinkSync(filePath); } catch (e) {}
-    throw new Error('Header berkas tidak valid. Berkas bukan gambar asli (Magic Byte Mismatch).');
+    const sniff = buffer.length >= 12 ? buffer.toString('hex', 0, 8) : 'kosong';
+    throw new Error('Header berkas tidak valid. Berkas bukan gambar asli (Magic Byte Mismatch). 8 byte pertama: ' + sniff + '.');
   }
 
   // Scan for malicious executable scripts in binary buffer
@@ -72,9 +79,9 @@ const fileFilter = (req, file, cb) => {
   }
 
   // Allowed Image Extensions Only
-  const allowed = /\.(jpeg|jpg|png|gif|webp)$/i;
+  const allowed = /\.(jpeg|jpg|png|gif|webp|avif|heic|heif|bmp|ico|tiff|tif)$/i;
   if (!allowed.test(path.extname(originalName))) {
-    return cb(new Error('Format file tidak didukung. File harus berupa gambar (jpeg, jpg, png, gif, webp).'), false);
+    return cb(new Error('Format file tidak didukung. File harus berupa gambar (jpeg, jpg, png, gif, webp, avif, heic, bmp, ico, tiff).'), false);
   }
 
   cb(null, true);

@@ -150,7 +150,7 @@ function adminToast(message, type = 'success', title = '', duration = 2000) {
   };
 
   closeBtn.addEventListener('click', dismiss);
-  container.appendChild(toast);
+  container.prepend(toast);
 
   requestAnimationFrame(() => {
     toast.classList.add('toast-show');
@@ -177,10 +177,10 @@ function validateFileClient(file) {
     return { valid: false, message: 'Nama berkas mencurigakan (Double Extension terdeteksi).' };
   }
 
-  const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  const allowedExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.heic', '.heif', '.bmp', '.ico', '.tiff', '.tif'];
   const ext = rawName.substring(rawName.lastIndexOf('.'));
   if (!allowedExts.includes(ext)) {
-    return { valid: false, message: 'Format foto tidak didukung. Harus berupa gambar (JPG, PNG, GIF, WEBP).' };
+    return { valid: false, message: 'Format foto tidak didukung. Harus berupa gambar (JPG, PNG, GIF, WEBP, AVIF, HEIC, BMP, ICO, TIFF).' };
   }
 
   if (file.type && !file.type.startsWith('image/')) {
@@ -238,7 +238,7 @@ function createUploadProgressToast(fileName) {
   };
   closeBtn.addEventListener('click', dismiss);
 
-  container.appendChild(toast);
+  container.prepend(toast);
   requestAnimationFrame(() => {
     toast.classList.add('toast-show');
   });

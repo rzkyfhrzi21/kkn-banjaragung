@@ -14,7 +14,7 @@ const PUBLIC_DIR = path.join(ROOT_DIR, 'Web Profil Pekon Banjar Agung');
 
 const USE_SQLITE = String(process.env.USE_SQLITE).toLowerCase() === 'true';
 
-const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.heic', '.heif', '.bmp', '.ico', '.tiff', '.tif'];
 
 const DANGEROUS_EXTENSIONS_PATTERN = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
 

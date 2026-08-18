@@ -16,7 +16,14 @@ function guessContentType(filename) {
     '.jpeg': 'image/jpeg',
     '.png': 'image/png',
     '.gif': 'image/gif',
-    '.webp': 'image/webp'
+    '.webp': 'image/webp',
+    '.avif': 'image/avif',
+    '.heic': 'image/heic',
+    '.heif': 'image/heif',
+    '.bmp': 'image/bmp',
+    '.ico': 'image/x-icon',
+    '.tiff': 'image/tiff',
+    '.tif': 'image/tiff'
   };
   return map[path.extname(filename).toLowerCase()] || 'application/octet-stream';
 }
@@ -29,13 +36,14 @@ async function putFileToBlob(localPath) {
     const result = await blobClient.put('uploads/' + filename, fs.readFileSync(localPath), {
       access: 'private',
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: guessContentType(filename),
       token: process.env.BLOB_READ_WRITE_TOKEN
     });
     return result.url;
   } catch (err) {
     console.error('[Blob] Gagal upload ke Vercel Blob: ' + (err.message || err));
-    return null;
+    throw new Error('Penyimpanan file di server gagal (' + (err.message || 'unknown') + ')');
   }
 }
 
@@ -46,6 +54,7 @@ async function putJsonToBlob(key, jsonText) {
     const result = await blobClient.put(key, Buffer.from(jsonText, 'utf8'), {
       access: 'private',
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: 'application/json; charset=utf-8',
       token: process.env.BLOB_READ_WRITE_TOKEN
     });
