@@ -4,6 +4,7 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const { loadData, saveData } = require('../services/storage.service');
+const { putFileToBlob } = require('../services/blob.service');
 const {
   publicFormLimiter,
   checkHoneypot,
@@ -131,7 +132,11 @@ router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHone
     let bukti = '';
     if (req.file) {
       validateFileBuffer(req.file.path);
-      bukti = '/uploads/' + req.file.filename;
+      const blobUrl = await putFileToBlob(req.file.path);
+      bukti = blobUrl || '/uploads/' + req.file.filename;
+      if (blobUrl) {
+        try { fs.unlinkSync(req.file.path); } catch (e) {}
+      }
     }
     const data = loadData();
     const item = {

@@ -415,7 +415,7 @@ function applyPemerintahan(p) {
                 if (isGrid) {
                     const card = document.createElement('div');
                     card.className = (i % 2 === 0 ? 'border-red-800' : 'border-yellow-500') + ' bg-white rounded-2xl shadow-md p-5 flex flex-col items-center text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4';
-                    const hasFoto = item.foto && item.foto.includes('http');
+                    const hasFoto = !!item.foto;
                     const fotoHtml = hasFoto
                         ? `<img src="${item.foto}" alt="${item.jabatan}" class="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover mb-3">`
                         : `<div class="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 bg-red-100 rounded-full mb-3" aria-hidden="true"></div>`;
@@ -922,7 +922,7 @@ function updateSyaratKhusus() {
 function validateClientImageFile(file) {
     if (!file) return { valid: false, message: 'Tidak ada berkas yang dipilih.' };
     if (file.size === 0) return { valid: false, message: 'Berkas kosong (0 bytes).' };
-    if (file.size > 5 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 5MB.' };
+    if (file.size > 4 * 1024 * 1024) return { valid: false, message: 'Ukuran foto terlalu besar! Maksimal 4MB.' };
 
     const rawName = (file.name || '').toLowerCase();
     const dangerousPatterns = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;

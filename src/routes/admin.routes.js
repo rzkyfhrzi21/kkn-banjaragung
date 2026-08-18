@@ -317,7 +317,7 @@ router.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, 
 
       // On Vercel, persist the file to Vercel Blob Storage (fallback to /uploads/ locally)
       const blobUrl = await putFileToBlob(localPath);
-      urls.push('/uploads/' + filename);
+      urls.push(blobUrl || '/uploads/' + filename);
       if (blobUrl) {
         try { fs.unlinkSync(localPath); } catch (e) {}
       }
