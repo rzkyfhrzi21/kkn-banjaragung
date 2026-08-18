@@ -1,5 +1,5 @@
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 :root {
@@ -12,23 +12,55 @@ body {
   --putih: #ffffff;
 }
 
-.bg-green-700 { background-color: var(--maroon) !important; }
-.bg-green-800 { background-color: var(--maroon-dark) !important; }
-.bg-green-600 { background-color: var(--maroon-light) !important; }
-.bg-green-500 { background-color: #a83434 !important; }
-.bg-green-100 { background-color: #f3d9d9 !important; }
-.bg-green-50 { background-color: #faf0f0 !important; }
-.text-green-700 { color: var(--maroon) !important; }
-.text-green-600 { color: var(--maroon-light) !important; }
-.border-green-300 { border-color: #c9a0a0 !important; }
-.border-green-700 { border-color: var(--maroon) !important; }
+.bg-green-700 {
+  background-color: var(--maroon) !important;
+}
+.bg-green-800 {
+  background-color: var(--maroon-dark) !important;
+}
+.bg-green-600 {
+  background-color: var(--maroon-light) !important;
+}
+.bg-green-500 {
+  background-color: #a83434 !important;
+}
+.bg-green-100 {
+  background-color: #f3d9d9 !important;
+}
+.bg-green-50 {
+  background-color: #faf0f0 !important;
+}
+.text-green-700 {
+  color: var(--maroon) !important;
+}
+.text-green-600 {
+  color: var(--maroon-light) !important;
+}
+.border-green-300 {
+  border-color: #c9a0a0 !important;
+}
+.border-green-700 {
+  border-color: var(--maroon) !important;
+}
 
-.bg-green-700:hover { background-color: var(--maroon-dark) !important; }
-.bg-green-600:hover { background-color: var(--maroon-dark) !important; }
-.bg-green-500:hover { background-color: #8f2323 !important; }
-.bg-green-100:hover { background-color: #ecd1d1 !important; }
-.text-green-700:hover { color: var(--maroon-dark) !important; }
-.text-green-600:hover { color: var(--maroon-dark) !important; }
+.bg-green-700:hover {
+  background-color: var(--maroon-dark) !important;
+}
+.bg-green-600:hover {
+  background-color: var(--maroon-dark) !important;
+}
+.bg-green-500:hover {
+  background-color: #8f2323 !important;
+}
+.bg-green-100:hover {
+  background-color: #ecd1d1 !important;
+}
+.text-green-700:hover {
+  color: var(--maroon-dark) !important;
+}
+.text-green-600:hover {
+  color: var(--maroon-dark) !important;
+}
 
 input:focus,
 textarea:focus {
@@ -36,8 +68,14 @@ textarea:focus {
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out both;
@@ -52,7 +90,11 @@ textarea:focus {
     linear-gradient(-45deg, transparent 47%, #d4af37 48% 52%, transparent 53%),
     linear-gradient(45deg, transparent 47%, #7a1e1e 48% 52%, transparent 53%),
     linear-gradient(-45deg, transparent 47%, #7a1e1e 48% 52%, transparent 53%);
-  background-position: 0 0, 0 0, 24px 24px, 24px 24px;
+  background-position:
+    0 0,
+    0 0,
+    24px 24px,
+    24px 24px;
   background-size: 48px 48px;
   border-top: 5px solid #d4af37;
   border-bottom: 5px solid #d4af37;
@@ -60,15 +102,25 @@ textarea:focus {
 
 .kebung-tikhai::before,
 .kebung-tikhai::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   right: 0;
   height: 10px;
-  background: repeating-linear-gradient(90deg, #d4af37 0 12px, #7a1e1e 12px 24px, #170d0d 24px 36px, #7a1e1e 36px 48px);
+  background: repeating-linear-gradient(
+    90deg,
+    #d4af37 0 12px,
+    #7a1e1e 12px 24px,
+    #170d0d 24px 36px,
+    #7a1e1e 36px 48px
+  );
 }
-.kebung-tikhai::before { top: 0; }
-.kebung-tikhai::after { bottom: 0; }
+.kebung-tikhai::before {
+  top: 0;
+}
+.kebung-tikhai::after {
+  bottom: 0;
+}
 .kebung-tikhai > .container {
   position: relative;
   z-index: 1;
@@ -95,7 +147,9 @@ footer.kebung-tikhai a:hover {
   border-radius: 0.5rem;
   overflow: hidden;
   background: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .admin-file-input:hover {
   border-color: var(--maroon);
@@ -180,13 +234,17 @@ footer.kebung-tikhai a:hover {
   padding: 12px 16px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.12),
+    0 8px 10px -6px rgba(0, 0, 0, 0.08);
   border: 1px solid #e5e7eb;
   border-left: 5px solid #10b981;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   transform: translateX(110%);
   opacity: 0;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s ease;
   overflow: hidden;
 }
 
@@ -287,8 +345,12 @@ footer.kebung-tikhai a:hover {
 }
 
 @keyframes toastProgress {
-  from { width: 100%; }
-  to { width: 0%; }
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
 }
 
 /* Spinner & Background Upload Progress Styles */
@@ -311,8 +373,12 @@ footer.kebung-tikhai a:hover {
 }
 
 @keyframes pekonSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .toast-upload-bar-track {
@@ -399,100 +465,102 @@ footer.kebung-tikhai a:hover {
 
 /* ===== Lightbox Global (Foto & Video) ===== */
 .pekon-lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.78);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 16px;
-    cursor: zoom-out;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 16px;
+  cursor: zoom-out;
 }
 .pekon-lightbox.hidden {
-    display: none;
+  display: none;
 }
 .pekon-lightbox-close {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    width: 44px;
-    height: 44px;
-    font-size: 28px;
-    line-height: 1;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    border-radius: 9999px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  line-height: 1;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
 }
 .pekon-lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.32);
 }
 .pekon-lightbox-img {
-    max-width: 92vw;
-    max-height: 88vh;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  max-width: 92vw;
+  max-height: 88vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
 }
 .pekon-lightbox-video {
-    max-width: 92vw;
-    max-height: 88vh;
-    border-radius: 8px;
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 8px;
 }
 .pekon-lightbox-open {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 /* ===== Admin Save Progress (berbaris di dalam container toast) ===== */
 #admin-save-progress {
-    position: relative;
-    width: 100%;
-    background: #1f2937;
-    border: 1px solid #374151;
-    border-radius: 10px;
-    padding: 10px 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    transform: translateX(110%);
-    pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  width: 100%;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateX(110%);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #admin-save-progress.asp-show {
-    opacity: 1;
-    transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0);
 }
 #admin-save-progress .asp-label {
-    color: #e5e7eb;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
+  color: #e5e7eb;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 #admin-save-progress .asp-pct {
-    color: #34d399;
-    font-variant-numeric: tabular-nums;
+  color: #34d399;
+  font-variant-numeric: tabular-nums;
 }
 #admin-save-progress .asp-track {
-    height: 6px;
-    background: #374151;
-    border-radius: 999px;
-    overflow: hidden;
+  height: 6px;
+  background: #374151;
+  border-radius: 999px;
+  overflow: hidden;
 }
 #admin-save-progress .asp-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #10b981, #34d399);
-    border-radius: 999px;
-    transition: width 0.25s ease;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 999px;
+  transition: width 0.25s ease;
 }

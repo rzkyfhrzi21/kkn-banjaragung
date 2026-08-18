@@ -1,181 +1,449 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <link rel="shortcut icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <link rel="apple-touch-icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/Lambang_Kabupaten_Tanggamus.ico"
+    />
+    <link rel="shortcut icon" href="/Lambang_Kabupaten_Tanggamus.ico" />
+    <link rel="apple-touch-icon" href="/Lambang_Kabupaten_Tanggamus.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
     <title>Profil Desa Pekon Banjar Agung | Visi, Misi & Sejarah</title>
-    <meta name="description" content="Profil lengkap Pekon Banjar Agung, Kecamatan Gunung Alip, Kabupaten Tanggamus. Mengenal visi, misi, sejarah, struktur geografis, dan potensi desa.">
-    <meta name="keywords" content="profil pekon banjar agung, visi misi banjar agung, sejarah desa banjar agung, tanggamus">
-    <link rel="canonical" href="https://banjaragung-tanggamus.web.id/profil.html">
-    <meta property="og:title" content="Profil Desa Pekon Banjar Agung | Tanggamus">
-    <meta property="og:description" content="Profil lengkap, visi, misi, dan potensi desa Pekon Banjar Agung.">
-    <meta property="og:url" content="https://banjaragung-tanggamus.web.id/profil.html">
-    <meta property="og:image" content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <meta
+      name="description"
+      content="Profil lengkap Pekon Banjar Agung, Kecamatan Gunung Alip, Kabupaten Tanggamus. Mengenal visi, misi, sejarah, struktur geografis, dan potensi desa."
+    />
+    <meta
+      name="keywords"
+      content="profil pekon banjar agung, visi misi banjar agung, sejarah desa banjar agung, tanggamus"
+    />
+    <link
+      rel="canonical"
+      href="https://banjaragung-tanggamus.web.id/profil.html"
+    />
+    <meta
+      property="og:title"
+      content="Profil Desa Pekon Banjar Agung | Tanggamus"
+    />
+    <meta
+      property="og:description"
+      content="Profil lengkap, visi, misi, dan potensi desa Pekon Banjar Agung."
+    />
+    <meta
+      property="og:url"
+      content="https://banjaragung-tanggamus.web.id/profil.html"
+    />
+    <meta
+      property="og:image"
+      content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
+  </head>
 
-<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
-<!-- Header -->
-    <header class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg">
-        <div class="container mx-auto flex items-center justify-between py-3 px-6">
-            <a href="index.html" class="flex items-center space-x-3 group">
-                <div class="relative">
-<img id="header-logo" src="https://share.google/CMDfohtoYzKIukCyb" alt="Logo Desa" class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover">
-                </div>
-                <div>
-                    <h1 id="header-nama" class="text-xl font-bold text-white leading-tight">Pekon Banjar Agung</h1>
-                    <p id="header-tagline" class="text-xs text-red-100">Bersama membangun desa yang mandiri dan sejahtera</p>
-                </div>
-            </a>
-            <!-- Hamburger button for mobile/tablet -->
-            <button id="menu-toggle" class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none" aria-label="Toggle Menu">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-            <!-- Desktop Navigation -->
-            <nav class="hidden lg:flex gap-1 items-center">
-                <a href="index.html" class="px-3 py-2 rounded-lg text-white font-semibold hover:bg-white/15 transition">Beranda</a>
-                <a href="profil.html" class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition">Profil Desa</a>
-                <a href="pemerintahan.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pemerintahan</a>
-                <a href="layanan-publik.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Layanan Publik</a>
-                <a href="pengumuman.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pengumuman</a>
-                <a href="galeri.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Galeri</a>
-                <a href="kontak.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Kontak</a>
-                <button id="notif-btn" title="Aktifkan Notifikasi" class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition" aria-label="Aktifkan Notifikasi">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                </button>
-            </nav>
-        </div>
-        <!-- Mobile/Tablet Navigation -->
-        <nav id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden">
-            <div class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="font-bold text-red-800 text-lg">Menu</span>
-                    <button id="menu-close" class="text-gray-600 hover:text-gray-900" aria-label="Tutup Menu">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <a href="index.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Beranda</a>
-                <a href="profil.html" class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100">Profil Desa</a>
-                <a href="pemerintahan.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pemerintahan</a>
-                <a href="layanan-publik.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Layanan Publik</a>
-                <a href="pengumuman.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pengumuman</a>
-                <a href="galeri.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Galeri</a>
-                <a href="kontak.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Kontak</a>
-                <button id="notif-btn-mobile" class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900">🔔 Aktifkan Notifikasi</button>
-            </div>
+  <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg"
+    >
+      <div
+        class="container mx-auto flex items-center justify-between py-3 px-6"
+      >
+        <a href="index.html" class="flex items-center space-x-3 group">
+          <div class="relative">
+            <img
+              id="header-logo"
+              src="https://share.google/CMDfohtoYzKIukCyb"
+              alt="Logo Desa"
+              class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover"
+            />
+          </div>
+          <div>
+            <h1
+              id="header-nama"
+              class="text-xl font-bold text-white leading-tight"
+            >
+              Pekon Banjar Agung
+            </h1>
+            <p id="header-tagline" class="text-xs text-red-100">
+              Bersama membangun desa yang mandiri dan sejahtera
+            </p>
+          </div>
+        </a>
+        <!-- Hamburger button for mobile/tablet -->
+        <button
+          id="menu-toggle"
+          class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none"
+          aria-label="Toggle Menu"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex gap-1 items-center">
+          <a
+            href="index.html"
+            class="px-3 py-2 rounded-lg text-white font-semibold hover:bg-white/15 transition"
+            >Beranda</a
+          >
+          <a
+            href="profil.html"
+            class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition"
+            >Profil Desa</a
+          >
+          <a
+            href="pemerintahan.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Pemerintahan</a
+          >
+          <a
+            href="layanan-publik.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Layanan Publik</a
+          >
+          <a
+            href="pengumuman.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Pengumuman</a
+          >
+          <a
+            href="galeri.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Galeri</a
+          >
+          <a
+            href="kontak.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Kontak</a
+          >
+          <button
+            id="notif-btn"
+            title="Aktifkan Notifikasi"
+            class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition"
+            aria-label="Aktifkan Notifikasi"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              ></path>
+            </svg>
+          </button>
         </nav>
+      </div>
+      <!-- Mobile/Tablet Navigation -->
+      <nav
+        id="mobile-menu"
+        class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden"
+      >
+        <div
+          class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-red-800 text-lg">Menu</span>
+            <button
+              id="menu-close"
+              class="text-gray-600 hover:text-gray-900"
+              aria-label="Tutup Menu"
+            >
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <a
+            href="index.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Beranda</a
+          >
+          <a
+            href="profil.html"
+            class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100"
+            >Profil Desa</a
+          >
+          <a
+            href="pemerintahan.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Pemerintahan</a
+          >
+          <a
+            href="layanan-publik.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Layanan Publik</a
+          >
+          <a
+            href="pengumuman.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Pengumuman</a
+          >
+          <a
+            href="galeri.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Galeri</a
+          >
+          <a
+            href="kontak.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Kontak</a
+          >
+          <button
+            id="notif-btn-mobile"
+            class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900"
+          >
+            🔔 Aktifkan Notifikasi
+          </button>
+        </div>
+      </nav>
     </header>
 
-<!-- Profil Desa -->
+    <!-- Profil Desa -->
     <main class="container mx-auto py-12 px-4 flex-1">
-
-        <div class="relative overflow-hidden rounded-2xl shadow-xl mb-12 bg-gradient-to-r from-red-900 via-red-800 to-red-700 p-8 md:p-12 text-center">
-            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image:linear-gradient(45deg,#c0392b 25%,transparent 25%,transparent 75%,#c0392b 75%),linear-gradient(45deg,#c0392b 25%,#f4d03f 25%,#f4d03f 75%,#c0392b 75%);background-size:40px 40px;"></div>
-            <div class="relative">
-                <span class="inline-block text-5xl mb-3"></span>
-                <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">Profil <span id="header-nama-hero">Pekon Banjar Agung</span></h2>
-                <p class="text-red-100 max-w-2xl mx-auto">Informasi lengkap tentang sejarah, visi misi, dan data singkat desa.</p>
-            </div>
+      <div
+        class="relative overflow-hidden rounded-2xl shadow-xl mb-12 bg-gradient-to-r from-red-900 via-red-800 to-red-700 p-8 md:p-12 text-center"
+      >
+        <div
+          class="absolute inset-0 opacity-20 pointer-events-none"
+          style="
+            background-image:
+              linear-gradient(
+                45deg,
+                #c0392b 25%,
+                transparent 25%,
+                transparent 75%,
+                #c0392b 75%
+              ),
+              linear-gradient(
+                45deg,
+                #c0392b 25%,
+                #f4d03f 25%,
+                #f4d03f 75%,
+                #c0392b 75%
+              );
+            background-size: 40px 40px;
+          "
+        ></div>
+        <div class="relative">
+          <span class="inline-block text-5xl mb-3"></span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-2 text-white">
+            Profil <span id="header-nama-hero">Pekon Banjar Agung</span>
+          </h2>
+          <p class="text-red-100 max-w-2xl mx-auto">
+            Informasi lengkap tentang sejarah, visi misi, dan data singkat desa.
+          </p>
         </div>
+      </div>
 
-        <!-- Tentang Desa -->
-        <div class="grid lg:grid-cols-2 gap-10 items-center mb-12">
-            <div class="relative">
-                <div class="absolute -inset-3 bg-gradient-to-br from-red-200 to-yellow-100 rounded-2xl blur-xl opacity-60"></div>
-<img id="profil-foto" src="https://images.unsplash.com/photo-1526494631344-8c6fa6462b17?auto=format&fit=crop&w=600&q=80" alt="Peta Desa" class="relative w-full rounded-2xl shadow-lg object-cover aspect-[4/3]">
-            </div>
-            <div>
-                <span class="inline-block bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">Tentang Desa</span>
-                <h3 id="profil-tentang-judul" class="text-3xl font-bold mb-4 text-gray-800">Mengenal Desa Kami</h3>
-                <p id="profil-deskripsi" class="mb-4 text-gray-600 leading-relaxed">Pekon Banjar Agung terletak di Kecamatan Banjar Agung, Kabupaten Lampung Selatan. Memiliki jumlah penduduk sekitar 15.000 jiwa. Potensi ekonomi desa meliputi pertanian, UMKM, dan pariwisata budaya yang berkembang.</p>
-                <p id="profil-komitmen" class="mb-6 text-gray-600 leading-relaxed">Kami berkomitmen untuk membangun masyarakat yang mandiri, sejahtera, dan berdaya saing melalui berbagai program pembangunan dan pemberdayaan.</p>
-                <div class="flex items-center gap-4">
-                    <a href="pemerintahan.html" class="bg-red-800 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-900 hover:-translate-y-0.5 transition">Lihat Pemerintahan</a>
-                    <a href="kontak.html" class="border-2 border-red-800 text-red-800 px-6 py-3 rounded-xl font-semibold hover:bg-red-50 transition">Hubungi Kami</a>
-                </div>
-            </div>
+      <!-- Tentang Desa -->
+      <div class="grid lg:grid-cols-2 gap-10 items-center mb-12">
+        <div class="relative">
+          <div
+            class="absolute -inset-3 bg-gradient-to-br from-red-200 to-yellow-100 rounded-2xl blur-xl opacity-60"
+          ></div>
+          <img
+            id="profil-foto"
+            src="https://images.unsplash.com/photo-1526494631344-8c6fa6462b17?auto=format&fit=crop&w=600&q=80"
+            alt="Peta Desa"
+            class="relative w-full rounded-2xl shadow-lg object-cover aspect-[4/3]"
+          />
         </div>
+        <div>
+          <span
+            class="inline-block bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3"
+            >Tentang Desa</span
+          >
+          <h3
+            id="profil-tentang-judul"
+            class="text-3xl font-bold mb-4 text-gray-800"
+          >
+            Mengenal Desa Kami
+          </h3>
+          <p id="profil-deskripsi" class="mb-4 text-gray-600 leading-relaxed">
+            Pekon Banjar Agung terletak di Kecamatan Banjar Agung, Kabupaten
+            Lampung Selatan. Memiliki jumlah penduduk sekitar 15.000 jiwa.
+            Potensi ekonomi desa meliputi pertanian, UMKM, dan pariwisata budaya
+            yang berkembang.
+          </p>
+          <p id="profil-komitmen" class="mb-6 text-gray-600 leading-relaxed">
+            Kami berkomitmen untuk membangun masyarakat yang mandiri, sejahtera,
+            dan berdaya saing melalui berbagai program pembangunan dan
+            pemberdayaan.
+          </p>
+          <div class="flex items-center gap-4">
+            <a
+              href="pemerintahan.html"
+              class="bg-red-800 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-900 hover:-translate-y-0.5 transition"
+              >Lihat Pemerintahan</a
+            >
+            <a
+              href="kontak.html"
+              class="border-2 border-red-800 text-red-800 px-6 py-3 rounded-xl font-semibold hover:bg-red-50 transition"
+              >Hubungi Kami</a
+            >
+          </div>
+        </div>
+      </div>
 
-        <!-- Data Singkat Desa: Kartu Statistik -->
-        <div class="mb-12">
-            <h4 class="text-2xl font-bold mb-6 text-center text-gray-800">Data Singkat <span class="text-red-800">Desa</span></h4>
-            <div id="profil-data-singkat" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-<div class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800" style="animation-delay:0.05s">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-2xl font-bold text-red-800">[xxxx]</div>
-                    <div class="text-sm text-gray-500 font-medium">Luas Wilayah (Ha)</div>
-                </div>
-                <div class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500" style="animation-delay:0.1s">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-2xl font-bold text-red-800">[xxxx]</div>
-                    <div class="text-sm text-gray-500 font-medium">Jumlah Penduduk</div>
-                </div>
-                <div class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800" style="animation-delay:0.15s">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-2xl font-bold text-red-800">[x]</div>
-                    <div class="text-sm text-gray-500 font-medium">Dusun</div>
-                </div>
-                <div class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500" style="animation-delay:0.2s">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-2xl font-bold text-red-800">[x]/[x]</div>
-                    <div class="text-sm text-gray-500 font-medium">RT/RW</div>
-                </div>
-                <div class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800" style="animation-delay:0.25s">
-                    <div class="text-4xl mb-2"></div>
-                    <div class="text-2xl font-bold text-red-800">[xxxxx]</div>
-                    <div class="text-sm text-gray-500 font-medium">Kode Pos</div>
-                </div>
+      <!-- Data Singkat Desa: Kartu Statistik -->
+      <div class="mb-12">
+        <h4 class="text-2xl font-bold mb-6 text-center text-gray-800">
+          Data Singkat <span class="text-red-800">Desa</span>
+        </h4>
+        <div
+          id="profil-data-singkat"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+        >
+          <div
+            class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800"
+            style="animation-delay: 0.05s"
+          >
+            <div class="text-4xl mb-2"></div>
+            <div class="text-2xl font-bold text-red-800">[xxxx]</div>
+            <div class="text-sm text-gray-500 font-medium">
+              Luas Wilayah (Ha)
             </div>
+          </div>
+          <div
+            class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500"
+            style="animation-delay: 0.1s"
+          >
+            <div class="text-4xl mb-2"></div>
+            <div class="text-2xl font-bold text-red-800">[xxxx]</div>
+            <div class="text-sm text-gray-500 font-medium">Jumlah Penduduk</div>
+          </div>
+          <div
+            class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800"
+            style="animation-delay: 0.15s"
+          >
+            <div class="text-4xl mb-2"></div>
+            <div class="text-2xl font-bold text-red-800">[x]</div>
+            <div class="text-sm text-gray-500 font-medium">Dusun</div>
+          </div>
+          <div
+            class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-yellow-500"
+            style="animation-delay: 0.2s"
+          >
+            <div class="text-4xl mb-2"></div>
+            <div class="text-2xl font-bold text-red-800">[x]/[x]</div>
+            <div class="text-sm text-gray-500 font-medium">RT/RW</div>
+          </div>
+          <div
+            class="animate-fade-in-up bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-xl hover:-translate-y-1 transition border-t-4 border-red-800"
+            style="animation-delay: 0.25s"
+          >
+            <div class="text-4xl mb-2"></div>
+            <div class="text-2xl font-bold text-red-800">[xxxxx]</div>
+            <div class="text-sm text-gray-500 font-medium">Kode Pos</div>
+          </div>
         </div>
+      </div>
 
-        <!-- Visi & Misi -->
-        <div class="grid md:grid-cols-2 gap-8 mb-8">
-            <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 shadow-md border-l-4 border-red-800">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="text-4xl"></span>
-                    <h4 class="text-2xl font-bold text-red-800">Visi</h4>
-                </div>
-                <p id="profil-visi" class="text-gray-700 text-lg italic leading-relaxed">"Mewujudkan Pekon Banjar Agung yang mandiri, sejahtera, dan berbudaya berbasis partisipasi masyarakat."</p>
-            </div>
-            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-8 shadow-md border-l-4 border-yellow-500">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="text-4xl"></span>
-                    <h4 class="text-2xl font-bold text-red-800">Misi</h4>
-                </div>
-                <ul id="profil-misi" class="space-y-3">
-                    <li class="flex items-start gap-2 text-gray-700"><span class="text-red-800 font-bold mt-0.5"></span> Meningkatkan kualitas pendidikan dan kesehatan masyarakat.</li>
-                    <li class="flex items-start gap-2 text-gray-700"><span class="text-red-800 font-bold mt-0.5"></span> Mendorong pertumbuhan ekonomi berbasis potensi lokal.</li>
-                    <li class="flex items-start gap-2 text-gray-700"><span class="text-red-800 font-bold mt-0.5"></span> Melestarikan budaya dan lingkungan hidup desa.</li>
-                    <li class="flex items-start gap-2 text-gray-700"><span class="text-red-800 font-bold mt-0.5"></span> Meningkatkan pelayanan publik yang transparan dan akuntabel.</li>
-                </ul>
-            </div>
+      <!-- Visi & Misi -->
+      <div class="grid md:grid-cols-2 gap-8 mb-8">
+        <div
+          class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 shadow-md border-l-4 border-red-800"
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-4xl"></span>
+            <h4 class="text-2xl font-bold text-red-800">Visi</h4>
+          </div>
+          <p
+            id="profil-visi"
+            class="text-gray-700 text-lg italic leading-relaxed"
+          >
+            "Mewujudkan Pekon Banjar Agung yang mandiri, sejahtera, dan
+            berbudaya berbasis partisipasi masyarakat."
+          </p>
         </div>
+        <div
+          class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-8 shadow-md border-l-4 border-yellow-500"
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-4xl"></span>
+            <h4 class="text-2xl font-bold text-red-800">Misi</h4>
+          </div>
+          <ul id="profil-misi" class="space-y-3">
+            <li class="flex items-start gap-2 text-gray-700">
+              <span class="text-red-800 font-bold mt-0.5"></span> Meningkatkan
+              kualitas pendidikan dan kesehatan masyarakat.
+            </li>
+            <li class="flex items-start gap-2 text-gray-700">
+              <span class="text-red-800 font-bold mt-0.5"></span> Mendorong
+              pertumbuhan ekonomi berbasis potensi lokal.
+            </li>
+            <li class="flex items-start gap-2 text-gray-700">
+              <span class="text-red-800 font-bold mt-0.5"></span> Melestarikan
+              budaya dan lingkungan hidup desa.
+            </li>
+            <li class="flex items-start gap-2 text-gray-700">
+              <span class="text-red-800 font-bold mt-0.5"></span> Meningkatkan
+              pelayanan publik yang transparan dan akuntabel.
+            </li>
+          </ul>
+        </div>
+      </div>
     </main>
 
-<footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
-        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
-            <div class="flex items-center space-x-2 mb-2 md:mb-0">
-                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
-            </div>
-            <div class="flex space-x-4 mb-2 md:mb-0">
-                <a href="#" class="hover:underline">Instagram</a>
-                <a href="#" class="hover:underline">Facebook</a>
-                <a href="#" class="hover:underline">YouTube</a>
-            </div>
-            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
+      <div
+        class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4"
+      >
+        <div class="flex items-center space-x-2 mb-2 md:mb-0">
+          <img
+            src="logo-darmajaya.png"
+            alt="Logo Institut Informatika dan Bisnis Darmajaya"
+            class="h-12 w-auto object-contain"
+          />
         </div>
+        <div class="flex space-x-4 mb-2 md:mb-0">
+          <a href="#" class="hover:underline">Instagram</a>
+          <a href="#" class="hover:underline">Facebook</a>
+          <a href="#" class="hover:underline">YouTube</a>
+        </div>
+        <div class="text-sm">
+          &copy; 2026 Pekon Banjar Agung. All rights reserved.
+        </div>
+      </div>
     </footer>
     <script src="script.js"></script>
-</body>
-
+  </body>
 </html>

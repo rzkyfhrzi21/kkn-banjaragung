@@ -1,329 +1,729 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
+  <head>
     <!-- Karakter & Viewport Responsif -->
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/x-icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <link rel="shortcut icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <link rel="apple-touch-icon" href="/Lambang_Kabupaten_Tanggamus.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/Lambang_Kabupaten_Tanggamus.ico"
+    />
+    <link rel="shortcut icon" href="/Lambang_Kabupaten_Tanggamus.ico" />
+    <link rel="apple-touch-icon" href="/Lambang_Kabupaten_Tanggamus.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- Primary Meta SEO -->
-    <title>Website Resmi Pekon Banjar Agung | Kecamatan Gunung Alip Tanggamus</title>
-    <meta name="description" content="Website Resmi Pekon Banjar Agung, Kecamatan Gunung Alip, Kabupaten Tanggamus, Lampung. Layanan publik mandiri, pengajuan surat online, profil desa, dan informasi kegiatan warga.">
-    <meta name="keywords" content="pekon banjar agung, desa banjar agung, gunung alip, tanggamus, lampung, pengajuan surat desa, profil pekon banjar agung">
-    <meta name="author" content="Pemerintah Pekon Banjar Agung">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <title>
+      Website Resmi Pekon Banjar Agung | Kecamatan Gunung Alip Tanggamus
+    </title>
+    <meta
+      name="description"
+      content="Website Resmi Pekon Banjar Agung, Kecamatan Gunung Alip, Kabupaten Tanggamus, Lampung. Layanan publik mandiri, pengajuan surat online, profil desa, dan informasi kegiatan warga."
+    />
+    <meta
+      name="keywords"
+      content="pekon banjar agung, desa banjar agung, gunung alip, tanggamus, lampung, pengajuan surat desa, profil pekon banjar agung"
+    />
+    <meta name="author" content="Pemerintah Pekon Banjar Agung" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://banjaragung-tanggamus.web.id/">
+    <link rel="canonical" href="https://banjaragung-tanggamus.web.id/" />
 
     <!-- Favicon & Web App Icons -->
-            <meta name="theme-color" content="#991b1b">
-    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#991b1b" />
+    <link rel="manifest" href="manifest.json" />
 
     <!-- Open Graph / Facebook / WhatsApp / Telegram Sharing -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://banjaragung-tanggamus.web.id/">
-    <meta property="og:title" content="Website Resmi Pekon Banjar Agung | Kabupaten Tanggamus">
-    <meta property="og:description" content="Pusat informasi resmi, pelayanan surat online, transparansi pemerintahan, dan potensi Pekon Banjar Agung, Gunung Alip, Tanggamus.">
-    <meta property="og:image" content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg">
-    <meta property="og:image:alt" content="Profil Pekon Banjar Agung">
-    <meta property="og:site_name" content="Pekon Banjar Agung">
-    <meta property="og:locale" content="id_ID">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://banjaragung-tanggamus.web.id/" />
+    <meta
+      property="og:title"
+      content="Website Resmi Pekon Banjar Agung | Kabupaten Tanggamus"
+    />
+    <meta
+      property="og:description"
+      content="Pusat informasi resmi, pelayanan surat online, transparansi pemerintahan, dan potensi Pekon Banjar Agung, Gunung Alip, Tanggamus."
+    />
+    <meta
+      property="og:image"
+      content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg"
+    />
+    <meta property="og:image:alt" content="Profil Pekon Banjar Agung" />
+    <meta property="og:site_name" content="Pekon Banjar Agung" />
+    <meta property="og:locale" content="id_ID" />
 
     <!-- Twitter / X Cards -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://banjaragung-tanggamus.web.id/">
-    <meta name="twitter:title" content="Website Resmi Pekon Banjar Agung | Kabupaten Tanggamus">
-    <meta name="twitter:description" content="Pusat informasi resmi dan pelayanan mandiri Pekon Banjar Agung, Tanggamus.">
-    <meta name="twitter:image" content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://banjaragung-tanggamus.web.id/" />
+    <meta
+      name="twitter:title"
+      content="Website Resmi Pekon Banjar Agung | Kabupaten Tanggamus"
+    />
+    <meta
+      name="twitter:description"
+      content="Pusat informasi resmi dan pelayanan mandiri Pekon Banjar Agung, Tanggamus."
+    />
+    <meta
+      name="twitter:image"
+      content="https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg"
+    />
 
     <!-- Google Fonts & Tailwind -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <!-- Schema.org Structured Data (JSON-LD) -->
     <script type="application/ld+json">
-    {
+      {
         "@context": "https://schema.org",
         "@graph": [
-            {
-                "@type": "GovernmentOrganization",
-                "@id": "https://banjaragung-tanggamus.web.id/#organization",
-                "name": "Pemerintah Pekon Banjar Agung",
-                "url": "https://banjaragung-tanggamus.web.id",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg"
-                },
-                "address": {
-                    "@type": "PostalAddress",
-                    "addressLocality": "Gunung Alip",
-                    "addressRegion": "Kabupaten Tanggamus",
-                    "addressCountry": "ID"
-                }
+          {
+            "@type": "GovernmentOrganization",
+            "@id": "https://banjaragung-tanggamus.web.id/#organization",
+            "name": "Pemerintah Pekon Banjar Agung",
+            "url": "https://banjaragung-tanggamus.web.id",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://banjaragung-tanggamus.web.id/profil-pkpm.jpeg"
             },
-            {
-                "@type": "WebSite",
-                "@id": "https://banjaragung-tanggamus.web.id/#website",
-                "url": "https://banjaragung-tanggamus.web.id",
-                "name": "Pekon Banjar Agung",
-                "publisher": {
-                    "@id": "https://banjaragung-tanggamus.web.id/#organization"
-                },
-                "inLanguage": "id-ID"
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Gunung Alip",
+              "addressRegion": "Kabupaten Tanggamus",
+              "addressCountry": "ID"
             }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://banjaragung-tanggamus.web.id/#website",
+            "url": "https://banjaragung-tanggamus.web.id",
+            "name": "Pekon Banjar Agung",
+            "publisher": {
+              "@id": "https://banjaragung-tanggamus.web.id/#organization"
+            },
+            "inLanguage": "id-ID"
+          }
         ]
-    }
+      }
     </script>
-</head>
+  </head>
 
-<body class="bg-gray-50 text-gray-800 overflow-x-hidden">
-<header class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg">
-        <div class="container mx-auto flex items-center justify-between py-3 px-6">
-            <a href="index.html" class="flex items-center space-x-3 group">
-                <div class="relative">
-                    <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform">
-                    <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"></span>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-white leading-tight">Pekon Banjar Agung</h1>
-                    <p class="text-xs text-red-100">Bersama membangun desa yang mandiri dan sejahtera</p>
-                </div>
-            </a>
-            <button id="menu-toggle" class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none" aria-label="Toggle Menu">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
+  <body class="bg-gray-50 text-gray-800 overflow-x-hidden">
+    <header
+      class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg"
+    >
+      <div
+        class="container mx-auto flex items-center justify-between py-3 px-6"
+      >
+        <a href="index.html" class="flex items-center space-x-3 group">
+          <div class="relative">
+            <img
+              src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80"
+              alt="Logo Desa"
+              class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform"
+            />
+            <span
+              class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"
+            ></span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-white leading-tight">
+              Pekon Banjar Agung
+            </h1>
+            <p class="text-xs text-red-100">
+              Bersama membangun desa yang mandiri dan sejahtera
+            </p>
+          </div>
+        </a>
+        <button
+          id="menu-toggle"
+          class="lg:hidden flex items-center px-3 py-2 rounded border border-white/40 text-white hover:bg-red-700 focus:outline-none"
+          aria-label="Toggle Menu"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
 
-<nav class="hidden lg:flex gap-1 items-center">
-                <a href="index.html" class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition">Beranda</a>
-                <a href="profil.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Profil Desa</a>
-                <a href="pemerintahan.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pemerintahan</a>
-                <a href="layanan-publik.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Layanan Publik</a>
-                <a href="pengumuman.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Pengumuman</a>
-                <a href="galeri.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Galeri</a>
-                <a href="kontak.html" class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition">Kontak</a>
-                <button id="notif-btn" title="Aktifkan Notifikasi" class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition" aria-label="Aktifkan Notifikasi">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                </button>
-            </nav>
-        </div>
-        <nav id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden">
-            <div class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft">
-                <div class="flex items-center justify-between mb-2">
-<span class="font-bold text-red-800 text-lg">Menu</span>
-                    <button id="menu-close" class="text-gray-600 hover:text-gray-900" aria-label="Tutup Menu">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-<a href="index.html" class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100">Beranda</a>
-                <a href="profil.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Profil Desa</a>
-                <a href="pemerintahan.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pemerintahan</a>
-                <a href="layanan-publik.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Layanan Publik</a>
-                <a href="pengumuman.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Pengumuman</a>
-                <a href="galeri.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Galeri</a>
-                <a href="kontak.html" class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50">Kontak</a>
-                <button id="notif-btn-mobile" class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900">🔔 Aktifkan Notifikasi</button>
-            </div>
+        <nav class="hidden lg:flex gap-1 items-center">
+          <a
+            href="index.html"
+            class="px-3 py-2 rounded-lg text-white font-semibold bg-white/25 hover:bg-white/30 transition"
+            >Beranda</a
+          >
+          <a
+            href="profil.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Profil Desa</a
+          >
+          <a
+            href="pemerintahan.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Pemerintahan</a
+          >
+          <a
+            href="layanan-publik.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Layanan Publik</a
+          >
+          <a
+            href="pengumuman.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Pengumuman</a
+          >
+          <a
+            href="galeri.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Galeri</a
+          >
+          <a
+            href="kontak.html"
+            class="px-3 py-2 rounded-lg text-red-50 font-medium hover:bg-white/15 hover:text-white transition"
+            >Kontak</a
+          >
+          <button
+            id="notif-btn"
+            title="Aktifkan Notifikasi"
+            class="ml-2 h-10 w-10 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 hover:scale-105 text-lg transition"
+            aria-label="Aktifkan Notifikasi"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              ></path>
+            </svg>
+          </button>
         </nav>
+      </div>
+      <nav
+        id="mobile-menu"
+        class="lg:hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-60 z-50 hidden"
+      >
+        <div
+          class="bg-white w-4/5 max-w-xs h-full shadow-2xl p-6 flex flex-col gap-3 animate-slideInLeft"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-red-800 text-lg">Menu</span>
+            <button
+              id="menu-close"
+              class="text-gray-600 hover:text-gray-900"
+              aria-label="Tutup Menu"
+            >
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <a
+            href="index.html"
+            class="px-3 py-2.5 rounded-lg text-red-800 font-semibold bg-red-50 hover:bg-red-100"
+            >Beranda</a
+          >
+          <a
+            href="profil.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Profil Desa</a
+          >
+          <a
+            href="pemerintahan.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Pemerintahan</a
+          >
+          <a
+            href="layanan-publik.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Layanan Publik</a
+          >
+          <a
+            href="pengumuman.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Pengumuman</a
+          >
+          <a
+            href="galeri.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Galeri</a
+          >
+          <a
+            href="kontak.html"
+            class="px-3 py-2.5 rounded-lg text-gray-700 font-medium hover:bg-red-50"
+            >Kontak</a
+          >
+          <button
+            id="notif-btn-mobile"
+            class="mt-2 w-full flex items-center justify-center gap-2 bg-red-800 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-red-900"
+          >
+            🔔 Aktifkan Notifikasi
+          </button>
+        </div>
+      </nav>
     </header>
 
     <section id="beranda" class="relative bg-green-700 text-white">
-        <div class="block md:hidden">
-            <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=1200&q=80" alt="Foto Desa" class="w-full h-48 object-cover opacity-60">
+      <div class="block md:hidden">
+        <img
+          src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=1200&q=80"
+          alt="Foto Desa"
+          class="w-full h-48 object-cover opacity-60"
+        />
+      </div>
+      <div class="hidden md:block">
+        <img
+          src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=1200&q=80"
+          alt="Foto Desa"
+          class="w-full h-72 object-cover opacity-60"
+        />
+      </div>
+      <div
+        class="relative md:absolute md:inset-0 flex flex-col items-center justify-center text-center px-4 py-8 md:py-0"
+      >
+        <h2 class="text-2xl md:text-4xl font-bold mb-2">
+          Selamat datang di Website Resmi Desa Pekon Banjar Agung
+        </h2>
+        <p class="text-gray-200 mb-4 text-base">
+          Informasi, layanan, dan berita terkini seputar Desa Pekon Banjar
+          Agung.
+        </p>
+        <p class="mb-4 text-base md:text-lg">
+          Kecamatan Gunung Alip, Kabupaten Tanggamus. Bersama membangun desa
+          yang mandiri dan sejahtera.
+        </p>
+        <div
+          class="flex flex-col gap-2 w-full max-w-xs mx-auto md:flex-row md:gap-3 md:max-w-none md:w-auto md:mx-0"
+        >
+          <a
+            href="profil.html"
+            class="bg-white text-green-700 px-5 py-2 rounded font-semibold shadow hover:bg-green-100"
+            >Lihat Profil Desa</a
+          >
+          <a
+            href="#layanan"
+            class="bg-green-500 text-white px-5 py-2 rounded font-semibold shadow hover:bg-green-600"
+            >Ajukan Surat Online</a
+          >
         </div>
-        <div class="hidden md:block">
-            <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=1200&q=80" alt="Foto Desa" class="w-full h-72 object-cover opacity-60">
-        </div>
-        <div class="relative md:absolute md:inset-0 flex flex-col items-center justify-center text-center px-4 py-8 md:py-0">
-            <h2 class="text-2xl md:text-4xl font-bold mb-2">Selamat datang di Website Resmi Desa Pekon Banjar Agung</h2>
-            <p class="text-gray-200 mb-4 text-base">Informasi, layanan, dan berita terkini seputar Desa Pekon Banjar Agung.</p>
-            <p class="mb-4 text-base md:text-lg">Kecamatan Gunung Alip, Kabupaten Tanggamus. Bersama membangun desa yang mandiri dan sejahtera.</p>
-            <div class="flex flex-col gap-2 w-full max-w-xs mx-auto md:flex-row md:gap-3 md:max-w-none md:w-auto md:mx-0">
-                <a href="profil.html" class="bg-white text-green-700 px-5 py-2 rounded font-semibold shadow hover:bg-green-100">Lihat Profil Desa</a>
-                <a href="#layanan" class="bg-green-500 text-white px-5 py-2 rounded font-semibold shadow hover:bg-green-600">Ajukan Surat Online</a>
-            </div>
-        </div>
+      </div>
     </section>
 
     <section id="profil" class="container mx-auto py-12 px-4">
-        <div class="md:flex md:items-center md:gap-8">
-<img id="tentang-foto" src="https://images.unsplash.com/photo-1526494631344-8c6fa6462b17?auto=format&fit=crop&w=300&q=80" alt="Peta Desa" class="rounded-lg shadow mb-6 md:mb-0 w-full md:w-auto">
-            <div>
-                <h3 id="beranda-tentang-judul" class="text-2xl font-bold mb-2">Tentang Desa</h3>
-                <p id="beranda-tentang-deskripsi" class="mb-2">Desa Pekon Banjar Agung terletak di Kecamatan Gunung Alip, Kabupaten Tanggamus. Memiliki jumlah penduduk sekitar 1,200 jiwa. Potensi ekonomi desa meliputi pertanian, UMKM, dan pariwisata budaya yang berkembang.</p>
-                <a href="profil.html" class="text-green-700 font-semibold hover:underline">Lihat Selengkapnya</a>
-            </div>
+      <div class="md:flex md:items-center md:gap-8">
+        <img
+          id="tentang-foto"
+          src="https://images.unsplash.com/photo-1526494631344-8c6fa6462b17?auto=format&fit=crop&w=300&q=80"
+          alt="Peta Desa"
+          class="rounded-lg shadow mb-6 md:mb-0 w-full md:w-auto"
+        />
+        <div>
+          <h3 id="beranda-tentang-judul" class="text-2xl font-bold mb-2">
+            Tentang Desa
+          </h3>
+          <p id="beranda-tentang-deskripsi" class="mb-2">
+            Desa Pekon Banjar Agung terletak di Kecamatan Gunung Alip, Kabupaten
+            Tanggamus. Memiliki jumlah penduduk sekitar 1,200 jiwa. Potensi
+            ekonomi desa meliputi pertanian, UMKM, dan pariwisata budaya yang
+            berkembang.
+          </p>
+          <a
+            href="profil.html"
+            class="text-green-700 font-semibold hover:underline"
+            >Lihat Selengkapnya</a
+          >
         </div>
+      </div>
     </section>
 
     <section id="layanan" class="bg-gradient-to-b from-white to-green-50 py-16">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-10">
-                <span class="inline-block bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3">Layanan Kami</span>
-                <h3 class="text-3xl font-bold mb-2">Layanan Unggulan</h3>
-                <p class="text-gray-500 text-base max-w-2xl mx-auto" id="layanan-index-desc">Nikmati kemudahan layanan publik dan informasi unggulan dari Pekon Banjar Agung.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="pengajuan-surat.html" class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-green-600">
-                    <span class="font-semibold text-lg" id="layanan-index-ps">Pengajuan Surat</span>
-                    <span class="text-sm text-gray-500 mt-1 text-center">Ajukan surat secara online</span>
-                </a>
-                <a href="data-kependudukan.html" class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-blue-600">
-                    <span class="font-semibold text-lg" id="layanan-index-dk">Data Kependudukan</span>
-                    <span class="text-sm text-gray-500 mt-1 text-center">Statistik penduduk desa</span>
-                </a>
-                <a href="jadwal-posyandu.html" class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-amber-500">
-                    <span class="font-semibold text-lg" id="layanan-index-jp">Jadwal Posyandu</span>
-                    <span class="text-sm text-gray-500 mt-1 text-center">Jadwal kesehatan warga</span>
-                </a>
-                <a href="arsip-perdes.html" class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-purple-600">
-                    <span class="font-semibold text-lg" id="layanan-index-ap">Arsip Perdes</span>
-                    <span class="text-sm text-gray-500 mt-1 text-center">Peraturan desa digital</span>
-                </a>
-            </div>
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+          <span
+            class="inline-block bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3"
+            >Layanan Kami</span
+          >
+          <h3 class="text-3xl font-bold mb-2">Layanan Unggulan</h3>
+          <p
+            class="text-gray-500 text-base max-w-2xl mx-auto"
+            id="layanan-index-desc"
+          >
+            Nikmati kemudahan layanan publik dan informasi unggulan dari Pekon
+            Banjar Agung.
+          </p>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <a
+            href="pengajuan-surat.html"
+            class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-green-600"
+          >
+            <span class="font-semibold text-lg" id="layanan-index-ps"
+              >Pengajuan Surat</span
+            >
+            <span class="text-sm text-gray-500 mt-1 text-center"
+              >Ajukan surat secara online</span
+            >
+          </a>
+          <a
+            href="data-kependudukan.html"
+            class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-blue-600"
+          >
+            <span class="font-semibold text-lg" id="layanan-index-dk"
+              >Data Kependudukan</span
+            >
+            <span class="text-sm text-gray-500 mt-1 text-center"
+              >Statistik penduduk desa</span
+            >
+          </a>
+          <a
+            href="jadwal-posyandu.html"
+            class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-amber-500"
+          >
+            <span class="font-semibold text-lg" id="layanan-index-jp"
+              >Jadwal Posyandu</span
+            >
+            <span class="text-sm text-gray-500 mt-1 text-center"
+              >Jadwal kesehatan warga</span
+            >
+          </a>
+          <a
+            href="arsip-perdes.html"
+            class="group flex flex-col items-center p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-t-4 border-purple-600"
+          >
+            <span class="font-semibold text-lg" id="layanan-index-ap"
+              >Arsip Perdes</span
+            >
+            <span class="text-sm text-gray-500 mt-1 text-center"
+              >Peraturan desa digital</span
+            >
+          </a>
+        </div>
+      </div>
     </section>
 
-    <section id="pengumuman" class="bg-gradient-to-b from-white to-green-50 py-16">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-10">
-                <span class="inline-block bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3">Info Terkini</span>
-                <h3 class="text-3xl font-bold mb-2">Pengumuman Terbaru</h3>
-                <p class="text-gray-500 text-base max-w-2xl mx-auto">Update pengumuman dan informasi penting untuk warga desa.</p>
-            </div>
-            <div id="pengumuman-index-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative">
-                        <img src="https://picsum.photos/id/18/400/200" alt="Gambar Pengumuman" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow">📢 Pengumuman</span>
-                        <span class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full">09 Agustus 2026</span>
-                    </div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors">Judul Pengumuman 1</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Ringkasan pengumuman terbaru di desa...</p>
-                        <span class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all">Baca Selengkapnya <span class="transition-transform">→</span></span>
-                    </div>
-                </div>
-                <div class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative">
-                        <img src="https://picsum.photos/id/19/400/200" alt="Gambar Pengumuman" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow">📢 Pengumuman</span>
-                        <span class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full">09 Agustus 2026</span>
-                    </div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors">Judul Pengumuman 2</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Ringkasan pengumuman terbaru di desa...</p>
-                        <span class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all">Baca Selengkapnya <span class="transition-transform">→</span></span>
-                    </div>
-                </div>
-                <div class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="relative">
-                        <img src="https://picsum.photos/id/24/400/200" alt="Gambar Pengumuman" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">
-                        <span class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow">📢 Pengumuman</span>
-                        <span class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full">09 Agustus 2026</span>
-                    </div>
-                    <div class="p-5">
-                        <h4 class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors">Judul Pengumuman 3</h4>
-                        <p class="text-sm text-gray-500 leading-relaxed">Ringkasan pengumuman terbaru di desa...</p>
-                        <span class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all">Baca Selengkapnya <span class="transition-transform">→</span></span>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-10">
-                <a href="pengumuman.html" class="inline-flex items-center bg-green-700 text-white px-6 py-3 rounded-full font-semibold shadow hover:bg-green-800 hover:shadow-lg transition">Lihat Semua Pengumuman <span class="ml-2">→</span></a>
-            </div>
+    <section
+      id="pengumuman"
+      class="bg-gradient-to-b from-white to-green-50 py-16"
+    >
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+          <span
+            class="inline-block bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3"
+            >Info Terkini</span
+          >
+          <h3 class="text-3xl font-bold mb-2">Pengumuman Terbaru</h3>
+          <p class="text-gray-500 text-base max-w-2xl mx-auto">
+            Update pengumuman dan informasi penting untuk warga desa.
+          </p>
         </div>
+        <div
+          id="pengumuman-index-grid"
+          class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <div
+            class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="relative">
+              <img
+                src="https://picsum.photos/id/18/400/200"
+                alt="Gambar Pengumuman"
+                class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <span
+                class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow"
+                >📢 Pengumuman</span
+              >
+              <span
+                class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full"
+                >09 Agustus 2026</span
+              >
+            </div>
+            <div class="p-5">
+              <h4
+                class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors"
+              >
+                Judul Pengumuman 1
+              </h4>
+              <p class="text-sm text-gray-500 leading-relaxed">
+                Ringkasan pengumuman terbaru di desa...
+              </p>
+              <span
+                class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all"
+                >Baca Selengkapnya
+                <span class="transition-transform">→</span></span
+              >
+            </div>
+          </div>
+          <div
+            class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="relative">
+              <img
+                src="https://picsum.photos/id/19/400/200"
+                alt="Gambar Pengumuman"
+                class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <span
+                class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow"
+                >📢 Pengumuman</span
+              >
+              <span
+                class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full"
+                >09 Agustus 2026</span
+              >
+            </div>
+            <div class="p-5">
+              <h4
+                class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors"
+              >
+                Judul Pengumuman 2
+              </h4>
+              <p class="text-sm text-gray-500 leading-relaxed">
+                Ringkasan pengumuman terbaru di desa...
+              </p>
+              <span
+                class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all"
+                >Baca Selengkapnya
+                <span class="transition-transform">→</span></span
+              >
+            </div>
+          </div>
+          <div
+            class="group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="relative">
+              <img
+                src="https://picsum.photos/id/24/400/200"
+                alt="Gambar Pengumuman"
+                class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <span
+                class="absolute top-3 left-3 bg-green-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow"
+                >📢 Pengumuman</span
+              >
+              <span
+                class="absolute bottom-3 right-3 bg-black bg-opacity-60 text-white text-[11px] px-3 py-1 rounded-full"
+                >09 Agustus 2026</span
+              >
+            </div>
+            <div class="p-5">
+              <h4
+                class="font-bold text-lg mb-2 group-hover:text-green-700 transition-colors"
+              >
+                Judul Pengumuman 3
+              </h4>
+              <p class="text-sm text-gray-500 leading-relaxed">
+                Ringkasan pengumuman terbaru di desa...
+              </p>
+              <span
+                class="inline-flex items-center text-green-700 font-semibold text-sm mt-3 group-hover:gap-2 transition-all"
+                >Baca Selengkapnya
+                <span class="transition-transform">→</span></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="text-center mt-10">
+          <a
+            href="pengumuman.html"
+            class="inline-flex items-center bg-green-700 text-white px-6 py-3 rounded-full font-semibold shadow hover:bg-green-800 hover:shadow-lg transition"
+            >Lihat Semua Pengumuman <span class="ml-2">→</span></a
+          >
+        </div>
+      </div>
     </section>
 
     <section class="bg-green-50 py-16">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-10">
-                <span class="inline-block bg-white text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3 shadow">Potensi Unggulan</span>
-                <h3 class="text-3xl font-bold mb-2">Potensi Desa</h3>
-                <p class="text-gray-500 text-base max-w-2xl mx-auto" id="potensi-index-desc">Berbagai potensi ekonomi, wisata, dan budaya yang dimiliki Pekon Banjar Agung.</p>
-            </div>
-            <div id="potensi-index-grid" class="grid md:grid-cols-3 gap-8">
-                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="h-2 bg-gradient-to-r from-green-500 to-green-700"></div>
-                    <div class="p-6 flex flex-col items-center text-center">
-                        <h4 class="font-bold text-lg mb-2" id="potensi-index-um">UMKM & Produk Unggulan</h4>
-                        <p class="text-sm text-gray-500 mb-4" id="potensi-index-um-desc">Produk lokal berkualitas dari warga desa.</p>
-                        <a href="umkm-produk-unggulan.html" class="inline-block bg-green-700 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-800 transition">Lihat Detail</a>
-                    </div>
-                </div>
-                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
-                    <div class="p-6 flex flex-col items-center text-center">
-                        <h4 class="font-bold text-lg mb-2" id="potensi-index-wi">Wisata Alam / Budaya</h4>
-                        <p class="text-sm text-gray-500 mb-4" id="potensi-index-wi-desc">Keindahan alam dan tradisi budaya desa.</p>
-                        <a href="wisata-alam-budaya.html" class="inline-block bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-800 transition">Lihat Detail</a>
-                    </div>
-                </div>
-                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                    <div class="h-2 bg-gradient-to-r from-amber-500 to-orange-600"></div>
-                    <div class="p-6 flex flex-col items-center text-center">
-                        <h4 class="font-bold text-lg mb-2" id="potensi-index-kg">Kegiatan Masyarakat</h4>
-                        <p class="text-sm text-gray-500 mb-4" id="potensi-index-kg-desc">Berbagai kegiatan sosial dan budaya warga.</p>
-                        <a href="kegiatan-masyarakat.html" class="inline-block bg-amber-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-amber-700 transition">Lihat Detail</a>
-                    </div>
-                </div>
-            </div>
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+          <span
+            class="inline-block bg-white text-green-700 text-xs font-bold uppercase tracking-wider rounded-full px-4 py-1 mb-3 shadow"
+            >Potensi Unggulan</span
+          >
+          <h3 class="text-3xl font-bold mb-2">Potensi Desa</h3>
+          <p
+            class="text-gray-500 text-base max-w-2xl mx-auto"
+            id="potensi-index-desc"
+          >
+            Berbagai potensi ekonomi, wisata, dan budaya yang dimiliki Pekon
+            Banjar Agung.
+          </p>
         </div>
+        <div id="potensi-index-grid" class="grid md:grid-cols-3 gap-8">
+          <div
+            class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="h-2 bg-gradient-to-r from-green-500 to-green-700"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <h4 class="font-bold text-lg mb-2" id="potensi-index-um">
+                UMKM & Produk Unggulan
+              </h4>
+              <p class="text-sm text-gray-500 mb-4" id="potensi-index-um-desc">
+                Produk lokal berkualitas dari warga desa.
+              </p>
+              <a
+                href="umkm-produk-unggulan.html"
+                class="inline-block bg-green-700 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-green-800 transition"
+                >Lihat Detail</a
+              >
+            </div>
+          </div>
+          <div
+            class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div class="h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <h4 class="font-bold text-lg mb-2" id="potensi-index-wi">
+                Wisata Alam / Budaya
+              </h4>
+              <p class="text-sm text-gray-500 mb-4" id="potensi-index-wi-desc">
+                Keindahan alam dan tradisi budaya desa.
+              </p>
+              <a
+                href="wisata-alam-budaya.html"
+                class="inline-block bg-blue-700 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-800 transition"
+                >Lihat Detail</a
+              >
+            </div>
+          </div>
+          <div
+            class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+          >
+            <div
+              class="h-2 bg-gradient-to-r from-amber-500 to-orange-600"
+            ></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <h4 class="font-bold text-lg mb-2" id="potensi-index-kg">
+                Kegiatan Masyarakat
+              </h4>
+              <p class="text-sm text-gray-500 mb-4" id="potensi-index-kg-desc">
+                Berbagai kegiatan sosial dan budaya warga.
+              </p>
+              <a
+                href="kegiatan-masyarakat.html"
+                class="inline-block bg-amber-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-amber-700 transition"
+                >Lihat Detail</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="galeri" class="container mx-auto py-12 px-4">
-        <h3 class="text-2xl font-bold mb-2 text-center">Galeri Desa</h3>
-        <p class="text-gray-500 mb-8 text-center text-base">Dokumentasi foto dan video kegiatan serta keindahan desa.</p>
-        <div id="galeri-home-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        </div>
-        <div class="text-center">
-            <a href="galeri.html" class="text-green-700 font-semibold hover:underline">Lihat Galeri Lengkap</a>
-        </div>
+      <h3 class="text-2xl font-bold mb-2 text-center">Galeri Desa</h3>
+      <p class="text-gray-500 mb-8 text-center text-base">
+        Dokumentasi foto dan video kegiatan serta keindahan desa.
+      </p>
+      <div
+        id="galeri-home-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6"
+      ></div>
+      <div class="text-center">
+        <a
+          href="galeri.html"
+          class="text-green-700 font-semibold hover:underline"
+          >Lihat Galeri Lengkap</a
+        >
+      </div>
     </section>
 
     <section id="kontak" class="bg-white py-12">
-        <div class="container mx-auto px-4 md:flex md:space-x-8">
-            <div class="md:w-1/2 mb-8 md:mb-0">
-                <h3 class="text-2xl font-bold mb-2">Kontak Desa</h3>
-                <p class="text-gray-500 mb-4 text-base">Hubungi kami untuk informasi, layanan, atau keperluan administrasi desa.</p>
-                <p class="mb-1">Alamat: Jl. xxx , Kecamatan Gunung Alip, Kabupaten Tanggamus</p>
-                <p class="mb-1">Telepon: 08xx-xxxx-xxxx</p>
-                <p class="mb-1">Email: desa@email.com</p>
-            </div>
-            <div class="md:w-1/2">
-                <iframe src="https://maps.google.com/maps?q=-5.3973289,104.7597588&z=16&output=embed" width="100%" height="200" class="rounded shadow" allowfullscreen="" loading="lazy"></iframe>
-            </div>
+      <div class="container mx-auto px-4 md:flex md:space-x-8">
+        <div class="md:w-1/2 mb-8 md:mb-0">
+          <h3 class="text-2xl font-bold mb-2">Kontak Desa</h3>
+          <p class="text-gray-500 mb-4 text-base">
+            Hubungi kami untuk informasi, layanan, atau keperluan administrasi
+            desa.
+          </p>
+          <p class="mb-1">
+            Alamat: Jl. xxx , Kecamatan Gunung Alip, Kabupaten Tanggamus
+          </p>
+          <p class="mb-1">Telepon: 08xx-xxxx-xxxx</p>
+          <p class="mb-1">Email: desa@email.com</p>
         </div>
+        <div class="md:w-1/2">
+          <iframe
+            src="https://maps.google.com/maps?q=-5.3973289,104.7597588&z=16&output=embed"
+            width="100%"
+            height="200"
+            class="rounded shadow"
+            allowfullscreen=""
+            loading="lazy"
+          ></iframe>
+        </div>
+      </div>
     </section>
 
-<footer class="bg-green-700 text-white py-6 mt-8">
-        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
-            <div class="flex items-center space-x-2 mb-2 md:mb-0">
-                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
-            </div>
-            <div class="flex space-x-4 mb-2 md:mb-0">
-                <a href="#" class="hover:underline">Instagram</a>
-                <a href="#" class="hover:underline">Facebook</a>
-                <a href="#" class="hover:underline">YouTube</a>
-            </div>
-            <div class="flex items-center space-x-2 mb-2 md:mb-0">
-                <a href="admin.html" class="bg-white text-green-700 px-4 py-1.5 rounded font-semibold hover:bg-green-100">Login Admin</a>
-            </div>
-            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+    <footer class="bg-green-700 text-white py-6 mt-8">
+      <div
+        class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4"
+      >
+        <div class="flex items-center space-x-2 mb-2 md:mb-0">
+          <img
+            src="logo-darmajaya.png"
+            alt="Logo Institut Informatika dan Bisnis Darmajaya"
+            class="h-12 w-auto object-contain"
+          />
         </div>
+        <div class="flex space-x-4 mb-2 md:mb-0">
+          <a href="#" class="hover:underline">Instagram</a>
+          <a href="#" class="hover:underline">Facebook</a>
+          <a href="#" class="hover:underline">YouTube</a>
+        </div>
+        <div class="flex items-center space-x-2 mb-2 md:mb-0">
+          <a
+            href="admin.html"
+            class="bg-white text-green-700 px-4 py-1.5 rounded font-semibold hover:bg-green-100"
+            >Login Admin</a
+          >
+        </div>
+        <div class="text-sm">
+          &copy; 2026 Pekon Banjar Agung. All rights reserved.
+        </div>
+      </div>
     </footer>
     <script src="script.js?v=11"></script>
-</body>
-
+  </body>
 </html>

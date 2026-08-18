@@ -4,10 +4,11 @@
  */
 
 (function (global) {
-  'use strict';
+  "use strict";
 
-  const ALLOWED_EXTS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-  const DANGEROUS_EXTS_REGEX = /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
+  const ALLOWED_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+  const DANGEROUS_EXTS_REGEX =
+    /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
   const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB (aman di bawah limit body request 4.5MB hosting Vercel)
 
   /**
@@ -17,27 +18,41 @@
    */
   function validateFileClient(file) {
     if (!file) {
-      return { valid: false, message: 'Silakan pilih berkas terlebih dahulu.' };
+      return { valid: false, message: "Silakan pilih berkas terlebih dahulu." };
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return { valid: false, message: 'Ukuran berkas maksimal 4MB. Silakan pilih foto lain.' };
+      return {
+        valid: false,
+        message: "Ukuran berkas maksimal 4MB. Silakan pilih foto lain.",
+      };
     }
 
     const name = file.name.toLowerCase();
-    const lastDot = name.lastIndexOf('.');
+    const lastDot = name.lastIndexOf(".");
     if (lastDot === -1) {
-      return { valid: false, message: 'Berkas tidak memiliki ekstensi yang valid.' };
+      return {
+        valid: false,
+        message: "Berkas tidak memiliki ekstensi yang valid.",
+      };
     }
 
     const ext = name.substring(lastDot);
     if (!ALLOWED_EXTS.includes(ext)) {
-      return { valid: false, message: 'Format berkas tidak didukung. Harap upload gambar (JPG, PNG, GIF, WebP).' };
+      return {
+        valid: false,
+        message:
+          "Format berkas tidak didukung. Harap upload gambar (JPG, PNG, GIF, WebP).",
+      };
     }
 
     const nameWithoutExt = name.substring(0, lastDot);
     if (DANGEROUS_EXTS_REGEX.test(nameWithoutExt)) {
-      return { valid: false, message: 'Nama berkas terdeteksi mencurigakan. Unggahan dibatalkan demi keamanan.' };
+      return {
+        valid: false,
+        message:
+          "Nama berkas terdeteksi mencurigakan. Unggahan dibatalkan demi keamanan.",
+      };
     }
 
     return { valid: true };
@@ -49,16 +64,15 @@
    * @returns {string}
    */
   function sanitizeClientInput(str) {
-    if (typeof str !== 'string') return '';
+    if (typeof str !== "string") return "";
     return str
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+\s*=/gi, '')
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+      .replace(/javascript:/gi, "")
+      .replace(/on\w+\s*=/gi, "")
       .trim();
   }
 
   global.validateFileClient = validateFileClient;
   global.sanitizeClientInput = sanitizeClientInput;
-
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== "undefined" ? window : this);
