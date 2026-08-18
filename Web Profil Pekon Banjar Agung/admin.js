@@ -34,6 +34,7 @@ async function checkSession() {
         loginGate.classList.add('hidden');
         dashboard.classList.remove('hidden');
         loadAllData();
+        restoreTab();
         return;
       }
     } catch (err) {}
@@ -64,6 +65,7 @@ adminLoginForm?.addEventListener('submit', async (e) => {
       loginGate.classList.add('hidden');
       dashboard.classList.remove('hidden');
       loadAllData();
+      restoreTab();
     } else {
       adminLoginError.textContent = data.message || 'Login gagal';
       adminLoginError.classList.remove('hidden');
@@ -83,6 +85,7 @@ logoutBtn?.addEventListener('click', () => {
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.tab;
+    localStorage.setItem('adminActiveTab', target);
     tabBtns.forEach(b => {
       b.classList.remove('bg-green-700', 'text-white');
       b.classList.add('bg-gray-200', 'text-gray-700');
@@ -93,6 +96,13 @@ tabBtns.forEach(btn => {
     document.getElementById('tab-' + target).classList.remove('hidden');
   });
 });
+
+// Kembalikan ke tab terakhir yang aktif (disimpan sebelum reload)
+function restoreTab() {
+  const saved = localStorage.getItem('adminActiveTab');
+  const btn = saved && document.querySelector('.tab-btn[data-tab="' + saved + '"]');
+  if (btn) btn.click();
+}
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -165,6 +175,59 @@ function adminToast(message, type = 'success', title = '', duration = 2000) {
   } else {
     timer = setTimeout(dismiss, duration);
   }
+}
+
+// ===== Simpan progress (spinner % di pojok kanan atas, tempat toast) =====
+let _saveProgTimer = null;
+
+function showSaveProgress() {
+  hideSaveProgress();
+  let el = document.getElementById('admin-save-progress');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'admin-save-progress';
+    el.innerHTML =
+      '<div class="asp-label">Menyimpan data <span class="asp-pct">0%</span></div>' +
+      '<div class="asp-track"><div class="asp-bar"></div></div>';
+    document.body.appendChild(el);
+  }
+  el.classList.add('asp-show');
+  updateSaveProgress(2);
+  _saveProgTimer = setInterval(() => {
+    const cur = document.getElementById('admin-save-progress');
+    if (!cur) return;
+    let pct = parseInt((cur.querySelector('.asp-pct') || { textContent: '0' }).textContent || '0', 10) || 0;
+    if (pct < 90) {
+      pct += Math.random() < 0.35 ? 8 : 3;
+      if (pct > 90) pct = 90;
+      updateSaveProgress(pct);
+    }
+  }, 250);
+}
+
+function updateSaveProgress(pct) {
+  const el = document.getElementById('admin-save-progress');
+  if (!el) return;
+  const bar = el.querySelector('.asp-bar');
+  const label = el.querySelector('.asp-pct');
+  if (bar) bar.style.width = pct + '%';
+  if (label) label.textContent = pct + '%';
+}
+
+function hideSaveProgress() {
+  if (_saveProgTimer) { clearInterval(_saveProgTimer); _saveProgTimer = null; }
+  const el = document.getElementById('admin-save-progress');
+  if (el) el.classList.remove('asp-show');
+}
+
+// Sukses: tuntaskan ke 100%, lalu reload (tab terakhir otomatis dipulihkan restoreTab)
+function finishSaveProgressAndReload(delayMs = 900) {
+  if (_saveProgTimer) { clearInterval(_saveProgTimer); _saveProgTimer = null; }
+  updateSaveProgress(100);
+  setTimeout(() => {
+    hideSaveProgress();
+    location.reload();
+  }, delayMs);
 }
 
 function validateFileClient(file) {
@@ -689,6 +752,7 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
       heroFoto: hero,
       fotoTentang
     };
+    showSaveProgress();
     const res = await fetch(API_BASE + '/api/admin/profil', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -696,6 +760,7 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
     });
     
     if (res.status === 401) {
+      hideSaveProgress();
       msg.textContent = 'Sesi login telah berakhir. Silakan login kembali.';
       msg.className = 'ml-3 text-sm text-red-600';
       adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error');
@@ -709,13 +774,15 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
       msg.className = 'ml-3 text-sm text-green-600';
       adminToast('Profil desa berhasil diperbarui! Memperbarui halaman...', 'success', 'Simpan Berhasil');
       if (data.data.logo) document.getElementById('header-logo').src = data.data.logo;
-      setTimeout(() => location.reload(), 1300);
+      finishSaveProgressAndReload(1200);
     } else {
+      hideSaveProgress();
       msg.textContent = data.message || 'Gagal menyimpan profil';
       msg.className = 'ml-3 text-sm text-red-600';
       adminToast(data.message || 'Gagal menyimpan profil', 'error');
     }
   } catch (err) {
+    hideSaveProgress();
     msg.textContent = 'Terjadi kesalahan: ' + (err.message || err);
     msg.className = 'ml-3 text-sm text-red-600';
     adminToast('Terjadi kesalahan saat menyimpan data', 'error');
@@ -792,6 +859,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       lembaga: lembaga
     };
 
+    showSaveProgress();
     const res = await fetch(API_BASE + '/api/admin/pemerintahan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -799,6 +867,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
     });
     
     if (res.status === 401) {
+      hideSaveProgress();
       msg.textContent = 'Sesi login telah berakhir. Silakan login kembali.';
       msg.className = 'ml-3 text-sm text-red-600';
       adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error');
@@ -818,13 +887,15 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       if (data.data?.lembaga) {
         renderLembaga(data.data.lembaga);
       }
-      setTimeout(() => location.reload(), 1300);
+      finishSaveProgressAndReload(1200);
     } else {
+      hideSaveProgress();
       msg.textContent = data.message || 'Gagal menyimpan data pemerintahan';
       msg.className = 'ml-3 text-sm text-red-600';
       adminToast(data.message || 'Gagal menyimpan data pemerintahan', 'error');
     }
   } catch (err) {
+    hideSaveProgress();
     console.error('Error save pemerintahan:', err);
     msg.textContent = 'Terjadi kesalahan: ' + (err.message || err);
     msg.className = 'ml-3 text-sm text-red-600';
@@ -848,12 +919,14 @@ document.getElementById('save-kontak')?.addEventListener('click', async () => {
       facebook: document.getElementById('k-facebook').value.trim(),
       youtube: document.getElementById('k-youtube').value.trim()
     };
+    showSaveProgress();
     const res = await fetch(API_BASE + '/api/admin/kontak', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     if (res.status === 401) {
+      hideSaveProgress();
       adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
       if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
       setTimeout(() => checkSession(), 1500);
@@ -863,11 +936,14 @@ document.getElementById('save-kontak')?.addEventListener('click', async () => {
     if (data.success) {
       adminToast('Informasi kontak desa berhasil diperbarui!', 'success', 'Kontak Disimpan');
       if (msg) { msg.textContent = '✓ Kontak berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
+      finishSaveProgressAndReload(1200);
     } else {
+      hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan kontak', 'error', 'Simpan Gagal');
       if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
     }
   } catch (err) {
+    hideSaveProgress();
     adminToast('Terjadi kesalahan saat menyimpan kontak', 'error', 'Koneksi Error');
     if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
   }
@@ -1326,12 +1402,14 @@ jadwalPosyandu: {
     msg.className = 'ml-3 text-sm text-blue-600';
   }
   try {
+    showSaveProgress();
     const res = await fetch(API_BASE + '/api/admin/layanan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     if (res.status === 401) {
+      hideSaveProgress();
       adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
       if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
       setTimeout(() => checkSession(), 1500);
@@ -1341,11 +1419,14 @@ jadwalPosyandu: {
     if (data.success) {
       adminToast('Data layanan publik, posyandu & kependudukan berhasil disimpan!', 'success', 'Layanan Disimpan');
       if (msg) { msg.textContent = '✓ Layanan berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
+      finishSaveProgressAndReload(1200);
     } else {
+      hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan layanan', 'error', 'Simpan Gagal');
       if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
     }
   } catch (e) {
+    hideSaveProgress();
     adminToast('Terjadi kesalahan saat menyimpan layanan', 'error', 'Koneksi Error');
     if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
   }
@@ -1452,12 +1533,14 @@ document.getElementById('save-potensi')?.addEventListener('click', async () => {
         items: kegiatanItems
       }
     };
+    showSaveProgress();
     const res = await fetch(API_BASE + '/api/admin/potensi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     if (res.status === 401) {
+      hideSaveProgress();
       adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
       if (msg) { msg.textContent = 'Sesi telah berakhir.'; msg.className = 'ml-3 text-sm text-red-600'; }
       setTimeout(() => checkSession(), 1500);
@@ -1468,11 +1551,14 @@ document.getElementById('save-potensi')?.addEventListener('click', async () => {
       if (msg) { msg.textContent = '✓ Potensi berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
       fillPotensi(data.data || payload);
       adminToast('Data potensi UMKM, Wisata & Kegiatan berhasil diperbarui!', 'success', 'Potensi Disimpan');
+      finishSaveProgressAndReload(1200);
     } else {
+      hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan potensi desa', 'error', 'Simpan Gagal');
       if (msg) { msg.textContent = data.message || 'Gagal menyimpan'; msg.className = 'ml-3 text-sm text-red-600'; }
     }
   } catch (e) {
+    hideSaveProgress();
     adminToast('Terjadi kesalahan saat menyimpan potensi desa', 'error', 'Koneksi Error');
     if (msg) { msg.textContent = 'Terjadi kesalahan'; msg.className = 'ml-3 text-sm text-red-600'; }
   }
