@@ -908,11 +908,13 @@ function renderPotensiCards(gridId, items, defaultIcon = '✨') {
         const div = document.createElement('div');
         const icon = icons[idx % icons.length] || defaultIcon;
         const imgHtml = item.foto
-            ? `<img src="${item.foto}" alt="${item.nama}" class="w-full h-52 object-cover transition duration-500 group-hover:scale-105">`
-            : `<div class="h-52 bg-gradient-to-br from-red-100 via-amber-50 to-yellow-100 flex items-center justify-center text-5xl">${icon}</div>`;
+            ? `<div class="w-full h-52 sm:h-56 bg-gray-50 flex items-center justify-center p-3 overflow-hidden border-b border-gray-100">
+                <img src="${item.foto}" alt="${item.nama}" class="max-h-full max-w-full w-auto h-auto object-contain rounded-lg transition-transform duration-500 group-hover:scale-105">
+               </div>`
+            : `<div class="h-52 sm:h-56 bg-gradient-to-br from-red-100 via-amber-50 to-yellow-100 flex items-center justify-center text-5xl">${icon}</div>`;
         div.className = 'group bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col';
         div.innerHTML = `
-            <div class="overflow-hidden relative">${imgHtml}</div>
+            <div class="relative">${imgHtml}</div>
             <div class="p-6 flex-1 flex flex-col justify-between">
                 <div>
                     <h3 class="text-xl font-bold mb-2 text-gray-800">${item.nama}</h3>
