@@ -36,87 +36,150 @@
 </head>
 
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
-    <header class="bg-white shadow sticky top-0 z-50">
-        <div class="container mx-auto flex items-center justify-between py-4 px-6">
-            <a href="index.html" class="flex items-center space-x-3">
-                <img src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80" alt="Logo Desa" class="h-12 w-12 rounded-full">
-                <div>
-                    <h1 class="text-xl font-bold">Pekon Banjar Agung</h1>
-                    <p class="text-sm text-gray-500">Bersama membangun desa yang mandiri dan sejahtera</p>
-                </div>
-            </a>
-            <a href="layanan-publik.html" class="text-green-700 font-medium hover:underline">Kembali ke Layanan</a>
-        </div>
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-50 bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-lg"
+    >
+      <div
+        class="container mx-auto flex items-center justify-between py-3 px-6"
+      >
+        <a href="index.html" class="flex items-center space-x-3 group">
+          <div class="relative">
+            <img
+              id="header-logo"
+              src="https://images.unsplash.com/photo-1558005530-a7958896ec60?auto=format&fit=crop&w=48&q=80"
+              alt="Logo Desa"
+              class="h-12 w-12 rounded-full border-2 border-white/40 shadow-md group-hover:scale-105 transition-transform object-cover"
+            />
+            <span
+              class="absolute -bottom-0.5 -right-0.5 h-3 w-3 bg-lime-400 rounded-full border-2 border-white"
+            ></span>
+          </div>
+          <div>
+            <h1
+              id="header-nama"
+              class="text-xl font-bold text-white leading-tight"
+            >
+              Pekon Banjar Agung
+            </h1>
+            <p id="header-tagline" class="text-xs text-red-100">
+              Bersama membangun desa yang mandiri dan sejahtera
+            </p>
+          </div>
+        </a>
+
+        <a
+          href="layanan-publik.html"
+          class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Kembali ke Layanan
+        </a>
+      </div>
     </header>
 
     <main class="container mx-auto py-12 px-4 flex-1">
-        <nav class="text-sm mb-6">
-            <a href="index.html" class="text-green-700 hover:underline">Beranda</a> >
-            <a href="layanan-publik.html" class="text-green-700 hover:underline">Layanan Publik</a> >
-            <span class="text-gray-500">Jadwal Posyandu</span>
+        <nav class="text-sm mb-6 flex items-center gap-2 text-gray-500">
+            <a href="index.html" class="text-red-700 font-medium hover:underline">Beranda</a>
+            <span>/</span>
+            <a href="layanan-publik.html" class="text-red-700 font-medium hover:underline">Layanan Publik</a>
+            <span>/</span>
+            <span class="text-gray-600">Jadwal Posyandu</span>
         </nav>
-<h2 class="text-3xl font-bold mb-2 text-green-700" id="jp-title">Jadwal Posyandu</h2>
-        <p class="text-gray-500 mb-8" id="jp-desc">Informasi jadwal posyandu balita, lansia, dan kegiatan kesehatan di Desa [Nama Desa].</p>
 
-        <div class="bg-white rounded shadow p-6 mb-8">
-            <h3 class="text-2xl font-semibold mb-4">Posyandu Balita</h3>
-            <table class="min-w-full text-sm">
-                <thead>
-                    <tr class="bg-green-100">
-                        <th class="py-2 px-4 text-left font-semibold">Posyandu</th>
-                        <th class="py-2 px-4 text-left font-semibold">Lokasi</th>
-                        <th class="py-2 px-4 text-left font-semibold">Jadwal</th>
-                        <th class="py-2 px-4 text-left font-semibold">Waktu</th>
-                    </tr>
-                </thead>
-<tbody id="posyandu-balita-tbody">
-                    <tr><td class="py-2 px-4">Posyandu Melati</td><td class="py-2 px-4">Balai Desa</td><td class="py-2 px-4">Setiap Kamis</td><td class="py-2 px-4">08.00 - 11.00</td></tr>
-                    <tr><td class="py-2 px-4">Posyandu Mawar</td><td class="py-2 px-4">Dusun Krajan</td><td class="py-2 px-4">Setiap Jumat</td><td class="py-2 px-4">08.00 - 11.00</td></tr>
-                    <tr><td class="py-2 px-4">Posyandu Kenanga</td><td class="py-2 px-4">Dusun Pasar</td><td class="py-2 px-4">Setiap Sabtu</td><td class="py-2 px-4">08.00 - 11.00</td></tr>
-                </tbody>
-            </table>
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-900 via-red-800 to-red-700 p-8 md:p-10 mb-8 shadow-xl">
+            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image:linear-gradient(45deg,#c0392b 25%,transparent 25%,transparent 75%,#c0392b 75%);background-size:36px 36px;"></div>
+            <div class="relative">
+                <h2 class="text-3xl font-bold mb-2 text-white" id="jp-title">Jadwal Posyandu</h2>
+                <p class="text-red-100" id="jp-desc">Informasi jadwal posyandu balita, lansia, dan kegiatan kesehatan di Pekon Banjar Agung.</p>
+            </div>
         </div>
 
-        <div class="bg-white rounded shadow p-6 mb-8">
-            <h3 class="text-2xl font-semibold mb-4">Posyandu Lansia</h3>
-            <table class="min-w-full text-sm">
-                <thead>
-                    <tr class="bg-green-100">
-                        <th class="py-2 px-4 text-left font-semibold">Posyandu</th>
-                        <th class="py-2 px-4 text-left font-semibold">Lokasi</th>
-                        <th class="py-2 px-4 text-left font-semibold">Jadwal</th>
-                    </tr>
-                </thead>
-                <tbody id="posyandu-lansia-tbody">
-                    <tr><td class="py-2 px-4">Posyandu Lansia Sehat</td><td class="py-2 px-4">Balai Desa</td><td class="py-2 px-4">Tanggal 15 setiap bulan</td></tr>
-                    <tr><td class="py-2 px-4">Posyandu Lansia Bahagia</td><td class="py-2 px-4">Dusun Krajan</td><td class="py-2 px-4">Tanggal 25 setiap bulan</td></tr>
-                </tbody>
-            </table>
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                <span>👶</span> Posyandu Balita
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="bg-red-50 text-red-900 border-b border-red-100">
+                            <th class="py-2.5 px-4 text-left font-semibold">Posyandu</th>
+                            <th class="py-2.5 px-4 text-left font-semibold">Lokasi</th>
+                            <th class="py-2.5 px-4 text-left font-semibold">Jadwal</th>
+                            <th class="py-2.5 px-4 text-left font-semibold">Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="posyandu-balita-tbody" class="divide-y divide-gray-100">
+                        <tr><td class="py-2.5 px-4 font-medium">Posyandu Melati</td><td class="py-2.5 px-4 text-gray-600">Balai Desa</td><td class="py-2.5 px-4 text-gray-600">Setiap Kamis</td><td class="py-2.5 px-4 text-gray-600">08.00 - 11.00</td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">Posyandu Mawar</td><td class="py-2.5 px-4 text-gray-600">Dusun Krajan</td><td class="py-2.5 px-4 text-gray-600">Setiap Jumat</td><td class="py-2.5 px-4 text-gray-600">08.00 - 11.00</td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">Posyandu Kenanga</td><td class="py-2.5 px-4 text-gray-600">Dusun Pasar</td><td class="py-2.5 px-4 text-gray-600">Setiap Sabtu</td><td class="py-2.5 px-4 text-gray-600">08.00 - 11.00</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="bg-green-50 rounded shadow p-6">
-            <h3 class="text-2xl font-semibold mb-4">Layanan yang Tersedia</h3>
-            <ul class="list-disc list-inside space-y-2">
-                <li>Penimbangan dan pemantauan tumbuh kembang balita</li>
-                <li>Imunisasi dasar lengkap</li>
-                <li>Pemberian vitamin A dan tablet tambah darah</li>
-                <li>Pemeriksaan kesehatan lansia</li>
-                <li>Penyuluhan gizi dan kesehatan keluarga</li>
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                <span>👵</span> Posyandu Lansia
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="bg-red-50 text-red-900 border-b border-red-100">
+                            <th class="py-2.5 px-4 text-left font-semibold">Posyandu</th>
+                            <th class="py-2.5 px-4 text-left font-semibold">Lokasi</th>
+                            <th class="py-2.5 px-4 text-left font-semibold">Jadwal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="posyandu-lansia-tbody" class="divide-y divide-gray-100">
+                        <tr><td class="py-2.5 px-4 font-medium">Posyandu Lansia Sehat</td><td class="py-2.5 px-4 text-gray-600">Balai Desa</td><td class="py-2.5 px-4 text-gray-600">Tanggal 15 setiap bulan</td></tr>
+                        <tr><td class="py-2.5 px-4 font-medium">Posyandu Lansia Bahagia</td><td class="py-2.5 px-4 text-gray-600">Dusun Krajan</td><td class="py-2.5 px-4 text-gray-600">Tanggal 25 setiap bulan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center gap-2">
+                <span>🩺</span> Layanan Kesehatan yang Tersedia
+            </h3>
+            <ul id="jp-layanan-list" class="space-y-2.5 text-sm text-gray-700">
+                <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2">
+                    <span class="text-red-700">✓</span> Penimbangan dan pemantauan tumbuh kembang balita
+                </li>
+                <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2">
+                    <span class="text-red-700">✓</span> Imunisasi dasar lengkap
+                </li>
+                <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2">
+                    <span class="text-red-700">✓</span> Pemberian vitamin A dan tablet tambah darah
+                </li>
+                <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2">
+                    <span class="text-red-700">✓</span> Pemeriksaan kesehatan lansia
+                </li>
+                <li class="p-3 bg-gray-50 rounded-xl flex items-center gap-2">
+                    <span class="text-red-700">✓</span> Penyuluhan gizi dan kesehatan keluarga
+                </li>
             </ul>
         </div>
     </main>
 
-    <footer class="bg-green-700 kebung-tikhai text-white py-6 mt-8">
-        <div class="container mx-auto flex flex-col lg:flex-row items-center justify-between px-4">
-            <div class="flex items-center space-x-2 mb-2 md:mb-0">
-                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-12 w-auto object-contain">
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-red-950 via-red-900 to-red-950 text-white py-8 border-t border-red-800/40">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-6 gap-4">
+            <div class="flex items-center space-x-3">
+                <img src="logo-darmajaya.png" alt="Logo Institut Informatika dan Bisnis Darmajaya" class="h-10 w-auto object-contain brightness-95">
+                <span class="text-xs text-red-200">KKN Tematik IIB Darmajaya 2025</span>
             </div>
-            <div class="flex space-x-4 mb-2 md:mb-0">
-                <a href="#" class="hover:underline">Instagram</a>
-                <a href="#" class="hover:underline">Facebook</a>
-                <a href="#" class="hover:underline">YouTube</a>
+            <div class="flex items-center space-x-6 text-sm text-red-100">
+                <a href="https://instagram.com" class="hover:text-white transition">Instagram</a>
+                <a href="https://facebook.com" class="hover:text-white transition">Facebook</a>
+                <a href="https://youtube.com" class="hover:text-white transition">YouTube</a>
             </div>
-            <div class="text-sm">&copy; 2026 Pekon Banjar Agung. All rights reserved.</div>
+            <div class="text-xs text-red-200 text-center md:text-right">
+                &copy; <span id="footer-year">2025</span> Pekon Banjar Agung. Seluruh hak cipta dilindungi.
+            </div>
         </div>
     </footer>
     <script src="script.js"></script>

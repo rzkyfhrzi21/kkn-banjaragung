@@ -572,8 +572,8 @@ function applyBerita(berita) {
         indexGrid.innerHTML = '';
         berita.slice(0, 3).forEach(item => {
             const img = item.gambar
-                ? `<img src="${item.gambar}" alt="Gambar Pengumuman" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">`
-                : `<div class="w-full h-44 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">📢</div>`;
+                ? `<div class="w-full h-48 bg-gray-50 flex items-center justify-center p-2 overflow-hidden border-b border-gray-100"><img src="${item.gambar}" alt="${item.judul}" class="max-h-full max-w-full w-auto h-auto object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"></div>`
+                : `<div class="w-full h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">📢</div>`;
             const a = document.createElement('a');
             a.href = 'pengumuman-detail.html?id=' + item.id;
             a.className = 'group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300';
@@ -627,8 +627,8 @@ function applyPengumuman(pengumuman) {
 // Helper untuk membangun kartu pengumuman dengan format yang konsisten
 function buildPengumumanCard(item) {
     const img = item.gambar
-        ? `<img src="${item.gambar}" alt="Gambar Pengumuman" class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">`
-        : `<div class="w-full h-44 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">📢</div>`;
+        ? `<div class="w-full h-48 bg-gray-50 flex items-center justify-center p-2 overflow-hidden border-b border-gray-100"><img src="${item.gambar}" alt="${item.judul}" class="max-h-full max-w-full w-auto h-auto object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"></div>`
+        : `<div class="w-full h-48 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">📢</div>`;
     const a = document.createElement('a');
     a.href = 'pengumuman-detail.html?id=' + item.id;
     a.className = 'group block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300';
