@@ -863,19 +863,19 @@ function applyPotensi(p) {
     if (!p) return;
     const um = p.umkm || {}, wi = p.wisata || {}, kg = p.kegiatan || {};
     if (document.getElementById('um-title')) {
-        document.getElementById('um-title').textContent = um.judul || 'UMKM & Produk Unggulan';
-        if (document.getElementById('um-desc')) document.getElementById('um-desc').textContent = um.deskripsi || '';
-        renderPotensiCards('um-card-grid', um.items || []);
+        if (um.judul) document.getElementById('um-title').textContent = um.judul;
+        if (document.getElementById('um-desc') && um.deskripsi) document.getElementById('um-desc').textContent = um.deskripsi;
+        if (Array.isArray(um.items)) renderPotensiCards('um-card-grid', um.items, '🌾');
     }
     if (document.getElementById('wi-title')) {
-        document.getElementById('wi-title').textContent = wi.judul || 'Wisata Alam & Budaya';
-        if (document.getElementById('wi-desc')) document.getElementById('wi-desc').textContent = wi.deskripsi || '';
-        renderPotensiCards('wi-card-grid', wi.items || []);
+        if (wi.judul) document.getElementById('wi-title').textContent = wi.judul;
+        if (document.getElementById('wi-desc') && wi.deskripsi) document.getElementById('wi-desc').textContent = wi.deskripsi;
+        if (Array.isArray(wi.items)) renderPotensiCards('wi-card-grid', wi.items, '🏞️');
     }
     if (document.getElementById('kg-title')) {
-        document.getElementById('kg-title').textContent = kg.judul || 'Kegiatan Masyarakat';
-        if (document.getElementById('kg-desc')) document.getElementById('kg-desc').textContent = kg.deskripsi || '';
-        renderPotensiCards('kg-card-grid', kg.items || []);
+        if (kg.judul) document.getElementById('kg-title').textContent = kg.judul;
+        if (document.getElementById('kg-desc') && kg.deskripsi) document.getElementById('kg-desc').textContent = kg.deskripsi;
+        if (Array.isArray(kg.items)) renderPotensiCards('kg-card-grid', kg.items, '🤝');
     }
 
     // ===== Index page (index.html) Potensi Desa =====
@@ -890,29 +890,37 @@ function applyPotensi(p) {
     if (document.getElementById('potensi-index-kg-desc')) document.getElementById('potensi-index-kg-desc').textContent = kg.deskripsi || 'Berbagai kegiatan sosial dan budaya warga.';
 }
 
-function renderPotensiCards(gridId, items) {
+function renderPotensiCards(gridId, items, defaultIcon = '✨') {
     const grid = document.getElementById(gridId);
     if (!grid) return;
+    if (!items || !items.length) {
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <span class="text-4xl mb-3 block">${defaultIcon}</span>
+                <p class="text-gray-500 font-medium">Belum ada item yang ditambahkan di modul ini.</p>
+            </div>
+        `;
+        return;
+    }
     grid.innerHTML = '';
-    if (!items || !items.length) return;
-    items.forEach(item => {
+    const icons = ['🌾', '☕', '🍯', '🧵', '🍲', '🪴', '🏞️', '🏛️', '🎭', '🤝', '📚', '🏃'];
+    items.forEach((item, idx) => {
         const div = document.createElement('div');
-        const img = item.foto
+        const icon = icons[idx % icons.length] || defaultIcon;
+        const imgHtml = item.foto
             ? `<img src="${item.foto}" alt="${item.nama}" class="w-full h-52 object-cover transition duration-500 group-hover:scale-105">`
-            : `<div class="h-52 bg-gradient-to-br from-red-100 to-yellow-100"></div>`;
+            : `<div class="h-52 bg-gradient-to-br from-red-100 via-amber-50 to-yellow-100 flex items-center justify-center text-5xl">${icon}</div>`;
+        div.className = 'group bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 flex flex-col';
         div.innerHTML = `
-            <div class="group bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-                <div class="overflow-hidden">${img}</div>
-                <div class="p-5">
+            <div class="overflow-hidden relative">${imgHtml}</div>
+            <div class="p-6 flex-1 flex flex-col justify-between">
+                <div>
                     <h3 class="text-xl font-bold mb-2 text-gray-800">${item.nama}</h3>
-                    <p class="text-sm leading-relaxed text-gray-600">${item.deskripsi}</p>
+                    <p class="text-sm leading-relaxed text-gray-600">${item.deskripsi || ''}</p>
                 </div>
             </div>
         `;
-        const card = div.firstElementChild;
-        if (card) {
-            grid.appendChild(card);
-        }
+        grid.appendChild(div);
     });
 }
 
