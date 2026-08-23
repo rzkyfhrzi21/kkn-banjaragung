@@ -588,7 +588,7 @@ function fillPemerintahan(p) {
   document.getElementById('bpd-ketua').value = p.bpd?.ketua || '';
   document.getElementById('bpd-wakil').value = p.bpd?.wakil || '';
   document.getElementById('bpd-sekretaris').value = p.bpd?.sekretaris || '';
-  document.getElementById('bpd-anggota').value = p.bpd?.anggota || '';
+  renderBpdAnggota(p.bpd?.anggota || []);
   renderPerangkat(p.perangkat || []);
   renderLembaga(p.lembaga || []);
 }
@@ -700,6 +700,43 @@ document.getElementById('add-lembaga')?.addEventListener('click', () => {
   row.querySelector('.remove-lembaga').addEventListener('click', () => row.remove());
 });
 
+function renderBpdAnggota(list) {
+  const container = document.getElementById('bpd-anggota-list');
+  if (!container) return;
+  container.innerHTML = '';
+  const items = Array.isArray(list)
+    ? list
+    : (typeof list === 'string' && list.trim() ? list.split(/[\n,]+/).map(s => s.trim()).filter(Boolean) : []);
+  if (items.length) {
+    items.forEach(nama => addBpdAnggotaRow(nama));
+  } else {
+    addBpdAnggotaRow('');
+  }
+}
+
+function addBpdAnggotaRow(nama = '') {
+  const container = document.getElementById('bpd-anggota-list');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'flex gap-2 items-center bg-gray-50 p-2 rounded';
+  row.innerHTML = `
+    <input data-field="nama" value="${nama}" placeholder="Nama Anggota BPD" class="flex-1 border border-gray-300 rounded px-3 py-2">
+    <button type="button" class="remove-bpd-anggota bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200">Hapus</button>
+  `;
+  row.querySelector('.remove-bpd-anggota').addEventListener('click', () => row.remove());
+  container.appendChild(row);
+}
+
+document.getElementById('add-bpd-anggota')?.addEventListener('click', () => {
+  addBpdAnggotaRow('');
+});
+
+function collectBpdAnggota() {
+  return Array.from(document.querySelectorAll('#bpd-anggota-list input[data-field="nama"]'))
+    .map(inp => inp.value.trim())
+    .filter(Boolean);
+}
+
 function fillKontak(k) {
   if (!k) return;
   document.getElementById('k-alamat').value = k.alamat || '';
@@ -728,19 +765,51 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
     
     if (logoFile) {
       const up = await uploadFile(logoFile);
-      if (up) { logo = up; document.getElementById('p-logo-preview').dataset.savedUrl = up; }
+      if (up) {
+        logo = up;
+        document.getElementById('p-logo-preview').dataset.savedUrl = up;
+      } else {
+        msg.textContent = 'Gagal mengunggah Logo' + (lastUploadError ? ' — ' + lastUploadError : '');
+        msg.className = 'ml-3 text-sm text-red-600 font-medium';
+        adminToast(lastUploadError || 'Gagal mengunggah Logo', 'error', 'Unggah Gagal');
+        return;
+      }
     }
     if (heroFile) {
       const up = await uploadFile(heroFile);
-      if (up) { hero = up; document.getElementById('p-hero-preview').dataset.savedUrl = up; }
+      if (up) {
+        hero = up;
+        document.getElementById('p-hero-preview').dataset.savedUrl = up;
+      } else {
+        msg.textContent = 'Gagal mengunggah Foto Banner' + (lastUploadError ? ' — ' + lastUploadError : '');
+        msg.className = 'ml-3 text-sm text-red-600 font-medium';
+        adminToast(lastUploadError || 'Gagal mengunggah Foto Banner', 'error', 'Unggah Gagal');
+        return;
+      }
     }
     if (tentangFile) {
       const up = await uploadFile(tentangFile);
-      if (up) { fotoTentang = up; document.getElementById('p-tentang-preview').dataset.savedUrl = up; }
+      if (up) {
+        fotoTentang = up;
+        document.getElementById('p-tentang-preview').dataset.savedUrl = up;
+      } else {
+        msg.textContent = 'Gagal mengunggah Foto Tentang Desa' + (lastUploadError ? ' — ' + lastUploadError : '');
+        msg.className = 'ml-3 text-sm text-red-600 font-medium';
+        adminToast(lastUploadError || 'Gagal mengunggah Foto Tentang Desa', 'error', 'Unggah Gagal');
+        return;
+      }
     }
     if (panelFile) {
       const up = await uploadFile(panelFile);
-      if (up) { panelFoto = up; document.getElementById('p-panel-foto-preview').dataset.savedUrl = up; }
+      if (up) {
+        panelFoto = up;
+        document.getElementById('p-panel-foto-preview').dataset.savedUrl = up;
+      } else {
+        msg.textContent = 'Gagal mengunggah Foto Profil PKPM' + (lastUploadError ? ' — ' + lastUploadError : '');
+        msg.className = 'ml-3 text-sm text-red-600 font-medium';
+        adminToast(lastUploadError || 'Gagal mengunggah Foto Profil PKPM', 'error', 'Unggah Gagal');
+        return;
+      }
     }
 
     if (logo.startsWith('blob:')) logo = '';
@@ -871,7 +940,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
         ketua: document.getElementById('bpd-ketua').value.trim(),
         wakil: document.getElementById('bpd-wakil').value.trim(),
         sekretaris: document.getElementById('bpd-sekretaris').value.trim(),
-        anggota: document.getElementById('bpd-anggota').value.trim()
+        anggota: collectBpdAnggota()
       },
       lembaga: lembaga
     };
@@ -931,7 +1000,11 @@ document.getElementById('save-kontak')?.addEventListener('click', async () => {
       alamat: document.getElementById('k-alamat').value.trim(),
       telepon: document.getElementById('k-telepon').value.trim(),
       email: document.getElementById('k-email').value.trim(),
-      mapsUrl: document.getElementById('k-maps').value.trim(),
+      mapsUrl: (() => {
+        const raw = document.getElementById('k-maps').value.trim();
+        const m = raw.match(/src=["']([^"']+)["']/i);
+        return m ? m[1] : raw;
+      })(),
       instagram: document.getElementById('k-instagram').value.trim(),
       facebook: document.getElementById('k-facebook').value.trim(),
       youtube: document.getElementById('k-youtube').value.trim()
@@ -1439,7 +1512,7 @@ function renderPotensiItems(containerId, items, addBtnId) {
 function addPotensiRow(container, item) {
   const row = document.createElement('div');
   row.className = 'flex flex-col lg:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
-  row.dataset.foto = item.foto || '';
+  row.dataset.savedFoto = item.foto || '';
   const preview = item.foto
     ? `<img src="${item.foto}" alt="Pratinjau foto potensi" class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs">`
     : `<div class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 rounded-xl bg-gray-100 text-gray-400 text-xs flex items-center justify-center text-center p-1">Belum ada foto</div>`;
@@ -1461,13 +1534,12 @@ function addPotensiRow(container, item) {
     if (!file) return;
     row.querySelector('.file-name').textContent = file.name;
     row.querySelector('.file-name').classList.add('has-file');
-    row.dataset.foto = URL.createObjectURL(file);
     const oldPreview = row.querySelector('.potensi-preview');
     const image = document.createElement('img');
-    image.src = row.dataset.foto;
+    image.src = URL.createObjectURL(file);
     image.alt = 'Pratinjau foto potensi';
     image.className = 'potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs';
-    oldPreview.replaceWith(image);
+    if (oldPreview) oldPreview.replaceWith(image);
   });
   row.querySelector('.remove-potensi').addEventListener('click', () => row.remove());
   container.appendChild(row);
@@ -1479,9 +1551,15 @@ async function collectPotensiItems(containerId) {
   for (const row of rows) {
     const nama = row.querySelector('[data-field="nama"]').value.trim();
     const deskripsi = row.querySelector('[data-field="deskripsi"]').value.trim();
-    let foto = row.dataset.foto || '';
+    let foto = row.dataset.savedFoto || '';
     const file = row.querySelector('[data-field="foto"]').files[0];
-    if (file) foto = await uploadFile(file) || foto;
+    if (file) {
+      const up = await uploadFile(file);
+      if (up) {
+        foto = up;
+        row.dataset.savedFoto = up;
+      }
+    }
     if (foto.startsWith('blob:')) foto = '';
     if (nama || deskripsi || foto) items.push({ nama, deskripsi, foto });
   }

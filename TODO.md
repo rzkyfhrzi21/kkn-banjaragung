@@ -21,17 +21,17 @@
 
 ## 3. Data Kependudukan updateable
 
-- [ ] Struktur data kelompokUmur[] & pendidikan[]
-- [ ] Admin: form kelola di admin.html
-- [ ] Admin: logika simpan di admin.js
-- [ ] Publik: render tabel dinamis di data-kependudukan.html
+- [x] Struktur data kelompokUmur[] & pendidikan[]
+- [x] Admin: form kelola di admin.html
+- [x] Admin: logika simpan di admin.js
+- [x] Publik: render tabel dinamis di data-kependudukan.html
 
 ## 4. Arsip Perdes updateable
 
-- [ ] Struktur data perdes[] & perkades[]
-- [ ] Admin: form kelola di admin.html
-- [ ] Admin: logika simpan di admin.js
-- [ ] Publik: render tabel dinamis di arsip-perdes.html
+- [x] Struktur data perdes[] & perkades[]
+- [x] Admin: form kelola di admin.html
+- [x] Admin: logika simpan di admin.js
+- [x] Publik: render tabel dinamis di arsip-perdes.html
 
 ## 5. Testing
 

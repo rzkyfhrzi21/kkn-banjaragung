@@ -6,7 +6,20 @@
 (function (global) {
   "use strict";
 
-  const ALLOWED_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+  const ALLOWED_EXTS = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".avif",
+    ".heic",
+    ".heif",
+    ".bmp",
+    ".ico",
+    ".tiff",
+    ".tif",
+  ];
   const DANGEROUS_EXTS_REGEX =
     /\.(php|phtml|phar|inc|sh|bash|exe|cgi|pl|jsp|asp|aspx|htaccess|py|rb|svg)/i;
   const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB (aman di bawah limit body request 4.5MB hosting Vercel)

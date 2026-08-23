@@ -293,13 +293,16 @@ function applyProfil(p) {
                 el.textContent = el.textContent.replace('Desa [Nama Desa]', p.namaDesa);
             }
         });
-        // Fill profile page header elements by ID
-        const hNama = document.getElementById('header-nama');
-        if (hNama) hNama.textContent = p.namaDesa;
+        // Fill header nama elements by ID & class
+        document.querySelectorAll('#header-nama, .header-nama-text').forEach(el => {
+            el.textContent = p.namaDesa;
+        });
         const h2Profil = document.querySelector('h2.text-3xl');
         if (h2Profil && h2Profil.textContent.includes('Profil')) {
             h2Profil.textContent = 'Profil ' + p.namaDesa;
         }
+        const heroNamaSpan = document.getElementById('header-nama-hero');
+        if (heroNamaSpan) heroNamaSpan.textContent = p.namaDesa;
         // Page title (only on profil page)
         if (document.title.includes('Profil')) {
             document.title = 'Profil ' + p.namaDesa;
@@ -307,27 +310,46 @@ function applyProfil(p) {
     }
     // Logo
     if (p.logo) {
-        document.querySelectorAll('img[alt="Logo Desa"]').forEach(img => {
+        document.querySelectorAll('img[alt="Logo Desa"], #header-logo').forEach(img => {
             img.src = p.logo;
         });
-        const headerLogo = document.getElementById('header-logo');
-        if (headerLogo) headerLogo.src = p.logo;
     }
     // Hero foto
     if (p.heroFoto) {
         document.querySelectorAll('img[alt="Foto Desa"]').forEach(img => {
             img.src = p.heroFoto;
         });
+        const heroFoto = document.getElementById('beranda-hero-foto');
+        if (heroFoto) heroFoto.src = p.heroFoto;
+        const heroFotoMobile = document.getElementById('beranda-hero-foto-mobile');
+        if (heroFotoMobile) heroFotoMobile.src = p.heroFoto;
     }
     // Tagline text
     if (p.tagline) {
+        document.querySelectorAll('#header-tagline, .header-tagline-text').forEach(el => {
+            el.textContent = p.tagline;
+        });
         document.querySelectorAll('p').forEach(el => {
             if (el.textContent.includes('Bersama membangun desa')) {
                 el.textContent = p.tagline;
             }
         });
-        const hTagline = document.getElementById('header-tagline');
-        if (hTagline) hTagline.textContent = p.tagline;
+    }
+    // Beranda Hero Text
+    const heroTitle = document.getElementById('beranda-hero-title');
+    if (heroTitle && p.namaDesa) {
+        heroTitle.textContent = `Selamat datang di Website Resmi ${p.namaDesa}`;
+    }
+    const heroDesc = document.getElementById('beranda-hero-desc');
+    if (heroDesc && p.namaDesa) {
+        heroDesc.textContent = `Informasi, layanan, dan berita terkini seputar ${p.namaDesa}.`;
+    }
+    const heroSub = document.getElementById('beranda-hero-sub');
+    if (heroSub) {
+        const lokasi = [p.kecamatan, p.kabupaten].filter(Boolean).join(', ');
+        if (lokasi || p.tagline) {
+            heroSub.textContent = lokasi ? `${lokasi}. ${p.tagline || ''}`.trim() : (p.tagline || '');
+        }
     }
     // Deskripsi & foto profil page
     if (p.deskripsi) {
@@ -381,7 +403,7 @@ function applyProfil(p) {
 
 function applyPemerintahan(p) {
     if (!p) return;
-    // Kepala desa name
+    // Kepala desa name, jabatan & foto
     if (p.kepalaDesa?.nama) {
         const kepalaNama = document.getElementById('kepala-nama');
         if (kepalaNama) {
@@ -394,7 +416,12 @@ function applyPemerintahan(p) {
             }
         });
     }
-    // Kepala desa foto
+    if (p.kepalaDesa?.jabatan) {
+        const kepalaJabatan = document.getElementById('kepala-jabatan');
+        if (kepalaJabatan) {
+            kepalaJabatan.textContent = p.kepalaDesa.jabatan;
+        }
+    }
     if (p.kepalaDesa?.foto) {
         const kepalaFoto = document.getElementById('kepala-foto');
         if (kepalaFoto) {
@@ -405,7 +432,7 @@ function applyPemerintahan(p) {
             img.src = p.kepalaDesa.foto;
         });
     }
-// Perangkat desa table (legacy) atau grid kartu (desain baru)
+    // Perangkat desa table (legacy) atau grid kartu (desain baru)
     if (Array.isArray(p.perangkat)) {
         const tbody = document.getElementById('perangkat-tbody') || document.querySelector('table tbody');
         if (tbody) {
@@ -447,15 +474,41 @@ function applyPemerintahan(p) {
             });
         }
     }
-    // BPD items (mendukung struktur lama `ul.list-disc` dan desain baru kartu)
+    // BPD items (dinamis & mendukung array anggota / string nama)
     if (p.bpd) {
-        document.querySelectorAll('ul li').forEach(li => {
-            const text = li.textContent;
-            if (text.includes('Ketua:')) li.innerHTML = `<span class="font-medium text-gray-800">Ketua:</span> <span class="text-gray-600">${p.bpd.ketua || ''}</span>`;
-            if (text.includes('Wakil Ketua:')) li.innerHTML = `<span class="font-medium text-gray-800">Wakil Ketua:</span> <span class="text-gray-600">${p.bpd.wakil || ''}</span>`;
-            if (text.includes('Sekretaris:')) li.innerHTML = `<span class="font-medium text-gray-800">Sekretaris:</span> <span class="text-gray-600">${p.bpd.sekretaris || ''}</span>`;
-            if (text.includes('Anggota:')) li.innerHTML = `<span class="font-medium text-gray-800">Anggota:</span> <span class="text-gray-600">${p.bpd.anggota || ''}</span>`;
-        });
+        const bpdList = document.getElementById('bpd-list');
+        if (bpdList) {
+            bpdList.innerHTML = '';
+            if (p.bpd.ketua) {
+                bpdList.innerHTML += `<li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Ketua:</span> <span class="text-gray-600">${p.bpd.ketua}</span></li>`;
+            }
+            if (p.bpd.wakil) {
+                bpdList.innerHTML += `<li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Wakil Ketua:</span> <span class="text-gray-600">${p.bpd.wakil}</span></li>`;
+            }
+            if (p.bpd.sekretaris) {
+                bpdList.innerHTML += `<li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">Sekretaris:</span> <span class="text-gray-600">${p.bpd.sekretaris}</span></li>`;
+            }
+            const anggotaItems = Array.isArray(p.bpd.anggota)
+                ? p.bpd.anggota
+                : (typeof p.bpd.anggota === 'string' && p.bpd.anggota.trim() ? p.bpd.anggota.split(/[\n,]+/).map(s => s.trim()).filter(Boolean) : []);
+            if (anggotaItems.length) {
+                anggotaItems.forEach((nama, i) => {
+                    const label = anggotaItems.length > 1 ? `Anggota ${i + 1}:` : 'Anggota:';
+                    bpdList.innerHTML += `<li class="bg-white rounded-xl p-3 shadow-sm"><span class="font-medium text-gray-800">${label}</span> <span class="text-gray-600">${nama}</span></li>`;
+                });
+            }
+        } else {
+            document.querySelectorAll('ul li').forEach(li => {
+                const text = li.textContent;
+                if (text.includes('Ketua:')) li.innerHTML = `<span class="font-medium text-gray-800">Ketua:</span> <span class="text-gray-600">${p.bpd.ketua || ''}</span>`;
+                if (text.includes('Wakil Ketua:')) li.innerHTML = `<span class="font-medium text-gray-800">Wakil Ketua:</span> <span class="text-gray-600">${p.bpd.wakil || ''}</span>`;
+                if (text.includes('Sekretaris:')) li.innerHTML = `<span class="font-medium text-gray-800">Sekretaris:</span> <span class="text-gray-600">${p.bpd.sekretaris || ''}</span>`;
+                if (text.includes('Anggota:')) {
+                    const anggotaText = Array.isArray(p.bpd.anggota) ? p.bpd.anggota.join(', ') : (p.bpd.anggota || '');
+                    li.innerHTML = `<span class="font-medium text-gray-800">Anggota:</span> <span class="text-gray-600">${anggotaText}</span>`;
+                }
+            });
+        }
     }
 }
 
@@ -470,13 +523,17 @@ function applyKontak(k) {
 // Maps iframe — konversi link share/place apa pun ke format embed yang valid
     const toMapsEmbed = (url) => {
         if (!url) return '';
-        if (url.includes('output=embed')) return url;
+        const iframeMatch = url.match(/src=["']([^"']+)["']/i);
+        if (iframeMatch) url = iframeMatch[1];
+        if (url.includes('/maps/embed') || url.includes('output=embed')) return url;
         const m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
         if (m) return `https://maps.google.com/maps?q=${m[1]},${m[2]}&z=16&output=embed`;
         const q = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
         if (q) return `https://maps.google.com/maps?q=${q[1]},${q[2]}&z=16&output=embed`;
         const d = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
         if (d) return `https://maps.google.com/maps?q=${d[1]},${d[2]}&z=16&output=embed`;
+        const d2 = url.match(/!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)/);
+        if (d2) return `https://maps.google.com/maps?q=${d2[2]},${d2[1]}&z=16&output=embed`;
         return '';
     };
     if (k.mapsUrl) {

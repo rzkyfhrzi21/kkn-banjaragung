@@ -457,7 +457,7 @@
         <h4 class="text-lg font-semibold mb-2">
           BPD (Badan Permusyawaratan Desa)
         </h4>
-        <div class="grid md:grid-cols-2 gap-4">
+        <div class="grid md:grid-cols-3 gap-4 mb-4">
           <div>
             <label class="block text-sm font-medium mb-1">Ketua BPD</label>
             <input
@@ -484,15 +484,20 @@
               class="w-full border border-gray-300 rounded px-3 py-2"
             />
           </div>
-          <div>
-            <label class="block text-sm font-medium mb-1">Anggota BPD</label>
-            <input
-              type="text"
-              id="bpd-anggota"
-              class="w-full border border-gray-300 rounded px-3 py-2"
-            />
-          </div>
         </div>
+
+        <label class="block text-sm font-medium mb-1">Anggota BPD</label>
+        <p class="text-xs text-gray-500 mb-2">
+          Tambahkan seluruh anggota BPD desa secara fleksibel.
+        </p>
+        <div id="bpd-anggota-list" class="space-y-2 mb-3"></div>
+        <button
+          type="button"
+          id="add-bpd-anggota"
+          class="bg-gray-200 text-gray-700 px-4 py-2 rounded font-medium hover:bg-green-100 mb-6"
+        >
+          + Tambah Anggota BPD
+        </button>
 
         <h4 class="text-lg font-semibold mb-2 mt-6">Lembaga Desa Lainnya</h4>
         <p class="text-sm text-gray-500 mb-3">
