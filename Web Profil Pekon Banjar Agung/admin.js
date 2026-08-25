@@ -242,13 +242,14 @@ function hideSaveProgress() {
   if (el) el.classList.remove('asp-show');
 }
 
-// Sukses: tuntaskan ke 100%, lalu reload (tab terakhir otomatis dipulihkan restoreTab)
-function finishSaveProgressAndReload(delayMs = 900) {
+// Sukses: tuntaskan progres ke 100% lalu selesai TANPA me-reload halaman.
+// Pembaruan tampilan dilakukan langsung (in-place) pada bagian yang tersimpan;
+// reload penuh tidak diperlukan dan membuat UX terasa lambat.
+function finishSaveProgress(delayMs = 700) {
   if (_saveProgTimer) { clearInterval(_saveProgTimer); _saveProgTimer = null; }
   updateSaveProgress(100);
   setTimeout(() => {
     hideSaveProgress();
-    location.reload();
   }, delayMs);
 }
 
@@ -367,7 +368,7 @@ function createUploadProgressToast(fileName) {
         if (titleText) titleText.textContent = 'Memproses Berkas...';
       }
     },
-    success(message = 'Foto berhasil diunggah! Memperbarui halaman...', autoReload = false) {
+    success(message = 'Foto berhasil diunggah!') {
       toast.className = 'pekon-toast toast-success';
       if (iconBox) {
         iconBox.innerHTML = `<svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`;
@@ -378,13 +379,8 @@ function createUploadProgressToast(fileName) {
       const msgEl = toast.querySelector('.toast-message');
       if (msgEl) msgEl.textContent = message;
 
-      if (autoReload) {
-        setTimeout(() => {
-          location.reload();
-        }, 1300);
-      } else {
-        setTimeout(dismiss, 3500);
-      }
+      // Tanpa reload — bagian terkait diperbarui langsung (in-place) oleh pemanggil.
+      setTimeout(dismiss, 3500);
     },
     error(message = 'Gagal mengunggah foto.') {
       toast.className = 'pekon-toast toast-error';
@@ -437,7 +433,7 @@ function uploadFile(file, options = {}) {
               return;
             }
             lastUploadError = '';
-            progressToast.success('Foto berhasil diunggah! Data sedang disimpan...', options.autoReload || false);
+            progressToast.success('Foto berhasil diunggah! Data sedang disimpan...');
             resolve(data.url);
           } else {
             lastUploadError = data.message || 'Gagal mengupload berkas';
@@ -916,9 +912,11 @@ document.getElementById('save-profil')?.addEventListener('click', async () => {
     if (data.success) {
       msg.textContent = '✓ Profil berhasil disimpan';
       msg.className = 'ml-3 text-sm text-green-600';
-      adminToast('Profil desa berhasil diperbarui! Memperbarui halaman...', 'success', 'Simpan Berhasil');
+      adminToast('Profil desa berhasil diperbarui', 'success', 'Simpan Berhasil');
       if (data.data.logo) document.getElementById('header-logo').src = data.data.logo;
-      finishSaveProgressAndReload(1200);
+      // Bersihkan pilihan berkas di tempat — pratinjau & dataset sudah sinkron.
+      ['p-logo-file', 'p-hero-file', 'p-tentang-file', 'p-panel-foto-file'].forEach(id => clearFileInput(id));
+      finishSaveProgress(1200);
     } else {
       hideSaveProgress();
       msg.textContent = data.message || 'Gagal menyimpan profil';
@@ -1031,7 +1029,7 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
     if (data.success) {
       msg.textContent = '✓ Pemerintahan berhasil disimpan';
       msg.className = 'ml-3 text-sm text-green-600';
-      adminToast('Data pemerintahan & lembaga berhasil disimpan! Memperbarui halaman...', 'success', 'Simpan Berhasil');
+      adminToast('Data pemerintahan & lembaga berhasil disimpan', 'success', 'Simpan Berhasil');
       if (data.data?.kepalaDesa?.foto && preview) {
         preview.src = data.data.kepalaDesa.foto;
         preview.dataset.savedUrl = data.data.kepalaDesa.foto;
@@ -1039,7 +1037,9 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       if (data.data?.lembaga) {
         renderLembaga(data.data.lembaga);
       }
-      finishSaveProgressAndReload(1200);
+      // Bersihkan pilihan berkas kepala desa tanpa reload.
+      clearFileInput('kd-foto-file');
+      finishSaveProgress(1200);
     } else {
       hideSaveProgress();
       msg.textContent = data.message || 'Gagal menyimpan data pemerintahan';
@@ -1092,7 +1092,7 @@ document.getElementById('save-kontak')?.addEventListener('click', async () => {
     if (data.success) {
       adminToast('Informasi kontak desa berhasil diperbarui!', 'success', 'Kontak Disimpan');
       if (msg) { msg.textContent = '✓ Kontak berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
-      finishSaveProgressAndReload(1200);
+      finishSaveProgress(1200);
     } else {
       hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan kontak', 'error', 'Simpan Gagal');
@@ -1226,7 +1226,9 @@ async function updatePengumumanGambar(id, file) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     adminToast(file ? 'Foto pengumuman berhasil diganti' : 'Foto pengumuman berhasil dihapus', 'success', 'Berhasil');
-    finishSaveProgressAndReload(900);
+    finishSaveProgress();
+    // Perbarui daftar di tempat — tanpa reload halaman.
+    renderPengumuman((await (await fetch(API_BASE + '/api/data')).json()).pengumuman || []);
   } catch (err) {
     hideSaveProgress();
     adminToast('Gagal memperbarui foto pengumuman', 'error');
@@ -1292,7 +1294,7 @@ GALERI_CATEGORIES.forEach(cat => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ category: cat.key, urls: upData.urls })
         });
-        progressToast.success(`✓ ${files.length} foto berhasil diunggah ke kategori ${cat.label}! Memperbarui...`, true);
+        progressToast.success(`✓ ${files.length} foto berhasil diunggah ke kategori ${cat.label}! Memuat galeri...`);
       } else {
         progressToast.error(upData.message || 'Gagal mengunggah foto galeri');
       }
@@ -1343,7 +1345,12 @@ function renderGaleriAll(gal) {
     btn.addEventListener('click', async () => {
       const cat = btn.dataset.cat;
       const idx = btn.dataset.idx;
-      if (!confirm('Yakin ingin menghapus foto ini?\n\nBerkasnya juga akan dihapus dari penyimpanan server.')) return;
+      const okHapus = await showConfirm({
+        title: 'Hapus Foto Galeri?',
+        message: 'Foto ini akan dihapus dari galeri dan berkasnya ikut dihapus dari penyimpanan server.',
+        okText: 'Ya, Hapus'
+      });
+      if (!okHapus) return;
       try {
         const res = await fetch(API_BASE + '/api/admin/galeri-category/' + cat + '/' + idx, { method: 'DELETE' });
         let json = {};
@@ -1377,7 +1384,10 @@ async function replaceGaleriPhoto(catKey, idx, file) {
     try { json = await res.json(); } catch (e) {}
     if (!res.ok || !json.success) throw new Error(json.message || ('HTTP ' + res.status));
     adminToast('Foto galeri berhasil diganti', 'success', 'Berhasil');
-    finishSaveProgressAndReload(900);
+    finishSaveProgress();
+    // Perbarui grid galeri di tempat — tanpa reload halaman.
+    const fresh = await (await fetch(API_BASE + '/api/data')).json();
+    renderGaleriAll(fresh.galeri || {});
   } catch (err) {
     hideSaveProgress();
     adminToast('Gagal mengganti foto galeri' + (err && err.message ? ' — ' + err.message : ''), 'error');
@@ -1654,7 +1664,7 @@ jadwalPosyandu: {
     if (data.success) {
       adminToast('Data layanan publik, posyandu & kependudukan berhasil disimpan!', 'success', 'Layanan Disimpan');
       if (msg) { msg.textContent = '✓ Layanan berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
-      finishSaveProgressAndReload(1200);
+      finishSaveProgress(1200);
     } else {
       hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan layanan', 'error', 'Simpan Gagal');
@@ -1809,7 +1819,7 @@ document.getElementById('save-potensi')?.addEventListener('click', async () => {
       if (msg) { msg.textContent = '✓ Potensi berhasil disimpan'; msg.className = 'ml-3 text-sm text-green-600'; }
       fillPotensi(data.data || payload);
       adminToast('Data potensi UMKM, Wisata & Kegiatan berhasil diperbarui!', 'success', 'Potensi Disimpan');
-      finishSaveProgressAndReload(1200);
+      finishSaveProgress(1200);
     } else {
       hideSaveProgress();
       adminToast(data.message || 'Gagal menyimpan potensi desa', 'error', 'Simpan Gagal');
@@ -1898,7 +1908,7 @@ async function renderKeluhan() {
     });
     container.querySelectorAll('.delete-keluhan').forEach(btn => {
       btn.addEventListener('click', async () => {
-        if (!confirm('Yakin ingin menghapus keluhan ini?')) return;
+        if (!(await showConfirm({ title: 'Hapus Keluhan Ini?', message: 'Keluhan beserta foto buktinya akan dihapus permanen.', okText: 'Ya, Hapus' }))) return;
         await fetch(API_BASE + '/api/admin/keluhan/' + btn.dataset.id, { method: 'DELETE' });
         adminToast('Keluhan berhasil dihapus', 'success');
         renderKeluhan();
@@ -1955,7 +1965,10 @@ photoModal?.addEventListener('click', (e) => {
   if (e.target === photoModal) closePhotoModal();
 });
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && photoModal && !photoModal.classList.contains('hidden')) closePhotoModal();
+  if (e.key !== 'Escape') return;
+  // Jika modal konfirmasi sedang terbuka, biarkan dia yang menangkap ESC.
+  if (typeof appConfirmModal !== 'undefined' && appConfirmModal && !appConfirmModal.classList.contains('hidden')) return;
+  if (photoModal && !photoModal.classList.contains('hidden')) closePhotoModal();
 });
 
 photoReplaceBtn?.addEventListener('click', () => photoReplaceInput?.click());
@@ -1971,7 +1984,12 @@ photoReplaceInput?.addEventListener('change', async () => {
 photoRemoveBtn?.addEventListener('click', async () => {
   const ctx = photoCtx;
   if (!ctx || typeof ctx.onRemove !== 'function') return;
-  if (!confirm('Hapus foto ini dari data yang dipilih?\n\nData/record-nya TETAP tersimpan — hanya fotonya yang dikosongkan.')) return;
+  const ok = await showConfirm({
+    title: 'Hapus Foto?',
+    message: 'Data/record-nya TETAP tersimpan — hanya fotonya yang dikosongkan.',
+    okText: 'Ya, Hapus Foto'
+  });
+  if (!ok) return;
   closePhotoModal();
   await ctx.onRemove();
 });
@@ -2060,6 +2078,65 @@ bindFormPhotoPreview('p-hero-preview', { fileInputId: 'p-hero-file', caption: 'F
 bindFormPhotoPreview('p-tentang-preview', { fileInputId: 'p-tentang-file', caption: 'Foto Tentang Desa', saveBtnId: 'save-profil' });
 bindFormPhotoPreview('p-panel-foto-preview', { fileInputId: 'p-panel-foto-file', caption: 'Foto Profil Panel Admin', saveBtnId: 'save-profil' });
 bindFormPhotoPreview('kd-foto-preview', { fileInputId: 'kd-foto-file', caption: 'Foto Kepala Desa', saveBtnId: 'save-pemerintahan' });
+
+// =====================================================================
+// ===== MODAL KONFIRMASI (pengganti confirm() bawaan browser) ========
+// =====================================================================
+const appConfirmModal = document.getElementById('app-confirm-modal');
+const appConfirmTitle = document.getElementById('app-confirm-title');
+const appConfirmMessage = document.getElementById('app-confirm-message');
+const appConfirmOkBtn = document.getElementById('app-confirm-ok');
+const appConfirmCancelBtn = document.getElementById('app-confirm-cancel');
+
+let appConfirmResolver = null;
+
+function settleAppConfirm(result) {
+  if (appConfirmModal) {
+    appConfirmModal.classList.add('hidden');
+    appConfirmModal.classList.remove('flex');
+    // Jika modal preview gambar masih terbuka di belakangnya, pertahankan lock scroll.
+    const photoStillOpen = photoModal && !photoModal.classList.contains('hidden');
+    document.body.style.overflow = photoStillOpen ? 'hidden' : '';
+  }
+  if (typeof appConfirmResolver === 'function') {
+    const resolve = appConfirmResolver;
+    appConfirmResolver = null;
+    resolve(result);
+  }
+}
+
+// Pemakaian: const lanjut = await showConfirm({ title, message, okText });
+function showConfirm(opts = {}) {
+  const { title = 'Konfirmasi', message = '', okText = 'Ya, Lanjutkan', cancelText = 'Batal' } = opts;
+  // Fallback darurat bila markup modal tidak tersedia di halaman.
+  if (!appConfirmModal || !appConfirmOkBtn || !appConfirmCancelBtn) {
+    return Promise.resolve(window.confirm(message || title));
+  }
+  return new Promise((resolve) => {
+    appConfirmResolver = resolve;
+    if (appConfirmTitle) appConfirmTitle.textContent = title;
+    if (appConfirmMessage) appConfirmMessage.textContent = message;
+    if (appConfirmOkBtn) appConfirmOkBtn.textContent = okText;
+    if (appConfirmCancelBtn) appConfirmCancelBtn.textContent = cancelText;
+    appConfirmModal.classList.remove('hidden');
+    appConfirmModal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    appConfirmOkBtn.focus();
+  });
+}
+
+appConfirmOkBtn?.addEventListener('click', () => settleAppConfirm(true));
+appConfirmCancelBtn?.addEventListener('click', () => settleAppConfirm(false));
+appConfirmModal?.addEventListener('click', (e) => {
+  if (e.target === appConfirmModal) settleAppConfirm(false);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (appConfirmModal && !appConfirmModal.classList.contains('hidden')) {
+    e.stopImmediatePropagation(); // konfirmasi menangkap ESC sebelum modal lain
+    settleAppConfirm(false);
+  }
+});
 
 document.querySelectorAll('.admin-file-input input[type="file"]').forEach(input => {
   input.addEventListener('change', () => {

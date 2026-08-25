@@ -1150,6 +1150,43 @@
       </div>
     </div>
 
+    <div
+      id="app-confirm-modal"
+      class="fixed inset-0 z-80 hidden items-center justify-center bg-black/60 p-4"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="app-confirm-title"
+    >
+      <div class="modal-pop w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
+        <div
+          id="app-confirm-icon"
+          class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100"
+        >
+          <svg class="h-7 w-7 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <h3 id="app-confirm-title" class="mb-1 text-lg font-bold text-gray-800">Konfirmasi</h3>
+        <p id="app-confirm-message" class="mb-6 whitespace-pre-line text-sm text-gray-500"></p>
+        <div class="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            id="app-confirm-cancel"
+            class="min-w-[110px] rounded-full bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            id="app-confirm-ok"
+            class="min-w-[110px] rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-red-700"
+          >
+            Ya, Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+
     <footer class="bg-green-700 text-white py-6 mt-8">
       <div class="container mx-auto text-center px-4 text-sm">
         &copy; 2026 Pemerintah Pekon Banjar Agung. All rights reserved.
@@ -1157,6 +1194,6 @@
     </footer>
     <script src="js/toast.js"></script>
     <script src="js/validators.js"></script>
-    <script src="admin.js?v=13"></script>
+    <script src="admin.js?v=14"></script>
   </body>
 </html>

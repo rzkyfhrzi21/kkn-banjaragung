@@ -496,6 +496,22 @@ footer.kebung-tikhai a:hover {
   display: none;
 }
 
+/* ===== Admin: modal konfirmasi (pengganti confirm() bawaan browser) ===== */
+#app-confirm-modal {
+  z-index: 80; /* di atas modal preview gambar (z-70) */
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#app-confirm-modal.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app-confirm-modal.hidden {
+  display: none;
+}
+
 #photo-preview-modal .modal-pop {
   animation: photoModalPop 0.18s ease-out;
 }
