@@ -96,36 +96,22 @@ document.addEventListener('DOMContentLoaded', function () {
         { key: 'galeri3', title: 'Wisata & Budaya', desc: 'Dokumentasi wisata dan budaya desa' }
     ];
 
-    // Default photos per category (fallback if no uploaded photos)
-    const defaultPhotos = {
-        galeri1: [
-            'https://picsum.photos/id/159/400/300',
-            'https://picsum.photos/id/108/400/300',
-            'https://picsum.photos/id/109/400/300'
-        ],
-        galeri2: [
-            'https://picsum.photos/id/110/400/300',
-            'https://picsum.photos/id/112/400/300',
-            'https://picsum.photos/id/114/400/300'
-        ],
-        galeri3: [
-            'https://picsum.photos/id/120/400/300',
-            'https://picsum.photos/id/124/400/300',
-            'https://picsum.photos/id/127/400/300'
-        ]
-    };
-
     let currentPage = 1;
 
     function getPhotosForCategory(key) {
         const data = window.galeriData || {};
-        const uploaded = validGaleriList(data[key]);
-        return uploaded.length ? uploaded : defaultPhotos[key];
+        // TANPA foto default palsu — kategori kosong harusnya tampil kosong.
+        return validGaleriList(data[key]);
     }
 
     function renderGrid(key) {
         const photos = getPhotosForCategory(key);
         galGrid.innerHTML = '';
+        if (!photos.length) {
+            galGrid.innerHTML =
+                '<div class="col-span-full rounded bg-white py-12 text-center text-gray-400 shadow-sm border border-gray-100">Belum ada foto pada kategori ini.</div>';
+            return;
+        }
         photos.forEach((url, idx) => {
             const div = document.createElement('div');
             div.className = 'aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden';
@@ -588,8 +574,12 @@ function applyBerita(berita) {
     // For index page "Pengumuman Terbaru" section
     const indexGrid = document.getElementById('pengumuman-index-grid');
     if (indexGrid) {
-        if (!berita.length) return;
         indexGrid.innerHTML = '';
+        if (!berita.length) {
+            indexGrid.innerHTML =
+                '<div class="col-span-full rounded bg-white py-10 text-center text-gray-400 shadow-sm border border-gray-100">Belum ada pengumuman.</div>';
+            return;
+        }
         berita.slice(0, 3).forEach(item => {
             const img = item.gambar
                 ? `<div class="w-full h-48 bg-gray-50 flex items-center justify-center p-2 overflow-hidden border-b border-gray-100"><img src="${item.gambar}" alt="${item.judul}" class="max-h-full max-w-full w-auto h-auto object-contain rounded-lg group-hover:scale-105 transition-transform duration-500"></div>`
@@ -719,19 +709,9 @@ function applyGaleri(galeri) {
                 homeGrid.appendChild(div);
             });
         } else {
-            // Foto default jika galeri kosong
-            const defaults = [
-                'https://picsum.photos/id/159/400/300',
-                'https://picsum.photos/id/108/400/300',
-                'https://picsum.photos/id/109/400/300',
-                'https://picsum.photos/id/110/400/300'
-            ];
-            defaults.forEach(url => {
-                const div = document.createElement('div');
-                div.className = 'aspect-[4/3] bg-gray-200 rounded shadow overflow-hidden';
-                div.innerHTML = `<img src="${url}" alt="Galeri" class="object-cover w-full h-full">`;
-                homeGrid.appendChild(div);
-            });
+            // Tanpa foto default palsu — tampilkan pesan kosong.
+            homeGrid.innerHTML =
+                '<div class="col-span-full rounded bg-white py-10 text-center text-gray-400 shadow-sm border border-gray-100">Belum ada foto galeri.</div>';
         }
     }
 }
