@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const { loadData, saveData } = require('../services/storage.service');
+const { getData, saveData } = require('../services/storage.service');
 const {
   ADMIN_USER,
   loginAttempts,
@@ -14,7 +14,8 @@ const {
 const {
   adminLimiter,
   upload,
-  validateFileBuffer
+  validateFileBuffer,
+  requireUploadStorage
 } = require('../middleware/security.middleware');
 const { putFileToBlob } = require('../services/blob.service');
 
@@ -62,7 +63,7 @@ router.get('/api/admin/check-session', async (req, res) => {
 
 // 3. Profil CRUD
 router.post('/api/admin/profil', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.profil = { ...data.profil, ...req.body };
   await saveData(data);
   res.json({ success: true, data: data.profil });
@@ -70,7 +71,7 @@ router.post('/api/admin/profil', async (req, res) => {
 
 // 4. Pemerintahan CRUD
 router.post('/api/admin/pemerintahan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.pemerintahan = { ...data.pemerintahan, ...req.body };
   await saveData(data);
   res.json({ success: true, data: data.pemerintahan });
@@ -78,7 +79,7 @@ router.post('/api/admin/pemerintahan', async (req, res) => {
 
 // 5. Kontak CRUD
 router.post('/api/admin/kontak', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.kontak = { ...data.kontak, ...req.body };
   await saveData(data);
   res.json({ success: true, data: data.kontak });
@@ -86,7 +87,7 @@ router.post('/api/admin/kontak', async (req, res) => {
 
 // 6. Layanan CRUD
 router.post('/api/admin/layanan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.layanan = { ...data.layanan, ...req.body };
   await saveData(data);
   res.json({ success: true, data: data.layanan });
@@ -94,7 +95,7 @@ router.post('/api/admin/layanan', async (req, res) => {
 
 // 7. Potensi CRUD
 router.post('/api/admin/potensi', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.potensi = { ...data.potensi, ...req.body };
   await saveData(data);
   res.json({ success: true, data: data.potensi });
@@ -102,7 +103,7 @@ router.post('/api/admin/potensi', async (req, res) => {
 
 // 8. Berita CRUD
 router.post('/api/admin/berita', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const items = data.berita || [];
   const newItem = {
     id: Date.now(),
@@ -119,7 +120,7 @@ router.post('/api/admin/berita', async (req, res) => {
 });
 
 router.put('/api/admin/berita/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const items = data.berita || [];
   const idx = items.findIndex(b => String(b.id) === req.params.id);
   if (idx === -1) {
@@ -132,7 +133,7 @@ router.put('/api/admin/berita/:id', async (req, res) => {
 });
 
 router.delete('/api/admin/berita/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.berita = (data.berita || []).filter(b => String(b.id) !== req.params.id);
   await saveData(data);
   res.json({ success: true });
@@ -140,7 +141,7 @@ router.delete('/api/admin/berita/:id', async (req, res) => {
 
 // 9. Pengumuman CRUD
 router.post('/api/admin/pengumuman', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const items = data.pengumuman || [];
   const newItem = {
     id: Date.now(),
@@ -157,7 +158,7 @@ router.post('/api/admin/pengumuman', async (req, res) => {
 });
 
 router.put('/api/admin/pengumuman/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const items = data.pengumuman || [];
   const idx = items.findIndex(p => String(p.id) === req.params.id);
   if (idx === -1) {
@@ -170,7 +171,7 @@ router.put('/api/admin/pengumuman/:id', async (req, res) => {
 });
 
 router.delete('/api/admin/pengumuman/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.pengumuman = (data.pengumuman || []).filter(p => String(p.id) !== req.params.id);
   data.komentar = (data.komentar || []).filter(k => String(k.pengumumanId) !== req.params.id);
   await saveData(data);
@@ -179,7 +180,7 @@ router.delete('/api/admin/pengumuman/:id', async (req, res) => {
 
 // 10. Galeri CRUD
 router.post('/api/admin/galeri', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.galeri = data.galeri || [];
   const urls = req.body.urls || (req.body.url ? [req.body.url] : []);
   if (urls.length) {
@@ -190,7 +191,7 @@ router.post('/api/admin/galeri', async (req, res) => {
 });
 
 router.delete('/api/admin/galeri/:index', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const idx = parseInt(req.params.index, 10);
   data.galeri = (data.galeri || []).filter((_, i) => i !== idx);
   await saveData(data);
@@ -198,7 +199,7 @@ router.delete('/api/admin/galeri/:index', async (req, res) => {
 });
 
 router.post('/api/admin/galeri-category', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   if (!data.galeri || Array.isArray(data.galeri)) {
     data.galeri = { galeri1: [], galeri2: [], galeri3: [] };
   }
@@ -213,7 +214,7 @@ router.post('/api/admin/galeri-category', async (req, res) => {
 });
 
 router.delete('/api/admin/galeri-category/:category/:index', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const category = req.params.category;
   const idx = parseInt(req.params.index, 10);
   if (data.galeri && data.galeri[category]) {
@@ -223,14 +224,31 @@ router.delete('/api/admin/galeri-category/:category/:index', async (req, res) =>
   res.json({ success: true, data: data.galeri });
 });
 
+// Ganti foto galeri pada posisi tertentu secara in-place (urutan tidak berubah).
+router.put('/api/admin/galeri-category/:category/:index', async (req, res) => {
+  const data = await getData();
+  const category = req.params.category;
+  const idx = parseInt(req.params.index, 10);
+  if (!data.galeri || !Array.isArray(data.galeri[category]) || !data.galeri[category][idx]) {
+    return res.status(404).json({ success: false, message: 'Foto galeri tidak ditemukan' });
+  }
+  const url = req.body && typeof req.body.url === 'string' ? req.body.url.trim() : '';
+  if (!url) {
+    return res.status(400).json({ success: false, message: 'URL foto baru wajib diisi' });
+  }
+  data.galeri[category][idx] = url;
+  await saveData(data);
+  res.json({ success: true, data: data.galeri });
+});
+
 // 11. Pengajuan Surat Masuk CRUD
 router.get('/api/admin/pengajuan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.pengajuan || [] });
 });
 
 router.delete('/api/admin/pengajuan/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.pengajuan = (data.pengajuan || []).filter(p => String(p.id) !== req.params.id);
   await saveData(data);
   res.json({ success: true });
@@ -238,12 +256,12 @@ router.delete('/api/admin/pengajuan/:id', async (req, res) => {
 
 // 12. Keluhan Masyarakat CRUD
 router.get('/api/admin/keluhan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.keluhan || [] });
 });
 
 router.delete('/api/admin/keluhan/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.keluhan = (data.keluhan || []).filter(p => String(p.id) !== req.params.id);
   await saveData(data);
   res.json({ success: true });
@@ -251,7 +269,7 @@ router.delete('/api/admin/keluhan/:id', async (req, res) => {
 
 // 13. Komentar Moderation CRUD
 router.get('/api/admin/komentar', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const komentar = (data.komentar || []).map(k => {
     const peng = (data.pengumuman || []).find(p => String(p.id) === String(k.pengumumanId));
     return { ...k, judulPengumuman: peng ? peng.judul : '(Pengumuman dihapus)' };
@@ -260,14 +278,14 @@ router.get('/api/admin/komentar', async (req, res) => {
 });
 
 router.delete('/api/admin/komentar/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   data.komentar = (data.komentar || []).filter(k => String(k.id) !== req.params.id);
   await saveData(data);
   res.json({ success: true });
 });
 
 // 14. File Upload (Single)
-router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
+router.post('/api/admin/upload', requireUploadStorage, upload.single('foto'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ success: false, message: 'Tidak ada file yang diupload' });
   }
@@ -302,7 +320,7 @@ router.post('/api/admin/upload', upload.single('foto'), async (req, res) => {
 });
 
 // 15. File Upload (Multiple)
-router.post('/api/admin/upload-multiple', upload.array('foto', 20), async (req, res) => {
+router.post('/api/admin/upload-multiple', requireUploadStorage, upload.array('foto', 20), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ success: false, message: 'Tidak ada file yang diupload' });
   }

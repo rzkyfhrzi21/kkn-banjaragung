@@ -68,7 +68,7 @@ async function putJsonToBlob(key, jsonText) {
 // Hasil: { ok: true, notFound: boolean, data } atau { ok: false, error }
 // notFound=true berarti blob memang belum ada (404) — aman untuk seed.
 // ok=false berarti network/API error — JANGAN menimpa blob dengan data lain.
-async function getBlob(key, attempt = 1) {
+async function getBlob(key, attempt = 1, maxAttempts = 3) {
   if (!isBlobAvailable()) return { ok: false, error: 'blob unavailable' };
   try {
     if (!blobClient) blobClient = require('@vercel/blob');
@@ -83,18 +83,18 @@ async function getBlob(key, attempt = 1) {
       ? ' (domain CDN store belum siap/DNS — coba lagi dalam beberapa menit)'
       : '';
     console.warn('[Blob] Gagal ambil ' + key + ' dari Vercel Blob: ' + (err && err.message || err) + hint);
-    if (attempt < 3) {
+    if (attempt < maxAttempts) {
       await new Promise((r) => setTimeout(r, 1500 * attempt));
-      return getBlob(key, attempt + 1);
+      return getBlob(key, attempt + 1, maxAttempts);
     }
     return { ok: false, error: (err && err.message) || 'unknown' };
   }
 }
 
 // Hasil: { ok: true, text: string|null } atau { ok: false, error }
-async function fetchBlobText(key) {
+async function fetchBlobText(key, opts = {}) {
   try {
-    const { ok, notFound, data: blob } = await getBlob(key);
+    const { ok, notFound, data: blob } = await getBlob(key, 1, opts.maxAttempts || 3);
     if (!ok) return { ok: false, error: 'fetch gagal' };
     if (notFound || !blob) return { ok: true, text: null };
     if (blob.stream) {

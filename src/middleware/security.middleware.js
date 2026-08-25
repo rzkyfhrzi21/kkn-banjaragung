@@ -7,10 +7,26 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const {
   UPLOAD_DIR,
+  IS_VERCEL,
   ALLOWED_IMAGE_EXTENSIONS,
   DANGEROUS_EXTENSIONS_PATTERN,
   DANGEROUS_BINARY_SIGNATURES
 } = require('../config/constants');
+const { isBlobAvailable } = require('../services/blob.service');
+
+// Di Vercel, filesystem hanya ephemeral (/tmp) — file yang tidak dipersist ke
+// Vercel Blob akan HILANG dan URL /uploads/... menjadi mati. Jika storage blob
+// belum dikonfigurasi, tolak unggahan dengan pesan jelas daripada menerima
+// file lalu memberi notifikasi "berhasil" palsu kepada admin.
+function requireUploadStorage(req, res, next) {
+  if (IS_VERCEL && !isBlobAvailable()) {
+    return res.status(503).json({
+      success: false,
+      message: 'Penyimpanan berkas belum dikonfigurasi pada server (BLOB_READ_WRITE_TOKEN kosong). Upload dinonaktifkan agar berkas tidak hilang.'
+    });
+  }
+  next();
+}
 
 // 1. Anti-Webshell & True MIME / Magic Byte Buffer Validation
 function validateFileBuffer(filePath) {
@@ -159,6 +175,7 @@ const securityHeaders = helmet({
 module.exports = {
   validateFileBuffer,
   upload,
+  requireUploadStorage,
   sanitizeInput,
   checkHoneypot,
   apiLimiter,

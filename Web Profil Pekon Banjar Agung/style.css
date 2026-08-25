@@ -463,6 +463,48 @@ footer.kebung-tikhai a:hover {
   display: block;
 }
 
+/* ===== Admin: gambar yang bisa diklik untuk membuka modal preview besar ===== */
+.admin-img-clickable {
+  cursor: zoom-in;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-img-clickable:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+#photo-preview-modal {
+  z-index: 70; /* di atas tab bar (z-50) & toast */
+  background-color: rgba(0, 0, 0, 0.85); /* fallback bila utilitas Tailwind belum termuat */
+}
+
+/* Fallback tampilan modal tanpa bergantung pada utility class dinamis */
+#photo-preview-modal.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#photo-preview-modal.hidden {
+  display: none;
+}
+
+#photo-preview-modal .modal-pop {
+  animation: photoModalPop 0.18s ease-out;
+}
+
+@keyframes photoModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 /* ===== Lightbox Global (Foto & Video) ===== */
 .pekon-lightbox {
   position: fixed;

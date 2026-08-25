@@ -320,13 +320,47 @@ function loadData() {
   }
 }
 
+// ===== Sumber data terkini untuk Vercel (multi-instance) =====
+// Di Vercel, /tmp/data/data.json hanya konsisten per-instance lambda dan hanya
+// disinkronkan saat cold start. Akibatnya request bisa bergantian dilayani
+// instance dengan data basi — gejala: konten/gambar "kadang muncul kadang tidak".
+// getData() membaca SELALU dari blob (dengan cache TTL beberapa detik agar
+// hemat & cepat), lalu fallback ke file lokal bila blob tidak tersedia/gagal.
+const BLOB_DATA_CACHE_TTL_MS = 5000;
+let blobDataCache = { text: null, at: 0 };
+
+async function getData() {
+  if (isBlobAvailable()) {
+    if (Date.now() - blobDataCache.at > BLOB_DATA_CACHE_TTL_MS) {
+      const res = await fetchBlobText(BLOB_DATA_KEY, { maxAttempts: 1 });
+      if (res.ok) {
+        blobDataCache = { text: res.text, at: Date.now() };
+        if (res.text) {
+          try { saveDataToFile(deepMerge(defaultData(), JSON.parse(res.text))); } catch (e) {}
+        }
+      }
+      // Gagal network: tetap pakai cache/lokal agar situs tidak mati.
+    }
+    if (blobDataCache.text) {
+      try {
+        return deepMerge(defaultData(), JSON.parse(blobDataCache.text));
+      } catch (e) {}
+    }
+  }
+  return loadData();
+}
+
 async function saveData(data) {
   try { saveDataToFile(data); } catch (e) {}
 
   if (isBlobAvailable()) {
     // WAJIB await: di Vercel serverless, promise fire-and-forget bisa dibekukan
     // sebelum fetch keluar (gejala: log "No outgoing requests", perubahan hilang).
-    await putJsonToBlob(BLOB_DATA_KEY, JSON.stringify(data));
+    const jsonText = JSON.stringify(data);
+    await putJsonToBlob(BLOB_DATA_KEY, jsonText);
+    // Tulisan instance ini langsung dipercaya — hindari membaca balik versi lama
+    // karena propagasi CDN blob bisa selisih beberapa ratus ms.
+    blobDataCache = { text: jsonText, at: Date.now() };
   }
 
   if (USE_SQLITE) {
@@ -429,6 +463,7 @@ module.exports = {
   migrateLegacyMapsUrl,
   readJsonFileSafe,
   loadData,
+  getData,
   saveData,
   syncDataFromBlob
 };

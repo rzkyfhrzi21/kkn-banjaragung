@@ -3,14 +3,15 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const { loadData, saveData } = require('../services/storage.service');
+const { getData, loadData, saveData } = require('../services/storage.service');
 const { putFileToBlob } = require('../services/blob.service');
 const {
   publicFormLimiter,
   checkHoneypot,
   sanitizeInput,
   upload,
-  validateFileBuffer
+  validateFileBuffer,
+  requireUploadStorage
 } = require('../middleware/security.middleware');
 
 // 1. Health & Ready Endpoints
@@ -28,7 +29,7 @@ router.get('/ready', async (req, res) => {
 // Field sensitif (users, pengajuan, keluhan, komentar) TIDAK diekspos —
 // admin mengaksesnya via /api/admin/* yang dilindungi autentikasi.
 router.get('/api/data', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const publicData = { ...data };
   delete publicData.users;
   delete publicData.pengajuan;
@@ -39,42 +40,42 @@ router.get('/api/data', async (req, res) => {
 
 // 3. Specific Public Resource Endpoints
 router.get('/api/profil', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.profil });
 });
 
 router.get('/api/pemerintahan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.pemerintahan });
 });
 
 router.get('/api/kontak', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.kontak });
 });
 
 router.get('/api/layanan', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.layanan });
 });
 
 router.get('/api/potensi', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.potensi });
 });
 
 router.get('/api/berita', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.berita || [] });
 });
 
 router.get('/api/pengumuman', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({ success: true, data: data.pengumuman || [] });
 });
 
 router.get('/api/pengumuman/:id', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const item = (data.pengumuman || []).find(p => String(p.id) === req.params.id);
   if (!item) {
     return res.status(404).json({ success: false, message: 'Pengumuman tidak ditemukan' });
@@ -83,13 +84,13 @@ router.get('/api/pengumuman/:id', async (req, res) => {
 });
 
 router.get('/api/pengumuman/:id/komentar', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const komentar = (data.komentar || []).filter(k => String(k.pengumumanId) === req.params.id);
   res.json({ success: true, data: komentar });
 });
 
 router.post('/api/pengumuman/:id/komentar', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const { nama, isi } = req.body || {};
   if (!nama || !isi) {
     return res.status(400).json({ success: false, message: 'Nama dan isi komentar wajib diisi' });
@@ -109,7 +110,7 @@ router.post('/api/pengumuman/:id/komentar', async (req, res) => {
 
 // 4. Form Pengajuan Surat Online
 router.post('/api/pengajuan', publicFormLimiter, checkHoneypot, async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   const item = {
     id: Date.now(),
     nama: sanitizeInput(req.body.nama || ''),
@@ -127,7 +128,7 @@ router.post('/api/pengajuan', publicFormLimiter, checkHoneypot, async (req, res)
 });
 
 // 5. Form Keluhan Masyarakat Online
-router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHoneypot, async (req, res) => {
+router.post('/api/keluhan', publicFormLimiter, requireUploadStorage, upload.single('bukti'), checkHoneypot, async (req, res) => {
   try {
     let bukti = '';
     if (req.file) {
@@ -138,7 +139,7 @@ router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHone
         try { fs.unlinkSync(req.file.path); } catch (e) {}
       }
     }
-    const data = loadData();
+    const data = await getData();
     const item = {
       id: Date.now(),
       nama: sanitizeInput(req.body.nama || ''),
@@ -164,7 +165,7 @@ router.post('/api/keluhan', publicFormLimiter, upload.single('bukti'), checkHone
 
 // 6. Statistics Endpoint
 router.get('/api/stats', async (req, res) => {
-  const data = loadData();
+  const data = await getData();
   res.json({
     success: true,
     totalPengumuman: (data.pengumuman || []).length,

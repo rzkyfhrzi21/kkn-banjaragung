@@ -261,6 +261,34 @@ function validateFileClient(file) {
   return { valid: true };
 }
 
+function clearFileInput(inputId, inputEl) {
+  const inp = inputEl || (inputId ? document.getElementById(inputId) : null);
+  if (!inp) return;
+  inp.value = '';
+  const span = inp.closest('.admin-file-input')?.querySelector('.file-name');
+  if (span) {
+    span.textContent = 'No file chosen';
+    span.classList.remove('has-file');
+  }
+}
+
+// Pastikan URL hasil unggahan benar-benar bisa dimuat browser sebelum dianggap sukses.
+// Mencegah kasus "notifikasi berhasil tapi gambar tidak dimuat".
+function verifyImageLoads(url) {
+  return new Promise((resolve) => {
+    if (!url) return resolve(false);
+    // Format yang kerap tak bisa dirender browser desktop — jangan divalidasi render.
+    if (/\.(heic|heif|tiff|tif)$/i.test((url.split('?')[0] || ''))) return resolve(true);
+    let done = false;
+    const finish = (ok) => { if (!done) { done = true; clearTimeout(t); resolve(ok); } };
+    const t = setTimeout(() => finish(false), 15000);
+    const img = new Image();
+    img.onload = () => finish(true);
+    img.onerror = () => finish(false);
+    img.src = url;
+  });
+}
+
 function createUploadProgressToast(fileName) {
   let container = document.getElementById('pekon-toast-container') || document.getElementById('admin-toast-container');
   if (!container) {
@@ -380,11 +408,18 @@ function uploadFile(file, options = {}) {
       }
     });
 
-    xhr.addEventListener('load', () => {
+    xhr.addEventListener('load', async () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const data = JSON.parse(xhr.responseText);
           if (data.success) {
+            const urlOk = await verifyImageLoads(data.url);
+            if (!urlOk) {
+              lastUploadError = 'Berkas terkirim ke server tetapi gambarnya tidak dapat dimuat. Kemungkinan penyimpanan server bermasalah — coba lagi atau hubungi admin.';
+              progressToast.error(lastUploadError);
+              resolve(null);
+              return;
+            }
             lastUploadError = '';
             progressToast.success('Foto berhasil diunggah! Data sedang disimpan...', options.autoReload || false);
             resolve(data.url);
@@ -440,7 +475,7 @@ function uploadFile(file, options = {}) {
     });
 
     xhr.open('POST', API_BASE + '/api/admin/upload');
-    const token = sessionStorage.getItem('adminToken') || adminToken;
+    const token = sessionStorage.getItem('adminToken');
     if (token) {
       xhr.setRequestHeader('Authorization', 'Bearer ' + token);
     }
@@ -593,81 +628,88 @@ function fillPemerintahan(p) {
   renderLembaga(p.lembaga || []);
 }
 
-function renderPerangkat(list) {
-  const container = document.getElementById('perangkat-list');  container.innerHTML = '';
-  list.forEach((item, idx) => {
-    const row = document.createElement('div');
-    row.className = 'flex flex-col md:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
-    const fotoPreview = item.foto
-      ? `<img src="${item.foto}" alt="Foto" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`
-      : `<div class="w-20 h-20 rounded-2xl border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-1">No Foto</div>`;
-    row.innerHTML = `
-      <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
-        ${fotoPreview}
-        <div class="admin-file-input w-full max-w-[180px] text-xs">
-          <span class="file-btn">Pilih File</span>
-          <span class="file-name">No file chosen</span>
-          <input type="file" data-foto-input accept="image/*">
-        </div>
-      </div>
-      <input data-idx="${idx}" data-field="jabatan" value="${item.jabatan}" placeholder="Jabatan" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
-      <input data-idx="${idx}" data-field="nama" value="${item.nama}" placeholder="Nama" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
-      <button type="button" class="remove-perangkat bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200 whitespace-nowrap" data-idx="${idx}">Hapus</button>
-    `;
+// Ganti node pratinjau pada baris dinamis TANPA merusak input file di sebelahnya.
+// (Bug lama: innerHTML pada div pembungkus ikut menghapus <input type="file">,
+//  sehingga foto perangkat desa tidak pernah terkirim saat tombol Simpan diklik.)
+const PERANGKAT_PREVIEW_CLASSES = 'perangkat-preview w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs';
+const PERANGKAT_PLACEHOLDER_CLASSES = 'perangkat-preview w-20 h-20 rounded-2xl border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-1';
+const POTENSI_PREVIEW_CLASSES = 'potensi-preview admin-img-clickable w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs';
+const POTENSI_PLACEHOLDER_CLASSES = 'potensi-preview w-28 h-24 sm:w-32 sm:h-28 rounded-xl bg-gray-100 text-gray-400 text-xs flex items-center justify-center text-center p-1';
 
-    const fotoInput = row.querySelector('[data-foto-input]');
-    const imgEl = row.querySelector('img');
-    const nameSpan = row.querySelector('.file-name');
-    fotoInput.addEventListener('change', () => {
-      const f = fotoInput.files[0];
-      if (f && imgEl) imgEl.src = URL.createObjectURL(f);
-      else if (f && !imgEl) {
-        row.querySelector('div').innerHTML = `<img src="${URL.createObjectURL(f)}" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`;
-      }
-      if (nameSpan) {
-        nameSpan.textContent = f ? f.name : 'No file chosen';
-        nameSpan.classList.toggle('has-file', !!f);
-      }
-    });
-    container.appendChild(row);
-  });
-
-  container.querySelectorAll('.remove-perangkat').forEach(btn => {
-    btn.addEventListener('click', () => btn.closest('div').remove());
-  });
+function buildPreviewNode(url, imgClasses, phClasses, placeholderText) {
+  if (url) {
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Pratinjau foto';
+    img.className = imgClasses;
+    return img;
+  }
+  const ph = document.createElement('div');
+  ph.className = phClasses;
+  ph.textContent = placeholderText;
+  return ph;
 }
 
-document.getElementById('add-perangkat')?.addEventListener('click', () => {
+function renderPerangkat(list) {
   const container = document.getElementById('perangkat-list');
+  if (!container) return;
+  container.innerHTML = '';
+  (list || []).forEach(item => addPerangkatRow(container, item));
+}
+
+function addPerangkatRow(container, item = {}) {
   const row = document.createElement('div');
   row.className = 'flex flex-col md:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
+  row.dataset.savedFoto = item.foto || '';
   row.innerHTML = `
-    <div class="flex flex-col items-center gap-1.5 flex-shrink-0">
-      <div class="w-20 h-20 rounded-2xl border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-1">No Foto</div>
-      <div class="admin-file-input w-full max-w-[180px] text-xs">
-        <span class="file-btn">Pilih File</span>
-        <span class="file-name">No file chosen</span>
-        <input type="file" data-foto-input accept="image/*">
-      </div>
-    </div>
-    <input data-field="jabatan" value="" placeholder="Jabatan" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
-    <input data-field="nama" value="" placeholder="Nama" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
+    <div class="perangkat-foto-col flex flex-col items-center gap-1.5 flex-shrink-0"></div>
+    <input data-field="jabatan" value="${escapeHtml(item.jabatan || '')}" placeholder="Jabatan" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
+    <input data-field="nama" value="${escapeHtml(item.nama || '')}" placeholder="Nama" class="flex-1 w-full border border-gray-300 rounded px-3 py-2">
     <button type="button" class="remove-perangkat bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200 whitespace-nowrap">Hapus</button>
   `;
-  container.appendChild(row);
-  row.querySelector('.remove-perangkat').addEventListener('click', () => row.remove());
+  const col = row.querySelector('.perangkat-foto-col');
+  col.innerHTML = `
+    <div class="admin-file-input w-full max-w-[180px] text-xs">
+      <span class="file-btn">Pilih File</span>
+      <span class="file-name">No file chosen</span>
+      <input type="file" data-foto-input accept="image/*">
+    </div>
+  `;
+  mountPerangkatPreview(row, item.foto || '');
+
   const fotoInput = row.querySelector('[data-foto-input]');
   const nameSpan = row.querySelector('.file-name');
   fotoInput.addEventListener('change', () => {
     const f = fotoInput.files[0];
-    if (f) {
-      row.querySelector('div').innerHTML = `<img src="${URL.createObjectURL(f)}" class="w-20 h-20 rounded-2xl object-contain bg-white border border-gray-200 p-1 shadow-xs">`;
-    }
+    if (!f) return;
+    mountPerangkatPreview(row, URL.createObjectURL(f));
     if (nameSpan) {
-      nameSpan.textContent = f ? f.name : 'No file chosen';
-      nameSpan.classList.toggle('has-file', !!f);
+      nameSpan.textContent = f.name;
+      nameSpan.classList.add('has-file');
     }
   });
+  row.querySelector('.remove-perangkat').addEventListener('click', () => row.remove());
+  container.appendChild(row);
+}
+
+// Pasang pratinjau foto perangkat (img / placeholder "No Foto") + klik modal preview.
+function mountPerangkatPreview(row, url) {
+  const col = row.querySelector('.perangkat-foto-col');
+  if (!col) return;
+  col.querySelector('.perangkat-preview')?.remove();
+  const node = buildPreviewNode(url, PERANGKAT_PREVIEW_CLASSES, PERANGKAT_PLACEHOLDER_CLASSES, 'No Foto');
+  col.insertBefore(node, col.querySelector('.admin-file-input'));
+  if (url) {
+    enableImagePreview(node, {
+      caption: 'Foto Perangkat Desa' + (row.querySelector('[data-field="nama"]')?.value ? ' — ' + row.querySelector('[data-field="nama"]').value : ''),
+      onChange: (file) => replaceDynamicRowPhoto(row, file, mountPerangkatPreview, 'save-pemerintahan'),
+      onRemove: () => removeDynamicRowPhoto(row, () => mountPerangkatPreview(row, ''), 'save-pemerintahan')
+    });
+  }
+}
+
+document.getElementById('add-perangkat')?.addEventListener('click', () => {
+  addPerangkatRow(document.getElementById('perangkat-list'), { jabatan: '', nama: '', foto: '' });
 });
 
 function renderLembaga(list) {
@@ -908,14 +950,22 @@ document.getElementById('save-pemerintahan')?.addEventListener('click', async ()
       const jabatan = jabatanInput ? jabatanInput.value.trim() : '';
       const nama = namaInput ? namaInput.value.trim() : '';
       if (jabatan || nama) {
-        let foto = row.dataset.savedFoto || row.querySelector('img')?.src || '';
+        let foto = row.dataset.savedFoto || '';
         const fotoInput = row.querySelector('[data-foto-input]');
         if (fotoInput && fotoInput.files[0]) {
           const uploaded = await uploadFile(fotoInput.files[0]);
-          if (uploaded) {
-            foto = uploaded;
-            row.dataset.savedFoto = uploaded;
+          if (!uploaded) {
+            hideSaveProgress();
+            const who = jabatan || nama;
+            msg.textContent = 'Gagal mengunggah foto perangkat "' + who + '"' + (lastUploadError ? ' — ' + lastUploadError : '');
+            msg.className = 'ml-3 text-sm text-red-600 font-medium';
+            adminToast(lastUploadError || ('Gagal mengunggah foto perangkat ' + who), 'error', 'Unggah Gagal');
+            return;
           }
+          foto = uploaded;
+          row.dataset.savedFoto = uploaded;
+          clearFileInput(null, fotoInput);
+          mountPerangkatPreview(row, uploaded);
         }
         if (foto.startsWith('blob:')) foto = '';
         perangkat.push({ jabatan, nama, foto });
@@ -1063,15 +1113,25 @@ document.getElementById('add-pengumuman')?.addEventListener('click', async () =>
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pengumuman)
     });
+    if (res.status === 401) {
+      adminToast('Sesi login telah berakhir. Silakan login kembali.', 'error', 'Sesi Berakhir');
+      setTimeout(() => checkSession(), 1500);
+      return;
+    }
     const data = await res.json();
     if (data.success) {
       document.getElementById('peng-judul').value = '';
       document.getElementById('peng-tanggal').value = '';
       document.getElementById('peng-ringkasan').value = '';
       if (document.getElementById('peng-isi')) document.getElementById('peng-isi').value = '';
-      document.getElementById('peng-foto-file').value = '';
-      document.getElementById('peng-foto-preview').src = '';
-      document.getElementById('peng-foto-preview').classList.add('hidden');
+      clearFileInput('peng-foto-file');
+      // Reset pratinjau: hapus ATRIBUT src-nya (bukan src='').
+      // src='' membuat browser menampilkan ikon gambar rusak.
+      const pengPreview = document.getElementById('peng-foto-preview');
+      if (pengPreview) {
+        pengPreview.removeAttribute('src');
+        pengPreview.classList.add('hidden');
+      }
       renderPengumuman((await (await fetch(API_BASE + '/api/data')).json()).pengumuman || []);
       adminToast('Pengumuman berhasil ditambahkan', 'success');
     } else {
@@ -1096,6 +1156,7 @@ document.getElementById('peng-foto-file')?.addEventListener('change', (e) => {
 
 function renderPengumuman(list) {
   const container = document.getElementById('pengumuman-list');
+  if (!container) return;
   container.innerHTML = '';
   if (!list.length) {
     container.innerHTML = '<p class="text-gray-400 text-sm">Belum ada pengumuman.</p>';
@@ -1103,15 +1164,27 @@ function renderPengumuman(list) {
   }
   list.forEach(item => {
     const div = document.createElement('div');
-    div.className = 'flex items-center justify-between bg-gray-50 rounded px-3 py-2';
+    div.className = 'flex items-center gap-3 bg-gray-50 rounded px-3 py-2';
+    const thumb = item.gambar
+      ? `<img src="${escapeHtml(item.gambar)}" alt="Foto pengumuman" class="admin-img-clickable w-14 h-14 rounded-lg object-cover bg-white border border-gray-200 p-0.5 shadow-xs flex-shrink-0">`
+      : '<div class="w-14 h-14 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] text-center p-1 flex-shrink-0">No Foto</div>';
     div.innerHTML = `
-      <div class="flex-1">
-        <p class="font-medium">${item.judul}</p>
-        <p class="text-xs text-gray-400">${item.tanggal}</p>
+      ${thumb}
+      <div class="flex-1 min-w-0">
+        <p class="font-medium truncate">${escapeHtml(item.judul)}</p>
+        <p class="text-xs text-gray-400">${escapeHtml(item.tanggal || '')}</p>
       </div>
       <button class="delete-pengumuman bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200" data-id="${item.id}">Hapus</button>
     `;
     container.appendChild(div);
+
+    if (item.gambar) {
+      enableImagePreview(div.querySelector('img.admin-img-clickable'), {
+        caption: 'Foto Pengumuman — ' + (item.judul || ''),
+        onChange: (file) => updatePengumumanGambar(item.id, file),
+        onRemove: () => updatePengumumanGambar(item.id, null)
+      });
+    }
   });
   container.querySelectorAll('.delete-pengumuman').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -1119,6 +1192,29 @@ function renderPengumuman(list) {
       renderPengumuman((await (await fetch(API_BASE + '/api/data')).json()).pengumuman || []);
     });
   });
+}
+
+// Ganti / hapus foto pada satu record pengumuman (record TETAP ADA, hanya gambarnya).
+async function updatePengumumanGambar(id, file) {
+  let gambar = '';
+  if (file) {
+    gambar = await uploadFile(file);
+    if (!gambar) return;
+  }
+  try {
+    showSaveProgress();
+    const res = await fetch(API_BASE + '/api/admin/pengumuman/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gambar })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    adminToast(file ? 'Foto pengumuman berhasil diganti' : 'Foto pengumuman berhasil dihapus', 'success', 'Berhasil');
+    finishSaveProgressAndReload(900);
+  } catch (err) {
+    hideSaveProgress();
+    adminToast('Gagal memperbarui foto pengumuman', 'error');
+  }
 }
 
 const GALERI_CATEGORIES = [
@@ -1168,7 +1264,7 @@ GALERI_CATEGORIES.forEach(cat => {
       });
 
       xhr.open('POST', API_BASE + '/api/admin/upload-multiple');
-      const token = sessionStorage.getItem('adminToken') || adminToken;
+      const token = sessionStorage.getItem('adminToken');
       if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
       xhr.send(formData);
 
@@ -1210,11 +1306,19 @@ function renderGaleriAll(gal) {
       const div = document.createElement('div');
       div.className = 'relative group bg-gray-50 border border-gray-200 rounded-xl p-2 shadow-xs flex items-center justify-center min-h-[160px] overflow-hidden';
       div.innerHTML = `
-        <img src="${url}" alt="Galeri" class="w-full max-h-44 object-contain rounded-lg transition-transform duration-200 group-hover:scale-105">
+        <img src="${escapeHtml(url)}" alt="Galeri" class="admin-img-clickable w-full max-h-44 object-contain rounded-lg">
         <button class="delete-galeri absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all z-10" data-cat="${cat.key}" data-idx="${idx}" title="Hapus foto">&times;</button>
         <span class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[10px] px-2 py-0.5 rounded-md font-medium z-10">${cat.label}</span>
       `;
       container.appendChild(div);
+      const galImg = div.querySelector('img.admin-img-clickable');
+      if (galImg) {
+        enableImagePreview(galImg, {
+          caption: cat.label + ' — Foto ' + (idx + 1),
+          onChange: (file) => replaceGaleriPhoto(cat.key, idx, file),
+          onRemove: () => removeGaleriPhoto(cat.key, idx)
+        });
+      }
     });
   });
 
@@ -1233,6 +1337,37 @@ function renderGaleriAll(gal) {
       }
     });
   });
+}
+
+// Ganti foto galeri pada posisi yang sama (in-place), record tidak pindah urutan.
+async function replaceGaleriPhoto(catKey, idx, file) {
+  const url = await uploadFile(file);
+  if (!url) return;
+  try {
+    showSaveProgress();
+    const res = await fetch(API_BASE + '/api/admin/galeri-category/' + catKey + '/' + idx, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    adminToast('Foto galeri berhasil diganti', 'success', 'Berhasil');
+    finishSaveProgressAndReload(900);
+  } catch (err) {
+    hideSaveProgress();
+    adminToast('Gagal mengganti foto galeri', 'error');
+  }
+}
+
+async function removeGaleriPhoto(catKey, idx) {
+  try {
+    await fetch(API_BASE + '/api/admin/galeri-category/' + catKey + '/' + idx, { method: 'DELETE' });
+    adminToast('Foto berhasil dihapus dari galeri', 'success');
+    const data = await (await fetch(API_BASE + '/api/data')).json();
+    renderGaleriAll(data.galeri || {});
+  } catch (err) {
+    adminToast('Gagal menghapus foto galeri', 'error');
+  }
 }
 
 function renderGaleri(list) {
@@ -1513,14 +1648,10 @@ function addPotensiRow(container, item) {
   const row = document.createElement('div');
   row.className = 'flex flex-col lg:flex-row gap-3 items-center bg-gray-50 p-3 rounded-xl border border-gray-200';
   row.dataset.savedFoto = item.foto || '';
-  const preview = item.foto
-    ? `<img src="${item.foto}" alt="Pratinjau foto potensi" class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs">`
-    : `<div class="potensi-preview w-28 h-24 sm:w-32 sm:h-28 rounded-xl bg-gray-100 text-gray-400 text-xs flex items-center justify-center text-center p-1">Belum ada foto</div>`;
   row.innerHTML = `
-    ${preview}
     <div class="flex-1 w-full grid md:grid-cols-2 gap-2">
-      <input data-field="nama" type="text" value="${item.nama || ''}" placeholder="Nama potensi" class="w-full border border-gray-300 rounded px-3 py-2">
-      <input data-field="deskripsi" type="text" value="${item.deskripsi || ''}" placeholder="Keterangan di bawah foto" class="w-full border border-gray-300 rounded px-3 py-2">
+      <input data-field="nama" type="text" value="${escapeHtml(item.nama || '')}" placeholder="Nama potensi" class="w-full border border-gray-300 rounded px-3 py-2">
+      <input data-field="deskripsi" type="text" value="${escapeHtml(item.deskripsi || '')}" placeholder="Keterangan di bawah foto" class="w-full border border-gray-300 rounded px-3 py-2">
       <div class="admin-file-input md:col-span-2">
         <span class="file-btn">Pilih File</span>
         <span class="file-name">No file chosen</span>
@@ -1529,20 +1660,30 @@ function addPotensiRow(container, item) {
     </div>
     <button type="button" class="remove-potensi bg-red-100 text-red-600 px-3 py-2 rounded hover:bg-red-200 whitespace-nowrap">Hapus</button>
   `;
+  mountPotensiPreview(row, item.foto || '');
   row.querySelector('[data-field="foto"]').addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
     row.querySelector('.file-name').textContent = file.name;
     row.querySelector('.file-name').classList.add('has-file');
-    const oldPreview = row.querySelector('.potensi-preview');
-    const image = document.createElement('img');
-    image.src = URL.createObjectURL(file);
-    image.alt = 'Pratinjau foto potensi';
-    image.className = 'potensi-preview w-28 h-24 sm:w-32 sm:h-28 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs';
-    if (oldPreview) oldPreview.replaceWith(image);
+    mountPotensiPreview(row, URL.createObjectURL(file));
   });
   row.querySelector('.remove-potensi').addEventListener('click', () => row.remove());
   container.appendChild(row);
+}
+
+// Pasang pratinjau foto potensi (img / placeholder "Belum ada foto") + klik modal preview.
+function mountPotensiPreview(row, url) {
+  row.querySelector('.potensi-preview')?.remove();
+  const node = buildPreviewNode(url, POTENSI_PREVIEW_CLASSES, POTENSI_PLACEHOLDER_CLASSES, 'Belum ada foto');
+  row.insertBefore(node, row.firstChild);
+  if (url) {
+    enableImagePreview(node, {
+      caption: 'Foto Potensi Desa' + (row.querySelector('[data-field="nama"]')?.value ? ' — ' + row.querySelector('[data-field="nama"]').value : ''),
+      onChange: (file) => replaceDynamicRowPhoto(row, file, mountPotensiPreview, 'save-potensi'),
+      onRemove: () => removeDynamicRowPhoto(row, () => mountPotensiPreview(row, ''), 'save-potensi')
+    });
+  }
 }
 
 async function collectPotensiItems(containerId) {
@@ -1552,13 +1693,17 @@ async function collectPotensiItems(containerId) {
     const nama = row.querySelector('[data-field="nama"]').value.trim();
     const deskripsi = row.querySelector('[data-field="deskripsi"]').value.trim();
     let foto = row.dataset.savedFoto || '';
-    const file = row.querySelector('[data-field="foto"]').files[0];
+    const fotoInput = row.querySelector('[data-field="foto"]');
+    const file = fotoInput.files[0];
     if (file) {
       const up = await uploadFile(file);
-      if (up) {
-        foto = up;
-        row.dataset.savedFoto = up;
-      }
+      // GAGAL UPLOAD = HENTIKAN simpan. Jangan simpan diam-diam tanpa foto
+      // sementara notifikasi tetap bilang "berhasil".
+      if (!up) throw new Error(lastUploadError || ('Gagal mengunggah foto potensi "' + (nama || 'tanpa nama') + '"'));
+      foto = up;
+      row.dataset.savedFoto = up;
+      clearFileInput(null, fotoInput);
+      mountPotensiPreview(row, up);
     }
     if (foto.startsWith('blob:')) foto = '';
     if (nama || deskripsi || foto) items.push({ nama, deskripsi, foto });
@@ -1587,9 +1732,17 @@ document.getElementById('save-potensi')?.addEventListener('click', async () => {
     msg.className = 'ml-3 text-sm text-blue-600';
   }
   try {
-    const umkmItems = await collectPotensiItems('umkm-items');
-    const wisataItems = await collectPotensiItems('wisata-items');
-    const kegiatanItems = await collectPotensiItems('kegiatan-items');
+    let umkmItems, wisataItems, kegiatanItems;
+    try {
+      umkmItems = await collectPotensiItems('umkm-items');
+      wisataItems = await collectPotensiItems('wisata-items');
+      kegiatanItems = await collectPotensiItems('kegiatan-items');
+    } catch (upErr) {
+      const upMsg = upErr && upErr.message ? upErr.message : 'Gagal mengunggah foto potensi';
+      if (msg) { msg.textContent = upMsg; msg.className = 'ml-3 text-sm text-red-600 font-medium'; }
+      adminToast(upMsg, 'error', 'Unggah Gagal');
+      return;
+    }
     const payload = {
       umkm: {
         judul: document.getElementById('um-judul').value.trim(),
@@ -1690,7 +1843,7 @@ async function renderKeluhan() {
       const div = document.createElement('div');
       div.className = 'bg-gray-50 rounded p-4 border-l-4 border-amber-500';
       const buktiImg = item.bukti
-        ? `<a href="${item.bukti}" target="_blank" class="inline-block mt-2"><img src="${item.bukti}" alt="Bukti" class="max-w-xs max-h-48 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs hover:border-amber-500 transition-colors"></a>`
+        ? `<img src="${escapeHtml(item.bukti)}" alt="Bukti" class="keluhan-bukti-img admin-img-clickable max-w-xs max-h-48 object-contain bg-white rounded-xl border border-gray-200 p-1 shadow-xs hover:border-amber-500 transition-colors mt-2">`
         : '<p class="text-xs text-gray-400 mt-2">Tidak ada foto bukti.</p>';
       div.innerHTML = `
         <div class="flex items-start justify-between gap-3">
@@ -1706,6 +1859,11 @@ async function renderKeluhan() {
         </div>
       `;
       container.appendChild(div);
+      const buktiEl = div.querySelector('img.keluhan-bukti-img');
+      if (buktiEl) {
+        // Bukti keluhan adalah lampiran publik: hanya bisa dilihat, tidak bisa diganti/hapus.
+        enableImagePreview(buktiEl, { caption: 'Bukti Foto Keluhan' + (item.judul ? ' — ' + item.judul : '') });
+      }
     });
     container.querySelectorAll('.delete-keluhan').forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1719,6 +1877,158 @@ async function renderKeluhan() {
     container.innerHTML = '<p class="text-gray-400 text-sm">Gagal memuat keluhan.</p>';
   }
 }
+
+// =====================================================================
+// ===== MODAL PREVIEW GAMBAR BESAR (klik gambar mana pun di admin) =====
+// =====================================================================
+const photoModal = document.getElementById('photo-preview-modal');
+const photoModalImg = document.getElementById('photo-preview-img');
+const photoModalCaption = document.getElementById('photo-preview-caption');
+const photoModalActions = document.getElementById('photo-preview-actions');
+const photoReplaceBtn = document.getElementById('photo-replace-btn');
+const photoRemoveBtn = document.getElementById('photo-remove-btn');
+const photoCloseBtn = document.getElementById('photo-preview-close');
+const photoReplaceInput = document.getElementById('photo-replace-input');
+
+let photoCtx = null;
+
+function openPhotoModal(ctx) {
+  if (!photoModal || !ctx || !ctx.src) return;
+  photoCtx = ctx;
+  if (photoModalImg) {
+    photoModalImg.src = ctx.src;
+    photoModalImg.alt = ctx.caption || 'Pratinjau Gambar';
+  }
+  if (photoModalCaption) photoModalCaption.textContent = ctx.caption || '';
+  const editable = !!(ctx.onChange || ctx.onRemove);
+  if (photoModalActions) photoModalActions.classList.toggle('hidden', !editable);
+  if (photoReplaceBtn) photoReplaceBtn.classList.toggle('hidden', !ctx.onChange);
+  if (photoRemoveBtn) photoRemoveBtn.classList.toggle('hidden', !ctx.onRemove);
+  photoModal.classList.remove('hidden');
+  photoModal.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePhotoModal() {
+  if (!photoModal) return;
+  photoModal.classList.add('hidden');
+  photoModal.classList.remove('flex');
+  if (photoModalImg) photoModalImg.removeAttribute('src');
+  if (photoReplaceInput) photoReplaceInput.value = '';
+  photoCtx = null;
+  document.body.style.overflow = '';
+}
+
+photoCloseBtn?.addEventListener('click', closePhotoModal);
+photoModal?.addEventListener('click', (e) => {
+  if (e.target === photoModal) closePhotoModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && photoModal && !photoModal.classList.contains('hidden')) closePhotoModal();
+});
+
+photoReplaceBtn?.addEventListener('click', () => photoReplaceInput?.click());
+photoReplaceInput?.addEventListener('change', async () => {
+  const f = photoReplaceInput.files[0];
+  const ctx = photoCtx;
+  if (!f || !ctx || typeof ctx.onChange !== 'function') return;
+  photoReplaceInput.value = '';
+  closePhotoModal();
+  await ctx.onChange(f);
+});
+
+photoRemoveBtn?.addEventListener('click', async () => {
+  const ctx = photoCtx;
+  if (!ctx || typeof ctx.onRemove !== 'function') return;
+  if (!confirm('Hapus foto ini dari data yang dipilih?\n\nData/record-nya TETAP tersimpan — hanya fotonya yang dikosongkan.')) return;
+  closePhotoModal();
+  await ctx.onRemove();
+});
+
+// Pasang perilaku klik-untuk-preview pada satu elemen <img>.
+// handlers: { caption, onChange(file), onRemove() } — onChange/onRemove opsional
+// (jika keduanya absen, modal muncul dalam mode lihat-saja).
+function enableImagePreview(imgEl, handlers = {}) {
+  if (!imgEl) return;
+  imgEl.classList.add('admin-img-clickable');
+  imgEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const src = imgEl.getAttribute('src');
+    if (!src) return;
+    openPhotoModal({
+      src,
+      caption: handlers.caption || '',
+      onChange: typeof handlers.onChange === 'function' ? handlers.onChange : null,
+      onRemove: typeof handlers.onRemove === 'function' ? handlers.onRemove : null
+    });
+  });
+}
+
+function triggerSave(btnId) {
+  const btn = document.getElementById(btnId);
+  if (btn) btn.click();
+}
+
+// Ganti foto pada baris dinamis (perangkat desa / potensi desa):
+// upload -> update state baris -> simpan seksi lewat tombol Simpan yang sama.
+async function replaceDynamicRowPhoto(row, file, mountFn, saveBtnId) {
+  const url = await uploadFile(file);
+  if (!url) return;
+  row.dataset.savedFoto = url;
+  const fotoInput = row.querySelector('[data-foto-input], [data-field="foto"]');
+  if (fotoInput) {
+    fotoInput.value = '';
+    const nameSpan = row.querySelector('.file-name');
+    if (nameSpan) { nameSpan.textContent = 'No file chosen'; nameSpan.classList.remove('has-file'); }
+  }
+  mountFn(row, url);
+  triggerSave(saveBtnId);
+}
+
+// Hapus foto pada baris dinamis: record tetap ada, hanya fotonya dikosongkan.
+async function removeDynamicRowPhoto(row, mountEmptyFn, saveBtnId) {
+  row.dataset.savedFoto = '';
+  const fotoInput = row.querySelector('[data-foto-input], [data-field="foto"]');
+  if (fotoInput) {
+    fotoInput.value = '';
+    const nameSpan = row.querySelector('.file-name');
+    if (nameSpan) { nameSpan.textContent = 'No file chosen'; nameSpan.classList.remove('has-file'); }
+  }
+  mountEmptyFn();
+  triggerSave(saveBtnId);
+}
+
+// Pratinjau statis yang terikat form (Profil & Kepala Desa).
+// Ganti/Hapus memutakhirkan state form lalu memicu tombol Simpan seksi tersebut,
+// sehingga persistensinya identik dengan menekan Simpan secara manual.
+function bindFormPhotoPreview(imgId, opts) {
+  const img = document.getElementById(imgId);
+  if (!img) return;
+  enableImagePreview(img, {
+    caption: opts.caption,
+    onChange: async (file) => {
+      const up = await uploadFile(file);
+      if (!up) return;
+      img.src = up;
+      img.dataset.savedUrl = up;
+      clearFileInput(opts.fileInputId);
+      triggerSave(opts.saveBtnId);
+    },
+    onRemove: async () => {
+      img.removeAttribute('src');
+      delete img.dataset.savedUrl;
+      clearFileInput(opts.fileInputId);
+      triggerSave(opts.saveBtnId);
+    }
+  });
+}
+
+bindFormPhotoPreview('p-logo-preview', { fileInputId: 'p-logo-file', caption: 'Logo Desa', saveBtnId: 'save-profil' });
+bindFormPhotoPreview('p-hero-preview', { fileInputId: 'p-hero-file', caption: 'Foto Hero (Banner Beranda)', saveBtnId: 'save-profil' });
+bindFormPhotoPreview('p-tentang-preview', { fileInputId: 'p-tentang-file', caption: 'Foto Tentang Desa', saveBtnId: 'save-profil' });
+bindFormPhotoPreview('p-panel-foto-preview', { fileInputId: 'p-panel-foto-file', caption: 'Foto Profil Panel Admin', saveBtnId: 'save-profil' });
+bindFormPhotoPreview('kd-foto-preview', { fileInputId: 'kd-foto-file', caption: 'Foto Kepala Desa', saveBtnId: 'save-pemerintahan' });
 
 document.querySelectorAll('.admin-file-input input[type="file"]').forEach(input => {
   input.addEventListener('change', () => {
