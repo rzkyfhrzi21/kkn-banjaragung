@@ -1,6 +1,22 @@
 // ===== Admin Panel Logic =====
 const API_BASE = '';
 
+// Gambar fallback khusus (logo website) untuk gambar yang nama berkasnya ada
+// di database tetapi berkasnya tidak ditemukan di penyimpanan.
+const FALLBACK_IMAGE = 'assets/fallback/logo-fallback.ico';
+
+// Jika <img> gagal dimuat padahal punya src, tampilkan fallback khusus.
+// Dipasang pada fase capture karena event 'error' resource tidak bubble.
+document.addEventListener('error', (e) => {
+  const el = e.target;
+  if (!el || el.tagName !== 'IMG') return;
+  const src = el.getAttribute('src');
+  if (!src || el.dataset.fallbackApplied === '1' || src === FALLBACK_IMAGE) return;
+  el.dataset.fallbackApplied = '1';
+  el.classList.add('img-fallback');
+  el.src = FALLBACK_IMAGE;
+}, true);
+
 let lastUploadError = '';
 
 // Tambahkan token sesi ke setiap permintaan yang mengubah data admin.
@@ -1295,7 +1311,8 @@ GALERI_CATEGORIES.forEach(cat => {
 
 function renderGaleriAll(gal) {
   GALERI_CATEGORIES.forEach(cat => {
-    const list = (gal && gal[cat.key]) || [];
+    // Entri kosong/bukan-string ("", null) tidak dirender sama sekali.
+    const list = ((gal && gal[cat.key]) || []).filter(u => typeof u === 'string' && u.trim());
     const container = document.getElementById(cat.gridId);
     container.innerHTML = '';
     if (!list.length) {
@@ -1326,12 +1343,18 @@ function renderGaleriAll(gal) {
     btn.addEventListener('click', async () => {
       const cat = btn.dataset.cat;
       const idx = btn.dataset.idx;
-      if (!confirm('Yakin ingin menghapus foto ini?')) return;
+      if (!confirm('Yakin ingin menghapus foto ini?\n\nBerkasnya juga akan dihapus dari penyimpanan server.')) return;
       try {
         const res = await fetch(API_BASE + '/api/admin/galeri-category/' + cat + '/' + idx, { method: 'DELETE' });
+        let json = {};
+        try { json = await res.json(); } catch (e) {}
+        if (!res.ok || !json.success) {
+          adminToast(json.message || ('Gagal menghapus foto (HTTP ' + res.status + ')'), 'error', 'Hapus Gagal');
+          return;
+        }
         const data = await (await fetch(API_BASE + '/api/data')).json();
         renderGaleriAll(data.galeri || {});
-        adminToast('Foto berhasil dihapus', 'success');
+        adminToast('Foto berhasil dihapus dari galeri & penyimpanan', 'success');
       } catch (err) {
         adminToast('Gagal menghapus foto', 'error');
       }
@@ -1350,19 +1373,27 @@ async function replaceGaleriPhoto(catKey, idx, file) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url })
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    let json = {};
+    try { json = await res.json(); } catch (e) {}
+    if (!res.ok || !json.success) throw new Error(json.message || ('HTTP ' + res.status));
     adminToast('Foto galeri berhasil diganti', 'success', 'Berhasil');
     finishSaveProgressAndReload(900);
   } catch (err) {
     hideSaveProgress();
-    adminToast('Gagal mengganti foto galeri', 'error');
+    adminToast('Gagal mengganti foto galeri' + (err && err.message ? ' — ' + err.message : ''), 'error');
   }
 }
 
 async function removeGaleriPhoto(catKey, idx) {
   try {
-    await fetch(API_BASE + '/api/admin/galeri-category/' + catKey + '/' + idx, { method: 'DELETE' });
-    adminToast('Foto berhasil dihapus dari galeri', 'success');
+    const res = await fetch(API_BASE + '/api/admin/galeri-category/' + catKey + '/' + idx, { method: 'DELETE' });
+    let json = {};
+    try { json = await res.json(); } catch (e) {}
+    if (!res.ok || !json.success) {
+      adminToast(json.message || ('Gagal menghapus foto (HTTP ' + res.status + ')'), 'error', 'Hapus Gagal');
+      return;
+    }
+    adminToast('Foto berhasil dihapus dari galeri & penyimpanan', 'success');
     const data = await (await fetch(API_BASE + '/api/data')).json();
     renderGaleriAll(data.galeri || {});
   } catch (err) {

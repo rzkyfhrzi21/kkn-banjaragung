@@ -271,6 +271,23 @@ function migrateLegacyMapsUrl(data) {
   return false;
 }
 
+// Bersihkan entri galeri kosong/bukan-URL ("", null) yang tertinggal dari bug
+// lama agar grid tidak menampilkan gambar rusak. Idempoten.
+function migrateCleanGaleri(data) {
+  const g = data && data.galeri;
+  if (!g || Array.isArray(g)) return false;
+  let changed = false;
+  for (const key of Object.keys(g)) {
+    if (!Array.isArray(g[key])) continue;
+    const cleaned = g[key].filter(u => typeof u === 'string' && u.trim());
+    if (cleaned.length !== g[key].length) {
+      g[key] = cleaned;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 function loadData() {
   if (USE_SQLITE) {
     try {
@@ -312,6 +329,7 @@ function loadData() {
     const merged = deepMerge(defaultData(), parsed);
     if (migrateLegacyPotensi(merged)) saveDataToFile(merged);
     if (migrateLegacyMapsUrl(merged)) saveDataToFile(merged);
+    if (migrateCleanGaleri(merged)) saveDataToFile(merged);
     saveDataToFile(merged);
     return merged;
   } catch (e) {
@@ -461,6 +479,7 @@ module.exports = {
   deepMerge,
   migrateLegacyPotensi,
   migrateLegacyMapsUrl,
+  migrateCleanGaleri,
   readJsonFileSafe,
   loadData,
   getData,

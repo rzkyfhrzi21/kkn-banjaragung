@@ -1,4 +1,24 @@
- const menuToggle = document.getElementById('menu-toggle');
+// ===== Fallback gambar khusus (logo website) =====
+// Dipakai bila nama berkas gambar ada di database tetapi berkasnya tidak
+// ditemukan di penyimpanan server. Berlaku untuk seluruh halaman publik.
+const FALLBACK_IMAGE = 'assets/fallback/logo-fallback.ico';
+
+document.addEventListener('error', (e) => {
+    const el = e.target;
+    if (!el || el.tagName !== 'IMG') return;
+    const src = el.getAttribute('src');
+    if (!src || el.dataset.fallbackApplied === '1' || src === FALLBACK_IMAGE) return;
+    el.dataset.fallbackApplied = '1';
+    el.classList.add('img-fallback');
+    el.src = FALLBACK_IMAGE;
+}, true);
+
+// Entri galeri kosong/bukan-string ("", null) tidak dirender sama sekali.
+function validGaleriList(list) {
+    return Array.isArray(list) ? list.filter(u => typeof u === 'string' && u.trim()) : [];
+}
+
+const menuToggle = document.getElementById('menu-toggle');
 const mobileMenu = document.getElementById('mobile-menu');
 const menuClose = document.getElementById('menu-close');
 
@@ -29,7 +49,7 @@ mobileMenu?.addEventListener('click', (e) => {
             const grid = document.getElementById(gridId);
             if (!grid) return;
             const key = grids[gridId];
-            const list = (typeof g === 'object' && g[key]) || (Array.isArray(g) ? g : []);
+            const list = validGaleriList((typeof g === 'object' && g[key]) || (Array.isArray(g) ? g : []));
 
             if (list && list.length) {
                 grid.innerHTML = '';
@@ -46,9 +66,9 @@ div.innerHTML = `<img src="${url}" alt="Galeri" data-lightbox class="object-cove
         if (galGrid) {
   
             window.galeriData = {
-                galeri1: (typeof g === 'object' && g.galeri1) || (Array.isArray(g) ? g : []),
-                galeri2: (typeof g === 'object' && g.galeri2) || [],
-                galeri3: (typeof g === 'object' && g.galeri3) || []
+                galeri1: validGaleriList((typeof g === 'object' && g.galeri1) || (Array.isArray(g) ? g : [])),
+                galeri2: validGaleriList((typeof g === 'object' && g.galeri2) || []),
+                galeri3: validGaleriList((typeof g === 'object' && g.galeri3) || [])
             };
             // Re-render gallery page if already initialized
             if (window.__refreshGaleri) window.__refreshGaleri();
@@ -99,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getPhotosForCategory(key) {
         const data = window.galeriData || {};
-        const uploaded = data[key] || [];
+        const uploaded = validGaleriList(data[key]);
         return uploaded.length ? uploaded : defaultPhotos[key];
     }
 
@@ -651,11 +671,11 @@ function applyGaleri(galeri) {
     // Support both new (object with categories) and legacy (array) format
     let cats = { galeri1: [], galeri2: [], galeri3: [] };
     if (galeri && typeof galeri === 'object' && !Array.isArray(galeri)) {
-        cats.galeri1 = galeri.galeri1 || [];
-        cats.galeri2 = galeri.galeri2 || [];
-        cats.galeri3 = galeri.galeri3 || [];
+        cats.galeri1 = validGaleriList(galeri.galeri1);
+        cats.galeri2 = validGaleriList(galeri.galeri2);
+        cats.galeri3 = validGaleriList(galeri.galeri3);
     } else if (Array.isArray(galeri)) {
-        cats.galeri1 = galeri;
+        cats.galeri1 = validGaleriList(galeri);
     }
 
     const defs = [

@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Readable } = require('stream');
-const { IS_VERCEL } = require('../config/constants');
+const { IS_VERCEL, UPLOAD_DIR } = require('../config/constants');
 
 let blobClient = null;
 
@@ -138,4 +138,46 @@ async function streamBlobFile(res, key) {
   return false;
 }
 
-module.exports = { isBlobAvailable, putFileToBlob, putJsonToBlob, fetchBlobText, streamBlobFile };
+// ===== Penghapusan berkas unggahan =====
+
+// Ambil nama berkas dari URL hasil upload, baik URL CDN Blob penuh
+// (https://<store>.public.blob.vercel-storage.com/uploads/<nama>) maupun
+// path relatif (/uploads/<nama>). Hanya berkas pola aman yang diproses.
+function extractUploadFilename(url) {
+  if (typeof url !== 'string' || !url) return null;
+  const m = url.match(/\/uploads\/([A-Za-z0-9._-]+)(?:[?#].*)?$/);
+  return m ? m[1] : null;
+}
+
+async function deleteBlobFile(key) {
+  if (!isBlobAvailable()) return false;
+  try {
+    if (!blobClient) blobClient = require('@vercel/blob');
+    await blobClient.del(key);
+    return true;
+  } catch (err) {
+    console.warn('[Blob] Gagal hapus ' + key + ' dari Vercel Blob: ' + (err && err.message || err));
+    return false;
+  }
+}
+
+// Hapus berkas FISIK hasil unggahan dari penyimpanan (Blob di produksi,
+// folder uploads/ di lokal) agar tidak menumpuk jadi sampah.
+// remainingData: objek data TERBARU setelah mutasi — jika nama berkas masih
+// direferensikan di mana pun pada data tersebut, berkas TIDAK dihapus.
+async function cleanupUploadFiles(urls, remainingData) {
+  const list = Array.isArray(urls) ? urls : [urls];
+  const names = [...new Set(list.map(extractUploadFilename).filter(Boolean))];
+  if (!names.length) return;
+  const guard = remainingData != null ? JSON.stringify(remainingData) : '';
+  for (const name of names) {
+    if (guard && guard.includes(name)) continue; // masih dipakai di tempat lain
+    await deleteBlobFile('uploads/' + name);
+    try {
+      const localPath = path.join(UPLOAD_DIR, name);
+      if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+    } catch (e) {}
+  }
+}
+
+module.exports = { isBlobAvailable, putFileToBlob, putJsonToBlob, fetchBlobText, streamBlobFile, extractUploadFilename, cleanupUploadFiles };

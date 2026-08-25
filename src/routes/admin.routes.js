@@ -17,7 +17,7 @@ const {
   validateFileBuffer,
   requireUploadStorage
 } = require('../middleware/security.middleware');
-const { putFileToBlob } = require('../services/blob.service');
+const { putFileToBlob, cleanupUploadFiles } = require('../services/blob.service');
 
 // 1. Admin Login Endpoint (Unauthenticated, Rate-limited)
 router.post('/api/admin/login', async (req, res) => {
@@ -134,8 +134,10 @@ router.put('/api/admin/berita/:id', async (req, res) => {
 
 router.delete('/api/admin/berita/:id', async (req, res) => {
   const data = await getData();
+  const removed = (data.berita || []).filter(b => String(b.id) === req.params.id);
   data.berita = (data.berita || []).filter(b => String(b.id) !== req.params.id);
   await saveData(data);
+  cleanupUploadFiles(removed.map(r => r.gambar), data).catch(() => {});
   res.json({ success: true });
 });
 
@@ -164,24 +166,32 @@ router.put('/api/admin/pengumuman/:id', async (req, res) => {
   if (idx === -1) {
     return res.status(404).json({ success: false, message: 'Pengumuman tidak ditemukan' });
   }
+  const oldGambar = items[idx].gambar || '';
   items[idx] = { ...items[idx], ...req.body, id: items[idx].id };
   data.pengumuman = items;
   await saveData(data);
+  // Jika foto diganti/dikosongkan, berkas lamanya ikut dibersihkan dari penyimpanan.
+  const newGambar = items[idx].gambar || '';
+  if (oldGambar && oldGambar !== newGambar) {
+    cleanupUploadFiles([oldGambar], data).catch(() => {});
+  }
   res.json({ success: true, data: items[idx] });
 });
 
 router.delete('/api/admin/pengumuman/:id', async (req, res) => {
   const data = await getData();
+  const removed = (data.pengumuman || []).filter(p => String(p.id) === req.params.id);
   data.pengumuman = (data.pengumuman || []).filter(p => String(p.id) !== req.params.id);
   data.komentar = (data.komentar || []).filter(k => String(k.pengumumanId) !== req.params.id);
   await saveData(data);
+  cleanupUploadFiles(removed.map(r => r.gambar), data).catch(() => {});
   res.json({ success: true });
 });
 
 // 10. Galeri CRUD
 router.post('/api/admin/galeri', async (req, res) => {
   const data = await getData();
-  data.galeri = data.galeri || [];
+  if (!Array.isArray(data.galeri)) data.galeri = [];
   const urls = req.body.urls || (req.body.url ? [req.body.url] : []);
   if (urls.length) {
     data.galeri.push(...urls);
@@ -192,9 +202,17 @@ router.post('/api/admin/galeri', async (req, res) => {
 
 router.delete('/api/admin/galeri/:index', async (req, res) => {
   const data = await getData();
+  if (!Array.isArray(data.galeri)) {
+    return res.status(404).json({ success: false, message: 'Foto galeri tidak ditemukan.' });
+  }
   const idx = parseInt(req.params.index, 10);
-  data.galeri = (data.galeri || []).filter((_, i) => i !== idx);
+  if (idx < 0 || idx >= data.galeri.length || !data.galeri[idx]) {
+    return res.status(404).json({ success: false, message: 'Foto galeri tidak ditemukan atau sudah terhapus.' });
+  }
+  const [removedUrl] = data.galeri.splice(idx, 1);
   await saveData(data);
+  // Berkas fisik ikut dihapus dari penyimpanan (best-effort).
+  cleanupUploadFiles([removedUrl], data).catch(() => {});
   res.json({ success: true, data: data.galeri });
 });
 
@@ -217,10 +235,14 @@ router.delete('/api/admin/galeri-category/:category/:index', async (req, res) =>
   const data = await getData();
   const category = req.params.category;
   const idx = parseInt(req.params.index, 10);
-  if (data.galeri && data.galeri[category]) {
-    data.galeri[category] = data.galeri[category].filter((_, i) => i !== idx);
-    await saveData(data);
+  const arr = data.galeri && !Array.isArray(data.galeri) ? data.galeri[category] : null;
+  if (!Array.isArray(arr) || idx < 0 || idx >= arr.length || !arr[idx]) {
+    return res.status(404).json({ success: false, message: 'Foto galeri tidak ditemukan atau sudah terhapus.' });
   }
+  const [removedUrl] = arr.splice(idx, 1);
+  await saveData(data);
+  // Hapus berkas fisik dari penyimpanan (Blob/lokal) — best-effort setelah data aman.
+  cleanupUploadFiles([removedUrl], data).catch(() => {});
   res.json({ success: true, data: data.galeri });
 });
 
@@ -236,8 +258,11 @@ router.put('/api/admin/galeri-category/:category/:index', async (req, res) => {
   if (!url) {
     return res.status(400).json({ success: false, message: 'URL foto baru wajib diisi' });
   }
+  const oldUrl = data.galeri[category][idx];
   data.galeri[category][idx] = url;
   await saveData(data);
+  // Berkas lama yang sudah tidak terpakai ikut dibersihkan.
+  cleanupUploadFiles([oldUrl], data).catch(() => {});
   res.json({ success: true, data: data.galeri });
 });
 
@@ -262,8 +287,10 @@ router.get('/api/admin/keluhan', async (req, res) => {
 
 router.delete('/api/admin/keluhan/:id', async (req, res) => {
   const data = await getData();
+  const removed = (data.keluhan || []).filter(p => String(p.id) === req.params.id);
   data.keluhan = (data.keluhan || []).filter(p => String(p.id) !== req.params.id);
   await saveData(data);
+  cleanupUploadFiles(removed.map(r => r.bukti), data).catch(() => {});
   res.json({ success: true });
 });
 

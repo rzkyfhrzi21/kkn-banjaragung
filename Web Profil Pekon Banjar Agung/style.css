@@ -474,6 +474,12 @@ footer.kebung-tikhai a:hover {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
+/* Gambar fallback khusus — dipakai bila berkas gambar hilang dari penyimpanan */
+.img-fallback {
+  object-fit: contain;
+  background-color: #fdf6f6;
+}
+
 #photo-preview-modal {
   z-index: 70; /* di atas tab bar (z-50) & toast */
   background-color: rgba(0, 0, 0, 0.85); /* fallback bila utilitas Tailwind belum termuat */
