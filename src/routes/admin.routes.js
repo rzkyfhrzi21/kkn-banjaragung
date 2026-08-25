@@ -17,7 +17,27 @@ const {
   validateFileBuffer,
   requireUploadStorage
 } = require('../middleware/security.middleware');
-const { putFileToBlob, cleanupUploadFiles } = require('../services/blob.service');
+const { putFileToBlob, cleanupUploadFiles, cleanupOrphanUploads } = require('../services/blob.service');
+
+// Kumpulkan seluruh URL /uploads/ yang direferensikan pada struktur apa pun
+// (string, array, object bersarang) — dipakai untuk diff berkas sebelum/sesudah simpan.
+function collectUploadUrls(value, out = []) {
+  if (typeof value === 'string') {
+    if (value.includes('/uploads/')) out.push(value);
+  } else if (Array.isArray(value)) {
+    value.forEach(v => collectUploadUrls(v, out));
+  } else if (value && typeof value === 'object') {
+    Object.values(value).forEach(v => collectUploadUrls(v, out));
+  }
+  return out;
+}
+
+// URL unggahan yang ada pada oldList tetapi SUDAH TIDAK direferensikan
+// di bagian mana pun pada data setelah mutasi → kandidat dibersihkan.
+function diffRemovedUrls(oldList, dataAfterMutation) {
+  const still = new Set(collectUploadUrls(dataAfterMutation));
+  return [...new Set(oldList)].filter(u => !still.has(u));
+}
 
 // 1. Admin Login Endpoint (Unauthenticated, Rate-limited)
 router.post('/api/admin/login', async (req, res) => {
@@ -64,16 +84,21 @@ router.get('/api/admin/check-session', async (req, res) => {
 // 3. Profil CRUD
 router.post('/api/admin/profil', async (req, res) => {
   const data = await getData();
+  const oldUrls = collectUploadUrls(data.profil);
   data.profil = { ...data.profil, ...req.body };
   await saveData(data);
+  // Foto lama yang diganti/dihapus ikut dibersihkan dari penyimpanan.
+  cleanupUploadFiles(diffRemovedUrls(oldUrls, data), data).catch(() => {});
   res.json({ success: true, data: data.profil });
 });
 
 // 4. Pemerintahan CRUD
 router.post('/api/admin/pemerintahan', async (req, res) => {
   const data = await getData();
+  const oldUrls = collectUploadUrls(data.pemerintahan);
   data.pemerintahan = { ...data.pemerintahan, ...req.body };
   await saveData(data);
+  cleanupUploadFiles(diffRemovedUrls(oldUrls, data), data).catch(() => {});
   res.json({ success: true, data: data.pemerintahan });
 });
 
@@ -96,8 +121,11 @@ router.post('/api/admin/layanan', async (req, res) => {
 // 7. Potensi CRUD
 router.post('/api/admin/potensi', async (req, res) => {
   const data = await getData();
+  const oldUrls = collectUploadUrls(data.potensi);
   data.potensi = { ...data.potensi, ...req.body };
   await saveData(data);
+  // Item yang dihapus/ganti fotonya → berkas lamanya ikut dibersihkan.
+  cleanupUploadFiles(diffRemovedUrls(oldUrls, data), data).catch(() => {});
   res.json({ success: true, data: data.potensi });
 });
 
@@ -126,9 +154,11 @@ router.put('/api/admin/berita/:id', async (req, res) => {
   if (idx === -1) {
     return res.status(404).json({ success: false, message: 'Berita tidak ditemukan' });
   }
+  const oldUrls = collectUploadUrls(items[idx]);
   items[idx] = { ...items[idx], ...req.body, id: items[idx].id };
   data.berita = items;
   await saveData(data);
+  cleanupUploadFiles(diffRemovedUrls(oldUrls, data), data).catch(() => {});
   res.json({ success: true, data: items[idx] });
 });
 
@@ -375,6 +405,19 @@ router.post('/api/admin/upload-multiple', requireUploadStorage, upload.array('fo
       }
     }
     res.status(400).json({ success: false, message: err.message || 'Gagal mengupload file' });
+  }
+});
+
+// 16. Sapu bersih berkas unggahan yatim (tidak direferensikan data mana pun)
+router.post('/api/admin/cleanup-orphan-uploads', async (req, res) => {
+  try {
+    const data = await getData();
+    const result = await cleanupOrphanUploads(data);
+    console.info(`[AUDIT] Sapu bersih orphan: ${result.deleted.length} terhapus, ${result.failed.length} gagal dari IP ${req.ip}`);
+    res.json({ success: true, deleted: result.deleted, failed: result.failed });
+  } catch (err) {
+    console.error('[CLEANUP ERROR]', err);
+    res.status(500).json({ success: false, message: err.message || 'Gagal menjalankan pembersihan' });
   }
 });
 

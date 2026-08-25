@@ -237,8 +237,8 @@ footer.kebung-tikhai a:hover {
   box-shadow:
     0 10px 25px -5px rgba(0, 0, 0, 0.12),
     0 8px 10px -6px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e7eb;
-  border-left: 5px solid #10b981;
+  border: 1px solid #f0d9d9;
+  border-left: 5px solid var(--maroon, #7a1e1e);
   font-family: "Poppins", sans-serif;
   transform: translateX(110%);
   opacity: 0;
@@ -299,37 +299,56 @@ footer.kebung-tikhai a:hover {
   color: #1f2937;
 }
 
-/* Theme variations */
+/* Theme variations — palet seragam situs: putih & merah (maroon) */
 .pekon-toast.toast-success {
-  border-left-color: #10b981;
-  background: #f0fdf4;
+  border-left-color: var(--maroon, #7a1e1e);
+  background: #ffffff;
 }
 .pekon-toast.toast-success .toast-title {
-  color: #065f46;
+  color: var(--maroon, #7a1e1e);
+}
+/* Ikon sukses: pil maroon dengan centang putih (menimpa kelas Tailwind inline) */
+.pekon-toast.toast-success .toast-icon-box svg {
+  color: #ffffff;
+}
+.pekon-toast.toast-success .toast-icon-box {
+  background: var(--maroon, #7a1e1e);
+  border-radius: 9999px;
+  padding: 6px;
 }
 
 .pekon-toast.toast-error {
-  border-left-color: #ef4444;
+  border-left-color: #dc2626;
   background: #fef2f2;
 }
 .pekon-toast.toast-error .toast-title {
   color: #991b1b;
 }
+.pekon-toast.toast-error .toast-icon-box svg {
+  color: #b91c1c;
+}
 
 .pekon-toast.toast-warning {
-  border-left-color: #f59e0b;
-  background: #fffbeb;
+  border-left-color: #ef6a6a;
+  background: #fffafa;
 }
 .pekon-toast.toast-warning .toast-title {
-  color: #92400e;
+  color: #b91c1c;
+}
+.pekon-toast.toast-warning .toast-icon-box svg {
+  color: #dc2626;
 }
 
 .pekon-toast.toast-info {
-  border-left-color: #3b82f6;
-  background: #eff6ff;
+  border-left-color: #c98f8f;
+  background: #ffffff;
 }
 .pekon-toast.toast-info .toast-title {
-  color: #1e40af;
+  color: #6b4a4a;
+}
+.pekon-toast.toast-info .toast-icon-box svg {
+  color: var(--maroon, #7a1e1e);
+  opacity: 0.75;
 }
 
 /* Progress bar */
@@ -353,23 +372,33 @@ footer.kebung-tikhai a:hover {
   }
 }
 
-/* Spinner & Background Upload Progress Styles */
+/* Spinner & Background Upload Progress Styles — palet putih & merah */
 .pekon-toast.toast-upload {
-  border-left-color: #3b82f6;
+  border-left-color: var(--maroon, #7a1e1e);
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #f0d9d9;
 }
 
 .pekon-toast.toast-upload .toast-title {
-  color: #1e3a8a;
+  color: var(--maroon, #7a1e1e);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+/* Persentase unggahan (menimpa kelas Tailwind inline text-blue-600) */
+.pekon-toast .upload-percent {
+  color: var(--maroon, #7a1e1e) !important;
+}
+
 .toast-spinner {
   display: inline-block;
   animation: pekonSpin 0.85s linear infinite;
+}
+
+/* Spinner unggahan: merah maroon (menimpa kelas Tailwind inline text-blue-600) */
+.pekon-toast .toast-spinner {
+  color: var(--maroon, #7a1e1e) !important;
 }
 
 @keyframes pekonSpin {
@@ -393,7 +422,7 @@ footer.kebung-tikhai a:hover {
 .toast-upload-bar-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  background: linear-gradient(90deg, var(--maroon, #7a1e1e) 0%, #dc2626 100%);
   border-radius: 9999px;
   transition: width 0.2s ease-out;
 }
@@ -581,15 +610,18 @@ footer.kebung-tikhai a:hover {
   overflow: hidden;
 }
 
-/* ===== Admin Save Progress (berbaris di dalam container toast) ===== */
+/* ===== Admin Save Progress (berbaris di dalam container toast) — palet putih & merah ===== */
 #admin-save-progress {
   position: relative;
   width: 100%;
-  background: #1f2937;
-  border: 1px solid #374151;
-  border-radius: 10px;
-  padding: 10px 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  background: #ffffff;
+  border: 1px solid #f0d9d9;
+  border-left: 5px solid var(--maroon, #7a1e1e);
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow:
+    0 10px 25px -5px rgba(122, 30, 30, 0.18),
+    0 8px 10px -6px rgba(122, 30, 30, 0.08);
   opacity: 0;
   transform: translateX(110%);
   pointer-events: none;
@@ -602,9 +634,9 @@ footer.kebung-tikhai a:hover {
   transform: translateX(0);
 }
 #admin-save-progress .asp-label {
-  color: #e5e7eb;
+  color: var(--maroon, #7a1e1e);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
@@ -612,19 +644,19 @@ footer.kebung-tikhai a:hover {
   gap: 8px;
 }
 #admin-save-progress .asp-pct {
-  color: #34d399;
+  color: #dc2626;
   font-variant-numeric: tabular-nums;
 }
 #admin-save-progress .asp-track {
   height: 6px;
-  background: #374151;
+  background: #f6e3e3;
   border-radius: 999px;
   overflow: hidden;
 }
 #admin-save-progress .asp-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--maroon, #7a1e1e), #dc2626);
   border-radius: 999px;
   transition: width 0.25s ease;
 }

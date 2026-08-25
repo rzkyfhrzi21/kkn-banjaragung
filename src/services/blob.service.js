@@ -161,6 +161,51 @@ async function deleteBlobFile(key) {
   }
 }
 
+// Daftar seluruh pathname di bawah prefix (mis. 'uploads/'). null = gagal/tidak tersedia.
+// Mendukung API @vercel/blob lama (array blobs) maupun baru (async iterable).
+async function listBlobFiles(prefix = 'uploads/') {
+  if (!isBlobAvailable()) return null;
+  try {
+    if (!blobClient) blobClient = require('@vercel/blob');
+    const result = [];
+    const listed = blobClient.list({ prefix });
+    if (listed && typeof listed[Symbol.asyncIterator] === 'function') {
+      for await (const entry of listed) {
+        if (entry && entry.pathname) result.push(entry.pathname);
+      }
+    } else if (listed && Array.isArray(listed.blobs)) {
+      listed.blobs.forEach(b => { if (b && b.pathname) result.push(b.pathname); });
+    }
+    return result;
+  } catch (err) {
+    console.warn('[Blob] Gagal memindai daftar berkas: ' + (err && err.message || err));
+    return null;
+  }
+}
+
+// Sapu bersih berkas unggahan yatim di VERCEL BLOB (tidak lagi direferensikan
+// oleh data mana pun). Sengaja TIDAK menyapu folder uploads/ lokal: folder itu
+// juga berfungsi sebagai aset statis yang di-commit ke repo (fallback serve
+// /uploads di Vercel), sehingga menimpanya berisiko menghapus aset yang masih
+// dipakai data produksi. Mengembalikan { deleted: [nama...], failed: [nama...] }.
+async function cleanupOrphanUploads(referencedData) {
+  const guard = JSON.stringify(referencedData || {});
+  const deleted = [];
+  const failed = [];
+
+  const remote = await listBlobFiles('uploads/');
+  if (remote) {
+    for (const pathname of remote) {
+      const name = pathname.replace(/^uploads\//, '');
+      if (!name || !/^[A-Za-z0-9._-]+$/.test(name)) continue;
+      if (guard.includes(name)) continue; // masih dipakai
+      if (await deleteBlobFile(pathname)) deleted.push(name); else failed.push(name);
+    }
+  }
+
+  return { deleted, failed };
+}
+
 // Hapus berkas FISIK hasil unggahan dari penyimpanan (Blob di produksi,
 // folder uploads/ di lokal) agar tidak menumpuk jadi sampah.
 // remainingData: objek data TERBARU setelah mutasi — jika nama berkas masih
@@ -180,4 +225,4 @@ async function cleanupUploadFiles(urls, remainingData) {
   }
 }
 
-module.exports = { isBlobAvailable, putFileToBlob, putJsonToBlob, fetchBlobText, streamBlobFile, extractUploadFilename, cleanupUploadFiles };
+module.exports = { isBlobAvailable, putFileToBlob, putJsonToBlob, fetchBlobText, streamBlobFile, extractUploadFilename, cleanupUploadFiles, listBlobFiles, cleanupOrphanUploads };

@@ -2079,6 +2079,36 @@ bindFormPhotoPreview('p-tentang-preview', { fileInputId: 'p-tentang-file', capti
 bindFormPhotoPreview('p-panel-foto-preview', { fileInputId: 'p-panel-foto-file', caption: 'Foto Profil Panel Admin', saveBtnId: 'save-profil' });
 bindFormPhotoPreview('kd-foto-preview', { fileInputId: 'kd-foto-file', caption: 'Foto Kepala Desa', saveBtnId: 'save-pemerintahan' });
 
+// Sapu bersih berkas unggahan yatim di penyimpanan server.
+document.getElementById('cleanup-orphan-btn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('cleanup-orphan-btn');
+  const ok = await showConfirm({
+    title: 'Bersihkan Foto Tertinggal?',
+    message: 'Server akan memindai penyimpanan lalu menghapus berkas foto yang tidak lagi dipakai data mana pun.\n\nFoto yang masih tampil di website TIDAK akan terpengaruh.',
+    okText: 'Ya, Bersihkan'
+  });
+  if (!ok || !btn) return;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Memindai...';
+  try {
+    const res = await fetch(API_BASE + '/api/admin/cleanup-orphan-uploads', { method: 'POST' });
+    const json = await res.json();
+    if (!res.ok || !json.success) throw new Error(json.message || ('HTTP ' + res.status));
+    const n = (json.deleted || []).length;
+    if (n > 0) {
+      adminToast(n + ' berkas sampah berhasil dihapus dari penyimpanan', 'success', 'Penyimpanan Bersih');
+    } else {
+      adminToast('Tidak ada berkas tertinggal — penyimpanan sudah bersih', 'info', 'Sudah Bersih');
+    }
+  } catch (err) {
+    adminToast('Gagal menjalankan pembersihan' + (err && err.message ? ' — ' + err.message : ''), 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+});
+
 // =====================================================================
 // ===== MODAL KONFIRMASI (pengganti confirm() bawaan browser) ========
 // =====================================================================

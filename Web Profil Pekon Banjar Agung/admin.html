@@ -17,7 +17,7 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
-    <link href="style.css?v=12" rel="stylesheet" />
+    <link href="style.css?v=13" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   </head>
 
@@ -1074,6 +1074,17 @@
             class="grid grid-cols-2 md:grid-cols-4 gap-4"
           ></div>
         </div>
+        <div class="mt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-gray-100 pt-4">
+          <p class="text-xs text-gray-400">
+            Bersihkan berkas foto sampah di penyimpanan server yang sudah tidak dipakai data mana pun.
+          </p>
+          <button
+            id="cleanup-orphan-btn"
+            class="whitespace-nowrap rounded-lg border-2 border-red-700 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50"
+          >
+            Bersihkan Foto Tertinggal
+          </button>
+        </div>
       </section>
     </main>
     <div
@@ -1194,6 +1205,6 @@
     </footer>
     <script src="js/toast.js"></script>
     <script src="js/validators.js"></script>
-    <script src="admin.js?v=14"></script>
+    <script src="admin.js?v=15"></script>
   </body>
 </html>
